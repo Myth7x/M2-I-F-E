@@ -59,7 +59,7 @@ class ProjectBrowser(ui.Bar):
 		self.title.SetText("[ Project Browser ] - <Children:%s>" % (len(self.children)))
 
 	def selected_child_name(self):
-		return self.element_list.GetSelectedItemText()
+		return self.element_list.GetSelectedItemText() if self.element_list.GetSelectedItemText() else 'None'
 
 	def selected_child_object_name(self, child_name):
 		for child in self.children:

@@ -179,9 +179,11 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		LogTxt(NAME, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
 
 	def OnRender(self):
+		#LogTxt(NAME, "OnRender: %s" % self.child_config.selected_child_in_project)
 		if self.child_config.selected_child_in_project != self.project_browser.selected_child_name():
 			self.child_config.update(self.project_browser.selected_child_name(), self.project_browser.selected_child_object_name(self.project_browser.selected_child_name()))
 			LogTxt(NAME, "Child Config updated: %s" % self.project_browser.selected_child_name())
+		return True
 
 def setup_ifmgr():
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:

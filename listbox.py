@@ -127,7 +127,7 @@ class ListBox(ui.Window):
 		self.event(self.keyDict.get(line, 0), self.textDict.get(line, "None"))
 
 	def GetSelectedItemText(self):
-		return self.textDict.get(self.selectedLine, "None")
+		return self.textDict.get(self.selectedLine, None)
 
 	def GetSelectedItem(self):
 		return self.keyDict.get(self.selectedLine, 0)

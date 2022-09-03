@@ -29,6 +29,11 @@ class ChildConfig(ui.Bar):
 		self.selected_attribute = None
 		self.attributes = []
 		self.last_filter = ""
+		self.last_attribute_update = 0
+		self.left_down = False
+
+		self._module = ui
+		self._class = None
 
 		self.title = ui.TextLine()
 		self.title.SetParent(self)
@@ -63,10 +68,9 @@ class ChildConfig(ui.Bar):
 		attributes = []
 		for ui_class in self.ui_objects:
 			if ui_class == object_name:
-				_module = ui
-				_class = getattr(_module, ui_class)
+				self._class = getattr(self._module, ui_class)
 				for ui_class_attr in self.ui_objects[ui_class][3]:
-					_attribute = getattr(_class, ui_class_attr)
+					_attribute = getattr(self._class, ui_class_attr)
 					if callable(_attribute):
 						_attribute = self.Attribute(ui_class_attr, None, type(self.ui_objects[ui_class][3][ui_class_attr]))
 						attributes.append(ui_class_attr)
@@ -74,6 +78,8 @@ class ChildConfig(ui.Bar):
 		self.attributes = attributes
 
 		self.title.SetText("[ Child Config ] - %s <Attributes:%s>" % (self.selected_child_in_project, len(attributes)))
+
+		LogTxt("ChildConfig", "los gette info zu child_name: %s, object_name: %s" % (child_name, object_name))
 
 		self.update_attributes()
 
@@ -83,6 +89,12 @@ class ChildConfig(ui.Bar):
 
 	def selected_child(self):
 		return self.element_list.GetSelectedItemText()
+
+	def OnMouseLeftButtonDown(self, x, y):
+		self.left_down = True
+	
+	def OnMouseLeftButtonUp(self, x, y):
+		self.left_down = False
 
 	def OnUpdate(self):
 		self.title_selected_attribute.SetText("[ Selected Attribute ] - %s" % (self.element_list.GetSelectedItemText()))
@@ -101,6 +113,15 @@ class ChildConfig(ui.Bar):
 		else:
 			if self.filter.filter_editline.IsFocus():
 				self.filter.filter_editline.SetText("")
+		
+		selected_attribute = self.element_list.GetSelectedItemText()
+		if selected_attribute is not None and self.last_attribute_update > 250 and not self.left_down:
+			self.last_attribute_update = 0
+			if selected_attribute != self.selected_attribute:
+				LogTxt("ChildConfig", "selected attribute: %s" % (selected_attribute))
+				self.selected_attribute = selected_attribute
+				self.update(selected_attribute, self.selected_object)
+		self.last_attribute_update += 1
 
 	def __del__(self):
 		ui.Bar.__del__(self)

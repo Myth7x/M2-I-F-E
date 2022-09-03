@@ -7,6 +7,7 @@ UI_CLASS_EXPORT = {
 	'enabled' 	: True,
 	'path' 		: 'C:\\Proto_InterfaceManager\\%s_ui_classes.csv',
 }
+RGB_MODE = True
 
 ###############################################################################
 
@@ -26,14 +27,14 @@ from child_config import ChildConfig
 
 ###############################################################################
 
-BASE_THEME_COLOR = GenerateColor(0.3, 0.3, 0.3, 0.85)
+BASE_THEME_COLOR = GenerateColor(0.2, 0.3, 0.2, 0.85)
 
-class InterfaceManager(ui.ThinBoard):
+class InterfaceManager(ui.BoardWithTitleBar):
 
 	def __init__(self, width, height):
 		LogTxt(NAME, "Initializing..")
 
-		ui.ThinBoard.__init__(self)
+		ui.BoardWithTitleBar.__init__(self)
 
 		self.WINDOW_SIZE = [width, height]
 
@@ -62,34 +63,21 @@ class InterfaceManager(ui.ThinBoard):
 		self.Show()
 
 	def __del__(self):
-		ui.ThinBoard.__del__(self)
+		ui.BoardWithTitleBar.__del__(self)
+
+	def OnMouseLeftButtonDown(self):
+		self.SetFocus()
 
 	def BuildWindow(self):
+		self.SetTitleName(NAME)
 		self.SetSize(self.WINDOW_SIZE[0], self.WINDOW_SIZE[1])
 		self.SetCenterPosition()
 		self.AddFlag("movable")
 
-		# Title
-		self.title_bar = ui.Bar()
-		self.title_bar.SetParent(self)
-		self.title_bar.SetSize(self.WINDOW_SIZE[0], 25)
-		self.title_bar.SetPosition(0, 0)
-		self.title_bar.SetColor(BASE_THEME_COLOR)
-		#self.title_bar.AddFlag("movable") We need a hook onto onmousemove event on bar, if moving, update parent position relative to mouse position
-		self.title_bar.Show()
-		self.title = ui.TextLine()
-		self.title.SetFontName("Tahoma:16")
-		self.title.SetText("Interface Manager")
-		self.title.SetParent(self.title_bar)
-		self.title.SetPosition(int(self.WINDOW_SIZE[0]/2), 2)
-		self.title.SetHorizontalAlignCenter()
-		self.title.Show()
-		###############################################################################
-
 		# Info Text
 		self.information = ui.TextLine()
 		self.information.SetText("<Version:%s> <UI_Classes:%d>" % (VERSION, len(self.ui)))
-		self.information.SetParent(self.title_bar)
+		self.information.SetParent(self)
 		self.information.SetPosition(10, 30)
 		self.information.Show()
 		###############################################################################
@@ -141,6 +129,19 @@ class InterfaceManager(ui.ThinBoard):
 		self.remove_object_button.Show()
 		###############################################################################
 
+		# Demo Button
+		self.demo_button = ui.Button()
+		self.demo_button.SetParent(self)
+		self.demo_button.SetPosition(205, 145)
+		self.demo_button.SetText("Demo")
+		self.demo_button.ButtonText.SetPosition(45, 8)
+		#self.demo_button.SetEvent(ui.__mem_func__(self.OnDemo))
+		self.demo_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
+		self.demo_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
+		self.demo_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
+		self.demo_button.Show()
+		###############################################################################
+
 		# Save Button
 		self.save_button = ui.Button()
 		self.save_button.SetParent(self)
@@ -154,17 +155,18 @@ class InterfaceManager(ui.ThinBoard):
 		self.save_button.Show()
 		###############################################################################
 
-		# Export Button
-		self.export_button = ui.Button()
-		self.export_button.SetParent(self)
-		self.export_button.SetPosition(205, 220)
-		self.export_button.SetText("Export UI")
-		self.export_button.ButtonText.SetPosition(45, 8)
-		#self.export_button.SetEvent(ui.__mem_func__(self.OnExport))
-		self.export_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		self.export_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		self.export_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		self.export_button.Show()
+		# Copy Plain Button
+		self.copy_plain_button = ui.Button()
+		self.copy_plain_button.SetParent(self)
+		self.copy_plain_button.SetPosition(205, 220)
+		self.copy_plain_button.SetText("Copy Plaintext")
+		self.copy_plain_button.ButtonText.SetPosition(45, 8)
+		#self.copy_plain_button.SetEvent(ui.__mem_func__(self.OnExport))
+		self.copy_plain_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
+		self.copy_plain_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
+		self.copy_plain_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
+		self.copy_plain_button.Show()
+		###############################################################################
 
 	def OnAddObject(self):
 		self.project_browser.add_child(self.new_object_browser.selected_object())

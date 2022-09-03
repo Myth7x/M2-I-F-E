@@ -1,3 +1,4 @@
+from filter_editbox import FilterEditbox
 import ui, wndMgr
 
 from proto_utils import LogTxt
@@ -27,6 +28,7 @@ class ChildConfig(ui.Bar):
 		self.selected_object = None
 		self.selected_attribute = None
 		self.attributes = []
+		self.last_filter = ""
 
 		self.title = ui.TextLine()
 		self.title.SetParent(self)
@@ -38,8 +40,13 @@ class ChildConfig(ui.Bar):
 		self.element_list.SetParent(self)
 		self.element_list.SetPosition(5, 15)
 		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
-		self.element_list.SetSize(int(width/2) - 10, height - 15)
+		self.element_list.SetSize(int(width/2) - 10, height - 30)
 		self.element_list.Show()
+
+		self.filter = FilterEditbox(self.element_list.GetWidth() - 20, 20, color, "filter attributes..")
+		self.filter.SetParent(self)
+		self.filter.SetPosition(0, height - 20)
+		self.filter.Show()
 
 		self.title_selected_attribute = ui.TextLine()
 		self.title_selected_attribute.SetParent(self)
@@ -79,6 +86,21 @@ class ChildConfig(ui.Bar):
 
 	def OnUpdate(self):
 		self.title_selected_attribute.SetText("[ Selected Attribute ] - %s" % (self.element_list.GetSelectedItemText()))
+
+		filter = self.filter.filter_editline.GetText()
+		if filter != self.filter.placeholder:
+			if self.filter.filter_editline.IsFocus():
+				if filter != self.last_filter:
+					self.last_filter = filter
+					self.element_list.ClearItem()
+					for attribute in self.attributes:
+						if filter.lower() in attribute.lower():
+							self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
+			else:
+					self.filter.filter_editline.SetText(self.filter.placeholder)
+		else:
+			if self.filter.filter_editline.IsFocus():
+				self.filter.filter_editline.SetText("")
 
 	def __del__(self):
 		ui.Bar.__del__(self)

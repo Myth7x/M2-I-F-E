@@ -28,7 +28,7 @@ class ObjectBrowser(ui.Bar):
 			self.element_list.SetSize(width - 10, height - 30)
 			self.element_list.Show()
 
-			self.filter = FilterEditbox(width, 20, color, "filter children..")
+			self.filter = FilterEditbox(width, 20, color, "filter objects..")
 			self.filter.SetParent(self)
 			self.filter.SetPosition(0, height - 20)
 			self.filter.Show()

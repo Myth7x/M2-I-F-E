@@ -177,6 +177,7 @@ class InterfaceManager(ui.ThinBoard):
 	def OnRender(self):
 		if self.child_config.selected_child_in_project != self.project_browser.selected_child_name():
 			self.child_config.update(self.project_browser.selected_child_name(), self.project_browser.selected_child_object_name(self.project_browser.selected_child_name()))
+			LogTxt(NAME, "Child Config updated: %s" % self.project_browser.selected_child_name())
 
 def setup_ifmgr():
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:

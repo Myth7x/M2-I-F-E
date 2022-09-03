@@ -1,10 +1,11 @@
+from argparse import Namespace
 import inspect
 
 # M2 CPython Modules
 import ui
 
 # credits to samalamabigcock
-class UI_Classes():
+class UI_Classes:
 	def is_class(self, class_attr):
 		return hasattr(class_attr, "__init__")
 	def is_function(self, attr):

@@ -44,7 +44,7 @@ class ProjectBrowser(ui.Bar):
 		self.element_list.SetParent(self)
 		self.element_list.SetPosition(5, 15)
 		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
-		self.element_list.SetSize(width - 10, height - 30)
+		self.element_list.SetSize(width - 10, height - 46)
 		self.element_list.Show()
 
 		self.filter = FilterEditbox(width, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter children..")

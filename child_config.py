@@ -46,7 +46,7 @@ class ChildConfig(ui.Bar):
 		self.element_list.SetPosition(5, 15)
 		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
 		self.element_list.SetEvent(ui.__mem_func__(self.OnAttributeSelect))
-		self.element_list.SetSize(int(width/2) - 10, height - 30)
+		self.element_list.SetSize(int(width/2) - 10, height - 32)
 		self.element_list.Show()
 
 		self.filter = FilterEditbox(self.element_list.GetWidth() - 20, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter attributes..")

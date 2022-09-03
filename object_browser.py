@@ -1,3 +1,4 @@
+import inspect
 import ui
 
 from proto_utils import LogTxt
@@ -7,7 +8,10 @@ from filter_editbox import FilterEditbox
 class ObjectBrowser(ui.Bar):
 		def __init__(self, width, height, color, objects):
 			ui.Bar.__init__(self)
+
 			self.objects = objects
+			self.check_objects()
+
 			self.last_filter = ""
 			self.SetSize(width, height)
 			self.SetColor(color)
@@ -29,9 +33,26 @@ class ObjectBrowser(ui.Bar):
 			self.filter.SetPosition(0, height - 20)
 			self.filter.Show()
 
-			for obj in self.objects:
-				self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (obj))
+			self.update_element_list()
 		
+		def check_objects(self):
+			not_good = []
+			for ui_class in self.objects:
+				_module = ui
+				_class = getattr(_module, ui_class)
+				if not inspect.isclass(_class) or len(str(self.objects[ui_class][2])) <= 0:
+					LogTxt("ObjectBrowser", "not good ui_class for object browser: " + str(ui_class) + " - " + str(self.objects[ui_class][1]))
+					not_good.append(ui_class)
+			for ui_class in not_good:
+				del self.objects[ui_class]
+
+		def update_element_list(self):
+			filter = self.filter.filter_editline.GetText()
+			self.element_list.ClearItem()
+			for ui_class in self.objects:
+				if filter.lower() in ui_class.lower() or self.filter.filter_editline.GetText() == self.filter.placeholder:
+					self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (ui_class))
+
 		def selected_object(self):
 			return self.element_list.GetSelectedItemText()
 
@@ -41,10 +62,7 @@ class ObjectBrowser(ui.Bar):
 				if self.filter.filter_editline.IsFocus():
 					if filter != self.last_filter:
 						self.last_filter = filter
-						self.element_list.ClearItem()
-						for ui_class in self.objects:
-							if filter.lower() in ui_class.lower():
-								self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (ui_class))
+						self.update_element_list()
 				else:
 					self.filter.filter_editline.SetText(self.filter.placeholder)
 			else:

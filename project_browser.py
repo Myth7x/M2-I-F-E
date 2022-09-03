@@ -1,3 +1,4 @@
+import inspect
 from proto_utils import LogTxt
 import ui
 
@@ -21,6 +22,8 @@ class ProjectBrowser(ui.Bar):
 			return self.name == other.name
 		def __ne__(self, other):
 			return self.name != other.name
+		def __call__(self):
+			return self.name
 	def __init__(self, width, height, color, objects):
 		ui.Bar.__init__(self)
 		self.objects = objects
@@ -68,7 +71,6 @@ class ProjectBrowser(ui.Bar):
 			#LogTxt("Project Browser", "Checking object: %s" % (obj))
 			if obj == class_name:
 				_child = self.Child(class_name, obj, self)
-				# check if child already exists
 				for child in self.children:
 					if child.name == _child.name:
 						_child.name = "%s_%s" % (child.name, len(self.children))
@@ -89,7 +91,7 @@ class ProjectBrowser(ui.Bar):
 					self.last_filter = filter
 					self.element_list.ClearItem()
 					for child in self.children:
-						if filter.lower() in child.lower():
+						if filter.lower() in child().lower():
 							self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (child))
 			else:
 				self.filter.filter_editline.SetText(self.filter.placeholder)

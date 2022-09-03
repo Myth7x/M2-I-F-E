@@ -132,6 +132,18 @@ class InterfaceManager(ui.ThinBoard):
 		self.remove_object_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
 		self.remove_object_button.Show()
 		###############################################################################
+
+		# Save Button
+		self.save_button = ui.Button()
+		self.save_button.SetParent(self)
+		self.save_button.SetPosition(205, 130)
+		self.save_button.SetText("<Save>")
+		self.save_button.ButtonText.SetPosition(45, 8)
+		#self.save_button.SetEvent(ui.__mem_func__(self.OnSave))
+		self.save_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
+		self.save_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
+		self.save_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
+		self.save_button.Show()
 		
 
 	def OnAddObject(self):

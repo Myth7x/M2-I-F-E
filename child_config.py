@@ -60,6 +60,7 @@ class ChildConfig(ui.Bar):
 		self.title_selected_attribute.SetText("[ Selected Attribute ] - None")
 		self.title_selected_attribute.Show()
 
+	# Update the list of attributes (Not the selectbox entries)
 	def update(self, child_name, object_name):
 		self.element_list.ClearItem()
 
@@ -80,12 +81,9 @@ class ChildConfig(ui.Bar):
 
 		self.title.SetText("[ Child Config ] - %s <Attributes:%s>" % (self.selected_child_in_project, len(attributes)))
 
-		#if attributes != self.attributes:
-		#	self.attributes = attributes
-		#	for attribute in self.attributes:
-		#		self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
-
+	# Update loop
 	def OnUpdate(self):
+		# Filter
 		filter = self.filter.filter_editline.GetText().lower()
 		if filter != self.filter.placeholder.lower():
 			if self.filter.filter_editline.IsFocus():
@@ -98,6 +96,7 @@ class ChildConfig(ui.Bar):
 			else:
 				self.filter.filter_editline.SetText(self.filter.placeholder)
 		else:
+			# Update the list of attributes
 			if self.element_list.GetItemCount() != len(self.attributes):
 				self.element_list.ClearItem()
 				for attribute in self.attributes:

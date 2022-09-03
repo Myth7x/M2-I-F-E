@@ -58,7 +58,7 @@ class ListBox(ui.Window):
 
 		textLine = ui.TextLine()
 		textLine.SetParent(self)
-		textLine.SetText(text)
+		textLine.SetText('%d.\t%s' % (number+1, text))
 		textLine.Show()
 
 		if self.itemCenterAlign:
@@ -72,10 +72,10 @@ class ListBox(ui.Window):
 	def ChangeItem(self, number, text):
 		for key, value in self.keyDict.items():
 			if value == number:
-				self.textDict[key] = text
+				self.textDict[key] = '%d.\t%s' % (number+1, text)
 
 				if number < len(self.itemList):
-					self.itemList[key].SetText(text)
+					self.itemList[key].SetText('%d.\t%s' % (number+1, text))
 
 				return
 

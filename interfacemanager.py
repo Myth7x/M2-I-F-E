@@ -25,10 +25,12 @@ from object_browser import ObjectBrowser
 from project_browser import ProjectBrowser
 from child_config import ChildConfig
 
+import globals
+
 ###############################################################################
 
-BASE_THEME_COLOR = GenerateColor(0.2, 0.3, 0.2, 0.85)
 
+# Main Interface Manager Class
 class InterfaceManager(ui.BoardWithTitleBar):
 
 	def __init__(self, width, height):
@@ -65,6 +67,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def __del__(self):
 		ui.BoardWithTitleBar.__del__(self)
 
+	# To Reset Focus on Inputs
 	def OnMouseLeftButtonDown(self):
 		self.SetFocus()
 
@@ -82,33 +85,12 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.information.Show()
 		###############################################################################
 
-		# Object Browser
-		self.new_object_browser = ObjectBrowser(200, 200, BASE_THEME_COLOR, self.ui)
-		self.new_object_browser.SetParent(self)
-		self.new_object_browser.SetPosition(10, 50)
-		self.new_object_browser.Show()
-		###############################################################################
-
-		# Project Browser
-		self.project_browser = ProjectBrowser(200, 200, BASE_THEME_COLOR, self.ui)
-		self.project_browser.SetParent(self)
-		self.project_browser.SetPosition(self.WINDOW_SIZE[0] - 210, 50)
-		self.project_browser.Show()
-		###############################################################################
-
-		# Child Config
-		self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, BASE_THEME_COLOR, self.ui)
-		self.child_config.SetParent(self)
-		self.child_config.SetPosition(10, 280)
-		self.child_config.Show()
-		###############################################################################
-
 		# Add Object Button
 		self.add_object_button = ui.Button()
 		self.add_object_button.SetParent(self)
-		self.add_object_button.SetPosition(205, 70)
-		self.add_object_button.SetText("Add Object>")
-		self.add_object_button.ButtonText.SetPosition(45, 8)
+		self.add_object_button.SetPosition(160, 50)
+		self.add_object_button.SetText("<ADD")
+		self.add_object_button.ButtonText.SetPosition(66, 9)
 		self.add_object_button.SetEvent(ui.__mem_func__(self.OnAddObject))
 		self.add_object_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
 		self.add_object_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
@@ -119,9 +101,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		# Remove Object Button
 		self.remove_object_button = ui.Button()
 		self.remove_object_button.SetParent(self)
-		self.remove_object_button.SetPosition(205, 100)
-		self.remove_object_button.SetText("<Remove Object")
-		self.remove_object_button.ButtonText.SetPosition(45, 8)
+		self.remove_object_button.SetPosition(self.WINDOW_SIZE[0] - 210 - 55, 50)
+		self.remove_object_button.SetText("DELETE>")
+		self.remove_object_button.ButtonText.SetPosition(27, 9)
 		self.remove_object_button.SetEvent(ui.__mem_func__(self.OnRemoveObject))
 		self.remove_object_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
 		self.remove_object_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
@@ -130,59 +112,107 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		###############################################################################
 
 		# Demo Button
-		self.demo_button = ui.Button()
-		self.demo_button.SetParent(self)
-		self.demo_button.SetPosition(205, 145)
-		self.demo_button.SetText("Demo")
-		self.demo_button.ButtonText.SetPosition(45, 8)
-		#self.demo_button.SetEvent(ui.__mem_func__(self.OnDemo))
-		self.demo_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		self.demo_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		self.demo_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		self.demo_button.Show()
+		#self.demo_button = ui.Button()
+		#self.demo_button.SetParent(self)
+		#self.demo_button.SetPosition(230, 145)
+		#self.demo_button.SetText("Demo")
+		#self.demo_button.ButtonText.SetPosition(45, 8)
+		##self.demo_button.SetEvent(ui.__mem_func__(self.OnDemo))
+		#self.demo_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
+		#self.demo_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
+		#self.demo_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
+		#self.demo_button.Show()
 		###############################################################################
 
 		# Save Button
-		self.save_button = ui.Button()
-		self.save_button.SetParent(self)
-		self.save_button.SetPosition(205, 190)
-		self.save_button.SetText("Save Project")
-		self.save_button.ButtonText.SetPosition(45, 8)
-		#self.save_button.SetEvent(ui.__mem_func__(self.OnSave))
-		self.save_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		self.save_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		self.save_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		self.save_button.Show()
+		#self.save_button = ui.Button()
+		#self.save_button.SetParent(self)
+		#self.save_button.SetPosition(230, 190)
+		#self.save_button.SetText("Save Project")
+		#self.save_button.ButtonText.SetPosition(45, 8)
+		##self.save_button.SetEvent(ui.__mem_func__(self.OnSave))
+		#self.save_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
+		#self.save_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
+		#self.save_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
+		#self.save_button.Show()
 		###############################################################################
 
 		# Copy Plain Button
-		self.copy_plain_button = ui.Button()
-		self.copy_plain_button.SetParent(self)
-		self.copy_plain_button.SetPosition(205, 220)
-		self.copy_plain_button.SetText("Copy Plaintext")
-		self.copy_plain_button.ButtonText.SetPosition(45, 8)
-		#self.copy_plain_button.SetEvent(ui.__mem_func__(self.OnExport))
-		self.copy_plain_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		self.copy_plain_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		self.copy_plain_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		self.copy_plain_button.Show()
+		#self.copy_plain_button = ui.Button()
+		#self.copy_plain_button.SetParent(self)
+		#self.copy_plain_button.SetPosition(230, 220)
+		#self.copy_plain_button.SetText("Copy Plaintext")
+		#self.copy_plain_button.ButtonText.SetPosition(45, 8)
+		##self.copy_plain_button.SetEvent(ui.__mem_func__(self.OnExport))
+		#self.copy_plain_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
+		#self.copy_plain_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
+		#self.copy_plain_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
+		#self.copy_plain_button.Show()
 		###############################################################################
 
+		# Object Browser
+		self.new_object_browser = ObjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
+		self.new_object_browser.SetParent(self)
+		self.new_object_browser.SetPosition(10, 50)
+		self.new_object_browser.Show()
+		###############################################################################
+
+		# Project Browser
+		self.project_browser = ProjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
+		self.project_browser.SetParent(self)
+		self.project_browser.SetPosition(self.WINDOW_SIZE[0] - 210, 50)
+		self.project_browser.Show()
+		###############################################################################
+
+		# Child Config
+		self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, globals.BASE_THEME_COLOR, self.ui)
+		self.child_config.SetParent(self)
+		self.child_config.SetPosition(10, 280)
+		self.child_config.Show()
+		###############################################################################
+
+	# Add Object to current project by name
 	def OnAddObject(self):
 		self.project_browser.add_child(self.new_object_browser.selected_object())
 		self.new_object_browser.filter.filter_editline.SetText("")
 		LogTxt(NAME, "Added %s to Project Browser" % self.new_object_browser.selected_object())
 
+	# Remove Object from current project by name
 	def OnRemoveObject(self):
 		self.project_browser.remove_child(self.project_browser.selected_child_name())
 		self.project_browser.filter.filter_editline.SetText("")
 		LogTxt(NAME, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
 
+	# Abusing this loop to update
 	def OnRender(self):
-		#LogTxt(NAME, "OnRender: %s" % self.child_config.selected_child_in_project)
+		#LogTxt("InterfaceManager::OnRender", "PB_SEL(%s) CC_SEL(%s)" % (self.project_browser.selected_child_name(), self.child_config.selected_child_in_project))
+		#LogTxt(NAME, "InterfaceManager::OnRender::Start")
 		if self.child_config.selected_child_in_project != self.project_browser.selected_child_name():
 			self.child_config.update(self.project_browser.selected_child_name(), self.project_browser.selected_child_object_name(self.project_browser.selected_child_name()))
-			LogTxt(NAME, "Child Config updated: %s" % self.project_browser.selected_child_name())
+		
+		# Manage Object Browser Add Button
+		if self.new_object_browser.element_list.GetSelectedItemText():
+			if self.add_object_button.IsDown() and not self.add_object_button.IsIn():
+				self.add_object_button.SetUp()
+				self.add_object_button.Disable()
+				self.add_object_button.Enable()
+		else:
+			self.add_object_button.Down()
+		##################################################
+
+		# Manage Project Browser Remove Button
+		if self.project_browser.element_list.GetSelectedItemText():
+			if self.remove_object_button.IsDown() and not self.remove_object_button.IsIn():
+				self.remove_object_button.SetUp()
+				self.remove_object_button.Disable()
+				self.remove_object_button.Enable()
+		else:
+			self.remove_object_button.Down()
+		
+
+		##################################################
+		
+		#LogTxt(NAME, "InterfaceManager::OnRender::End")
 
 def setup_ifmgr():
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:
@@ -191,7 +221,7 @@ def setup_ifmgr():
 		return None
 	
 	#try:
-	ifmgr = InterfaceManager(500, 500)
+	ifmgr = InterfaceManager(550, 500)
 
 	constinfo.INTERFACE_MANAGER_INITIALIZED = True
 

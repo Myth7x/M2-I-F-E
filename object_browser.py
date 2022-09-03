@@ -1,9 +1,11 @@
 import inspect
-import ui
+import ui, wndMgr
 
 from proto_utils import LogTxt
 from listboxscroll import ListBoxScroll
 from filter_editbox import FilterEditbox
+
+import globals
 
 class ObjectBrowser(ui.Bar):
 		def __init__(self, width, height, color, objects):
@@ -18,17 +20,19 @@ class ObjectBrowser(ui.Bar):
 
 			self.title = ui.TextLine()
 			self.title.SetParent(self)
-			self.title.SetPosition(10, 2)
+			self.title.SetPosition(int(width / 2), 2)
+			self.title.SetHorizontalAlignCenter()
 			self.title.SetText("[ Object Browser ]")
 			self.title.Show()
 
 			self.element_list = ListBoxScroll()
 			self.element_list.SetParent(self)
 			self.element_list.SetPosition(5, 15)
-			self.element_list.SetSize(width - 10, height - 30)
+			self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
+			self.element_list.SetSize(width - 10, height - 40)
 			self.element_list.Show()
 
-			self.filter = FilterEditbox(width, 20, color, "filter objects..")
+			self.filter = FilterEditbox(width, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter objects..")
 			self.filter.SetParent(self)
 			self.filter.SetPosition(0, height - 20)
 			self.filter.Show()

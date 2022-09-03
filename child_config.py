@@ -4,6 +4,8 @@ import ui, wndMgr
 from proto_utils import LogTxt
 from listboxscroll import ListBoxScroll
 
+import globals
+
 class ChildConfig(ui.Bar):
 	class Attribute:
 		def __init__(self, name, value, type):
@@ -47,7 +49,7 @@ class ChildConfig(ui.Bar):
 		self.element_list.SetSize(int(width/2) - 10, height - 30)
 		self.element_list.Show()
 
-		self.filter = FilterEditbox(self.element_list.GetWidth() - 20, 20, color, "filter attributes..")
+		self.filter = FilterEditbox(self.element_list.GetWidth() - 20, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter attributes..")
 		self.filter.SetParent(self)
 		self.filter.SetPosition(0, height - 20)
 		self.filter.Show()

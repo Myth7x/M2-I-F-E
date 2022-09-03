@@ -1,9 +1,11 @@
 import inspect
 from proto_utils import LogTxt
-import ui
+import ui, wndMgr
 
 from listboxscroll import ListBoxScroll
 from filter_editbox import FilterEditbox
+
+import globals
 
 class ProjectBrowser(ui.Bar):
 	class Child:
@@ -41,10 +43,11 @@ class ProjectBrowser(ui.Bar):
 		self.element_list = ListBoxScroll()
 		self.element_list.SetParent(self)
 		self.element_list.SetPosition(5, 15)
+		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
 		self.element_list.SetSize(width - 10, height - 30)
 		self.element_list.Show()
 
-		self.filter = FilterEditbox(width, 20, color, "filter children..")
+		self.filter = FilterEditbox(width, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter children..")
 		self.filter.SetParent(self)
 		self.filter.SetPosition(0, height - 20)
 		self.filter.Show()
@@ -59,7 +62,7 @@ class ProjectBrowser(ui.Bar):
 		self.title.SetText("[ Project Browser ] - <Children:%s>" % (len(self.children)))
 
 	def selected_child_name(self):
-		return self.element_list.GetSelectedItemText() if self.element_list.GetSelectedItemText() else 'None'
+		return self.element_list.GetSelectedItemText()
 
 	def selected_child_object_name(self, child_name):
 		for child in self.children:

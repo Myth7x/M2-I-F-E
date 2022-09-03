@@ -10,13 +10,9 @@ UI_CLASS_EXPORT = {
 RGB_MODE = True
 
 ###############################################################################
-
+import sys
 import datetime
-
-# Python Modules
-import constinfo, ui
-# CPython Modules
-from grp import GenerateColor
+from listboxscroll import ListBoxScroll
 
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
@@ -26,6 +22,12 @@ from project_browser import ProjectBrowser
 from child_config import ChildConfig
 
 import globals
+
+# Python Modules
+import constinfo
+# CPython Modules
+from grp import GenerateColor
+import ui, wndMgr
 
 ###############################################################################
 
@@ -214,12 +216,66 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		
 		#LogTxt(NAME, "InterfaceManager::OnRender::End")
 
-def setup_ifmgr():
+
+# Tests
+from .ifmgr_ui.board import IfMgr_Board
+test_board = None
+
+from pythonscriptloader import PythonScriptLoader
+
+test_script_window = None
+
+def dbg_on_event():
+	LogTxt("dbg_on_event", "Event Fired")
+
+def setup_test(parent):
+	#global test_board
+	#LogTxt(NAME, "setup_test")
+	#test_board = ifmgr_board(parent, 420, 700, { 'enabled' : True, 'title' : 'Test IfMgr Board' })
+	#test_board.window.AddFlag("movable")
+	#test_board.add_custom_flag("sizeable")
+	#test_board.SetPosition(50, 50)
+	#test_board.Show()
+#
+	#_test_thinboard = {
+	#	'name' : 'test_thinboard',
+	#	'class' : ui.ThinBoard,
+	#	'position' : (10, 50),
+	#	'size' : (200, 200),
+	#	'fill_parent' : True,
+	#	'classes' : [],
+	#	'children' : [
+	#		{
+	#			'name' : 'test_listbox',
+	#			'class' : ListBoxScroll,
+	#			'position' : (10, 50),
+	#			'size' : (200, 200),
+	#			'fill_parent' : True,
+	#			'classes' : [],
+	#		}
+	#	],
+	#}
+	#test_board.AppendChild(_test_thinboard)
+#
+#
+	#return test_board
+
+	test_script = None
+
+	sys.path.append("C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\")
+	pyScrLoader = PythonScriptLoader()
+	test_script = pyScrLoader.load_script(parent, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "sizeable_board.py")	
+
+	LogTxt(NAME, "test wnd: %s" % test_script)
+
+	return test_script
+
+def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:
 		LogTxt(NAME, "Interface Manager is already initialized!")
 		LogTxt(NAME, "Restart client if you want to reinitialize it.")
 		return None
-	
+
 	#try:
 	ifmgr = InterfaceManager(550, 500)
 

@@ -6,5 +6,5 @@ Proto_InterfaceManager
 ```
 sys.path.append('C:\\Proto_InterfaceManager\\')
 import interfacemanager
-self.ifmgr = interfacemanager.setup_ifmgr()
+self.ifmgr = interfacemanager.setup_ifmgr(setup_ifmgr)
 ```

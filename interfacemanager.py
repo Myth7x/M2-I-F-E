@@ -26,7 +26,7 @@ from child_config import ChildConfig
 
 ###############################################################################
 
-BASE_THEME_COLOR = GenerateColor(0.3, 0.3, 0.3, 0.75)
+BASE_THEME_COLOR = GenerateColor(0.3, 0.3, 0.3, 0.85)
 
 class InterfaceManager(ui.ThinBoard):
 
@@ -144,7 +144,7 @@ class InterfaceManager(ui.ThinBoard):
 		# Save Button
 		self.save_button = ui.Button()
 		self.save_button.SetParent(self)
-		self.save_button.SetPosition(205, 130)
+		self.save_button.SetPosition(205, 190)
 		self.save_button.SetText("Save Project")
 		self.save_button.ButtonText.SetPosition(45, 8)
 		#self.save_button.SetEvent(ui.__mem_func__(self.OnSave))
@@ -157,7 +157,7 @@ class InterfaceManager(ui.ThinBoard):
 		# Export Button
 		self.export_button = ui.Button()
 		self.export_button.SetParent(self)
-		self.export_button.SetPosition(205, 160)
+		self.export_button.SetPosition(205, 220)
 		self.export_button.SetText("Export UI")
 		self.export_button.ButtonText.SetPosition(45, 8)
 		#self.export_button.SetEvent(ui.__mem_func__(self.OnExport))
@@ -168,10 +168,12 @@ class InterfaceManager(ui.ThinBoard):
 
 	def OnAddObject(self):
 		self.project_browser.add_child(self.new_object_browser.selected_object())
+		self.new_object_browser.filter.filter_editline.SetText("")
 		LogTxt(NAME, "Added %s to Project Browser" % self.new_object_browser.selected_object())
 
 	def OnRemoveObject(self):
 		self.project_browser.remove_child(self.project_browser.selected_child_name())
+		self.project_browser.filter.filter_editline.SetText("")
 		LogTxt(NAME, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
 
 	def OnRender(self):

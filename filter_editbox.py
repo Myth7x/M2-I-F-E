@@ -10,7 +10,7 @@ class FilterEditbox(ui.Bar):
 		self.filter_editline = ui.EditLine()
 		self.filter_editline.SetParent(self)
 		self.filter_editline.SetSize(width - 20, 10)
-		self.filter_editline.SetPosition(0, 0)
+		self.filter_editline.SetPosition(10, 0)
 		self.filter_editline.SetMax(50)
 		self.filter_editline.SetFontName(font)
 		self.filter_editline.SetText(self.placeholder)

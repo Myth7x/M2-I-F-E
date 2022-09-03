@@ -43,7 +43,7 @@ class ObjectBrowser(ui.Bar):
 						self.last_filter = filter
 						self.element_list.ClearItem()
 						for ui_class in self.objects:
-							if filter in ui_class:
+							if filter.lower() in ui_class.lower():
 								self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (ui_class))
 				else:
 					self.filter.filter_editline.SetText(self.filter.placeholder)

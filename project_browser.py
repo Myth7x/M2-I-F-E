@@ -62,7 +62,7 @@ class ProjectBrowser(ui.Bar):
 						self.last_filter = filter
 						self.element_list.ClearItem()
 						for child in self.children:
-							if filter in child:
+							if filter.lower() in child.lower():
 								self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (child))
 				else:
 					self.filter.filter_editline.SetText(self.filter.placeholder)

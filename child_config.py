@@ -29,8 +29,6 @@ class ChildConfig(ui.Bar):
 		self.selected_attribute = None
 		self.attributes = []
 		self.last_filter = ""
-		self.last_attribute_update = 0
-		self.left_down = False
 
 		self._module = ui
 		self._class = None
@@ -45,6 +43,7 @@ class ChildConfig(ui.Bar):
 		self.element_list.SetParent(self)
 		self.element_list.SetPosition(5, 15)
 		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
+		self.element_list.SetEvent(ui.__mem_func__(self.OnAttributeSelect))
 		self.element_list.SetSize(int(width/2) - 10, height - 30)
 		self.element_list.Show()
 
@@ -79,28 +78,14 @@ class ChildConfig(ui.Bar):
 
 		self.title.SetText("[ Child Config ] - %s <Attributes:%s>" % (self.selected_child_in_project, len(attributes)))
 
-		LogTxt("ChildConfig", "los gette info zu child_name: %s, object_name: %s" % (child_name, object_name))
-
-		self.update_attributes()
-
-	def update_attributes(self):
-		for attribute in self.attributes:
-			self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
-
-	def selected_child(self):
-		return self.element_list.GetSelectedItemText()
-
-	def OnMouseLeftButtonDown(self, x, y):
-		self.left_down = True
-	
-	def OnMouseLeftButtonUp(self, x, y):
-		self.left_down = False
+		#if attributes != self.attributes:
+		#	self.attributes = attributes
+		#	for attribute in self.attributes:
+		#		self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
 
 	def OnUpdate(self):
-		self.title_selected_attribute.SetText("[ Selected Attribute ] - %s" % (self.element_list.GetSelectedItemText()))
-
-		filter = self.filter.filter_editline.GetText()
-		if filter != self.filter.placeholder:
+		filter = self.filter.filter_editline.GetText().lower()
+		if filter != self.filter.placeholder.lower():
 			if self.filter.filter_editline.IsFocus():
 				if filter != self.last_filter:
 					self.last_filter = filter
@@ -109,19 +94,23 @@ class ChildConfig(ui.Bar):
 						if filter.lower() in attribute.lower():
 							self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
 			else:
-					self.filter.filter_editline.SetText(self.filter.placeholder)
+				self.filter.filter_editline.SetText(self.filter.placeholder)
 		else:
+			if self.element_list.GetItemCount() != len(self.attributes):
+				self.element_list.ClearItem()
+				for attribute in self.attributes:
+					self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
 			if self.filter.filter_editline.IsFocus():
 				self.filter.filter_editline.SetText("")
 		
+	def OnAttributeSelect(self, t=None, n=None):
+		if n is None: return
 		selected_attribute = self.element_list.GetSelectedItemText()
-		if selected_attribute is not None and self.last_attribute_update > 250 and not self.left_down:
-			self.last_attribute_update = 0
-			if selected_attribute != self.selected_attribute:
-				LogTxt("ChildConfig", "selected attribute: %s" % (selected_attribute))
-				self.selected_attribute = selected_attribute
-				self.update(selected_attribute, self.selected_object)
-		self.last_attribute_update += 1
+		self.title_selected_attribute.SetText("[ Selected Attribute ] - %s" % (selected_attribute))
+
+		if selected_attribute and selected_attribute != self.selected_attribute:
+			LogTxt("ChildConfig", "selected attribute: %s" % (selected_attribute))
+			self.selected_attribute = selected_attribute
 
 	def __del__(self):
 		ui.Bar.__del__(self)

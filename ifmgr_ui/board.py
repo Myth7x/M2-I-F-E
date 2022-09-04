@@ -102,6 +102,7 @@ class Board_Custom(ui.ScriptWindow):
 		if 'parent' in self.__dict__:
 			self.__dict__['parent'].update()
 
+		# yea this is nasty, will be removed later
 		for instruction in self.instruction_data:
 			if instruction['type'] == "on_update":
 				exec("exec('%s')" % instruction['exec_string'])

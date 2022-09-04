@@ -1,6 +1,3 @@
-# Python: 2.7.3 sadge sadge
-############################
-
 import sys, os
 
 # CPython Modules
@@ -38,6 +35,13 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			_data = getattr(_module, "object")
 			# Create the object
 			_object = _class()
+		except IOError, e:
+			LogTxt("Error: %s" % e)
+			return None
+		except RuntimeError, e:
+			LogTxt("Failed to load script: %s" % script)
+			LogTxt("Error: %s" % e)
+			return None
 		except:
 			LogTxt("PythonScriptLoader", "Failed to load script: %s" % (script))
 			return None
@@ -49,11 +53,10 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			# Clears Children list data and ElementDictionary dict data
 			_object.ClearDictionary()
 			# Set attributes for our board
-			_object.add_custom_flag(_data['customFlag'])
+			_object.set_sizeable_data(_data['sizeable'])
 		
 		if "style" in _data:
 			for StyleList in _data["style"]:
-				LogTxt("PythonScriptLoader", "Adding StyleList: %s %s" % (_data, StyleList))
 				_object.AddFlag(StyleList)
 
 		_object.SetPosition(int(_data["x"]), int(_data["y"]))

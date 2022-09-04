@@ -45,7 +45,8 @@ class ObjectBrowser(ui.Bar):
 				_module = ui
 				_class = getattr(_module, ui_class)
 				if not inspect.isclass(_class) or len(str(self.objects[ui_class][2])) <= 0:
-					LogTxt("ObjectBrowser", "not good ui_class for object browser: " + str(ui_class) + " - " + str(self.objects[ui_class][1]))
+					LogTxt("ObjectBrowser", "not good ui_class for object browser: %s - %s" % (ui_class, self.objects[ui_class][1]))
+					LogTxt("ObjectBrowser", "please report this to the author, or fix it yourself")
 					not_good.append(ui_class)
 			for ui_class in not_good:
 				del self.objects[ui_class]

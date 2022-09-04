@@ -10,17 +10,23 @@ _class = IfMgr_Board
 object = {
     "name" : "SizeableBoard",
 
-    "title" : "Sizeable Board Title",
+    "title" : "Object-Browser",
 
     "style" : ("movable", "float",),
 
-    "customFlag" : "sizeable",
+    "sizeable" : {
+        'enabled' : True,
+        'min_width' : 200,
+        'min_height' : 400,
+        'max_width' : 500,
+        'max_height' : 900,
+    },
 
 	"x" : 1,
 	"y" : 1,
 
-	"width" : 136,
-	"height" : 161,
+	"width" : 220,
+	"height" : 450,
 
 	"children" :
 	(
@@ -29,22 +35,22 @@ object = {
             "type" : "board",
             "style" : ("attach",),
 
-            "x" : 1,
-            "y" : 1,
+            "x" : 0,
+            "y" : 0,
 
-            "width" : 136,
-            "height" : 161,
+            "width" : 220,
+            "height" : 450,
         },
         {
             "name" : "test_titlebar",
             "type" : "titlebar",
             "style" : ("attach",),
 
-            "x" : 1,
-            "y" : 1,
+            "x" : 0,
+            "y" : 0,
 
-            "width" : 136,
-            "height" : 161,
+            "width" : 220,
+            "height" : 30,
 
             "children" :
             (
@@ -67,8 +73,8 @@ object = {
             "type" : "text",
             "style" : ("attach",),
 
-            "x" : 136/2,
-            "y" : 161/2,
+            "x" : 220/2,
+            "y" : 450/2,
 
             "position" : "relative",
 

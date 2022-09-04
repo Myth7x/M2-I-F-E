@@ -60,10 +60,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				f.close()
 			LogTxt(NAME, "Exported UI Classes to %s" % target_file)
 
-		LogTxt(NAME, "Building Window..")
-		self.BuildWindow()
-		LogTxt(NAME, "Window Built!")
-
+		if self.build_window() == False:
+			LogTxt(NAME, "Failed to build window!")
+			return False
 		self.Show()
 
 	def __del__(self):
@@ -73,7 +72,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def OnMouseLeftButtonDown(self):
 		self.SetFocus()
 
-	def BuildWindow(self):
+	def build_window(self):
 		self.SetTitleName(NAME)
 		self.SetSize(self.WINDOW_SIZE[0], self.WINDOW_SIZE[1])
 		self.SetCenterPosition()
@@ -113,65 +112,40 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.remove_object_button.Show()
 		###############################################################################
 
-		# Demo Button
-		#self.demo_button = ui.Button()
-		#self.demo_button.SetParent(self)
-		#self.demo_button.SetPosition(230, 145)
-		#self.demo_button.SetText("Demo")
-		#self.demo_button.ButtonText.SetPosition(45, 8)
-		##self.demo_button.SetEvent(ui.__mem_func__(self.OnDemo))
-		#self.demo_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		#self.demo_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		#self.demo_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		#self.demo_button.Show()
-		###############################################################################
+		try:
+			# Object Browser
+			self.new_object_browser = ObjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
+			self.new_object_browser.SetParent(self)
+			self.new_object_browser.SetPosition(10, 50)
+			self.new_object_browser.Show()
+			###############################################################################
+		except:
+			LogTxt(NAME, "Failed to build Object Browser!")
+			return False
 
-		# Save Button
-		#self.save_button = ui.Button()
-		#self.save_button.SetParent(self)
-		#self.save_button.SetPosition(230, 190)
-		#self.save_button.SetText("Save Project")
-		#self.save_button.ButtonText.SetPosition(45, 8)
-		##self.save_button.SetEvent(ui.__mem_func__(self.OnSave))
-		#self.save_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		#self.save_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		#self.save_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		#self.save_button.Show()
-		###############################################################################
+		try:
+			# Project Browser
+			self.project_browser = ProjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
+			self.project_browser.SetParent(self)
+			self.project_browser.SetPosition(self.WINDOW_SIZE[0] - 210, 50)
+			self.project_browser.Show()
+			###############################################################################
+		except:
+			LogTxt(NAME, "Failed to build Project Browser!")
+			return False
 
-		# Copy Plain Button
-		#self.copy_plain_button = ui.Button()
-		#self.copy_plain_button.SetParent(self)
-		#self.copy_plain_button.SetPosition(230, 220)
-		#self.copy_plain_button.SetText("Copy Plaintext")
-		#self.copy_plain_button.ButtonText.SetPosition(45, 8)
-		##self.copy_plain_button.SetEvent(ui.__mem_func__(self.OnExport))
-		#self.copy_plain_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		#self.copy_plain_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		#self.copy_plain_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		#self.copy_plain_button.Show()
-		###############################################################################
+		try:
+			# Child Config
+			self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, globals.BASE_THEME_COLOR, self.ui)
+			self.child_config.SetParent(self)
+			self.child_config.SetPosition(10, 280)
+			self.child_config.Show()
+			###############################################################################
+		except:
+			LogTxt(NAME, "Failed to build Child Config!")
+			return False
 
-		# Object Browser
-		self.new_object_browser = ObjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
-		self.new_object_browser.SetParent(self)
-		self.new_object_browser.SetPosition(10, 50)
-		self.new_object_browser.Show()
-		###############################################################################
-
-		# Project Browser
-		self.project_browser = ProjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
-		self.project_browser.SetParent(self)
-		self.project_browser.SetPosition(self.WINDOW_SIZE[0] - 210, 50)
-		self.project_browser.Show()
-		###############################################################################
-
-		# Child Config
-		self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, globals.BASE_THEME_COLOR, self.ui)
-		self.child_config.SetParent(self)
-		self.child_config.SetPosition(10, 280)
-		self.child_config.Show()
-		###############################################################################
+		return True
 
 	# Add Object to current project by name
 	def OnAddObject(self):
@@ -188,7 +162,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	# Abusing this loop to update
 	def OnRender(self):
 		#LogTxt("InterfaceManager::OnRender", "PB_SEL(%s) CC_SEL(%s)" % (self.project_browser.selected_child_name(), self.child_config.selected_child_in_project))
-		#LogTxt(NAME, "InterfaceManager::OnRender::Start")
+
 		if self.child_config.selected_child_in_project != self.project_browser.selected_child_name():
 			self.child_config.update(self.project_browser.selected_child_name(), self.project_browser.selected_child_object_name(self.project_browser.selected_child_name()))
 		
@@ -210,65 +184,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				self.remove_object_button.Enable()
 		else:
 			self.remove_object_button.Down()
-		
-
 		##################################################
-		
-		#LogTxt(NAME, "InterfaceManager::OnRender::End")
-
-
-# Tests
-from .ifmgr_ui.board import IfMgr_Board
-test_board = None
-
-from pythonscriptloader import PythonScriptLoader
-
-test_script_window = None
-
-def dbg_on_event():
-	LogTxt("dbg_on_event", "Event Fired")
-
-def setup_test(parent):
-	#global test_board
-	#LogTxt(NAME, "setup_test")
-	#test_board = ifmgr_board(parent, 420, 700, { 'enabled' : True, 'title' : 'Test IfMgr Board' })
-	#test_board.window.AddFlag("movable")
-	#test_board.add_custom_flag("sizeable")
-	#test_board.SetPosition(50, 50)
-	#test_board.Show()
-#
-	#_test_thinboard = {
-	#	'name' : 'test_thinboard',
-	#	'class' : ui.ThinBoard,
-	#	'position' : (10, 50),
-	#	'size' : (200, 200),
-	#	'fill_parent' : True,
-	#	'classes' : [],
-	#	'children' : [
-	#		{
-	#			'name' : 'test_listbox',
-	#			'class' : ListBoxScroll,
-	#			'position' : (10, 50),
-	#			'size' : (200, 200),
-	#			'fill_parent' : True,
-	#			'classes' : [],
-	#		}
-	#	],
-	#}
-	#test_board.AppendChild(_test_thinboard)
-#
-#
-	#return test_board
-
-	test_script = None
-
-	sys.path.append("C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\")
-	pyScrLoader = PythonScriptLoader()
-	test_script = pyScrLoader.load_script(parent, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "sizeable_board.py")	
-
-	LogTxt(NAME, "test wnd: %s" % test_script)
-
-	return test_script
 
 def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:
@@ -285,3 +201,22 @@ def setup_ifmgr(parent):
 	#except:
 	#	LogTxt(NAME, "Failed to initialize!")
 	#	return None
+
+############################################################################################################
+
+
+
+# Tests
+from pythonscriptloader import PythonScriptLoader
+
+
+def setup_test(parent):
+	test_script = None
+
+	sys.path.append("C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\")
+	pyScrLoader = PythonScriptLoader()
+	test_script = pyScrLoader.load_script(parent, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "sizeable_board.py")	
+
+	LogTxt(NAME, "Test Script Loaded!")
+
+	return test_script

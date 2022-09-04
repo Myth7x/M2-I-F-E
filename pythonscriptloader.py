@@ -1,25 +1,21 @@
-import sys, os
+import sys
 
 # CPython Modules
-import ui, chr, player, app
+import ui
 
 # Our Modules
 from proto_utils import LogTxt
 
-from .ifmgr_ui.board import IfMgr_Board
+from .ifmgr_ui.board import Board_Custom
 
 # Extend the ui.PythonScriptLoader class to add our own custom shit
 class PythonScriptLoader(ui.PythonScriptLoader):
 	def __init__(self):
 		ui.PythonScriptLoader.__init__(self)
 
-	def prepare_script_data(self, script_data):
-		# Prepare the script data
-		for child in script_data['children']:
-			child['script_data'] = script_data
-
-
 	def load_script(self, parent, path, script):
+		LogTxt(__name__, "Loading script: %s" % script)
+		
 		# Clears ScriptDictionary dict data and InsertFunction
 		self.Clear()
 
@@ -36,28 +32,34 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			# Create the object
 			_object = _class()
 		except IOError, e:
-			LogTxt("Error: %s" % e)
+			LogTxt(__name__, "Error: %s" % e)
 			return None
 		except RuntimeError, e:
-			LogTxt("Failed to load script: %s" % script)
-			LogTxt("Error: %s" % e)
+			LogTxt(__name__, "Failed to load script: %s" % script)
+			LogTxt(__name__, "Error: %s" % e)
 			return None
 		except:
-			LogTxt("PythonScriptLoader", "Failed to load script: %s" % (script))
+			LogTxt(__name__, "Failed to load script: %s" % (script))
 			return None
 
 		if _class == ui.ScriptWindow:
 			# Clears Children list data and ElementDictionary dict data
 			_object.ClearDictionary()
-		elif _class == IfMgr_Board:
+		elif _class == Board_Custom:
 			# Clears Children list data and ElementDictionary dict data
 			_object.ClearDictionary()
 			# Set attributes for our board
 			_object.set_sizeable_data(_data['sizeable'])
+			# Set instruction data
+			if 'instructions' in _data:
+				_object.set_instruction_data(_data['instructions'])
+		else:
+			_object.SetParent(parent)
 		
 		if "style" in _data:
 			for StyleList in _data["style"]:
 				_object.AddFlag(StyleList)
+
 
 		_object.SetPosition(int(_data["x"]), int(_data["y"]))
 		_object.SetSize(int(_data["width"]), int(_data["height"]))
@@ -69,7 +71,7 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 		self.LoadChildren(_object, _data)
 		
 		_object.__dict__['script_data'] = _data
-		self.prepare_script_data(_data)
+		_object.__dict__['parent'] 		= parent 
 
 		_object.Show()
 

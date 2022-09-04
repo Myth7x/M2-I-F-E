@@ -1,0 +1,1 @@
+del /s /q /f C:\Proto_InterfaceManager\*.pyc

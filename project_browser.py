@@ -40,12 +40,12 @@ class ProjectBrowser(ui.Bar):
 		self.title.SetText("[ Project Browser ] - <Children:%s>" % (len(self.children)))
 		self.title.Show()
 
-		self.element_list = ListBoxScroll()
-		self.element_list.SetParent(self)
-		self.element_list.SetPosition(5, 15)
-		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
-		self.element_list.SetSize(width - 10, height - 46)
-		self.element_list.Show()
+		self.object_list = ListBoxScroll()
+		self.object_list.SetParent(self)
+		self.object_list.SetPosition(5, 15)
+		self.object_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
+		self.object_list.SetSize(width - 10, height - 46)
+		self.object_list.Show()
 
 		self.filter = FilterEditbox(width, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter children..")
 		self.filter.SetParent(self)
@@ -53,16 +53,16 @@ class ProjectBrowser(ui.Bar):
 		self.filter.Show()
 
 		for obj in self.children:
-			self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (obj))
+			self.object_list.InsertItem(self.object_list.GetItemCount(), "%s" % (obj))
 	
 	def update(self):
-		self.element_list.ClearItem()
+		self.object_list.ClearItem()
 		for obj in self.children:
-			self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (obj))
+			self.object_list.InsertItem(self.object_list.GetItemCount(), "%s" % (obj))
 		self.title.SetText("[ Project Browser ] - <Children:%s>" % (len(self.children)))
 
 	def selected_child_name(self):
-		return self.element_list.GetSelectedItemText()
+		return self.object_list.GetSelectedItemText()
 
 	def selected_child_object_name(self, child_name):
 		for child in self.children:
@@ -92,10 +92,10 @@ class ProjectBrowser(ui.Bar):
 			if self.filter.filter_editline.IsFocus():
 				if filter != self.last_filter:
 					self.last_filter = filter
-					self.element_list.ClearItem()
+					self.object_list.ClearItem()
 					for child in self.children:
 						if filter.lower() in child().lower():
-							self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (child))
+							self.object_list.InsertItem(self.object_list.GetItemCount(), "%s" % (child))
 			else:
 				self.filter.filter_editline.SetText(self.filter.placeholder)
 		else:

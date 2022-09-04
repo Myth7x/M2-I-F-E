@@ -25,19 +25,19 @@ class ObjectBrowser(ui.Bar):
 			self.title.SetText("[ Object Browser ]")
 			self.title.Show()
 
-			self.element_list = ListBoxScroll()
-			self.element_list.SetParent(self)
-			self.element_list.SetPosition(5, 15)
-			self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
-			self.element_list.SetSize(width - 10, height - 46)
-			self.element_list.Show()
+			self.object_list = ListBoxScroll()
+			self.object_list.SetParent(self)
+			self.object_list.SetPosition(5, 15)
+			self.object_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
+			self.object_list.SetSize(width - 10, height - 46)
+			self.object_list.Show()
 
 			self.filter = FilterEditbox(width, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter objects..")
 			self.filter.SetParent(self)
 			self.filter.SetPosition(0, height - 20)
 			self.filter.Show()
 
-			self.update_element_list()
+			self.update_object_list()
 		
 		def check_objects(self):
 			not_good = []
@@ -45,21 +45,21 @@ class ObjectBrowser(ui.Bar):
 				_module = ui
 				_class = getattr(_module, ui_class)
 				if not inspect.isclass(_class) or len(str(self.objects[ui_class][2])) <= 0:
-					LogTxt("ObjectBrowser", "not good ui_class for object browser: %s - %s" % (ui_class, self.objects[ui_class][1]))
-					LogTxt("ObjectBrowser", "please report this to the author, or fix it yourself")
+					#LogTxt("ObjectBrowser", "not good ui_class for object browser: %s - %s" % (ui_class, self.objects[ui_class][1]))
+					#LogTxt("ObjectBrowser", "please report this to the author, or fix it yourself")
 					not_good.append(ui_class)
 			for ui_class in not_good:
 				del self.objects[ui_class]
 
-		def update_element_list(self):
+		def update_object_list(self):
 			filter = self.filter.filter_editline.GetText()
-			self.element_list.ClearItem()
+			self.object_list.ClearItem()
 			for ui_class in self.objects:
 				if filter.lower() in ui_class.lower() or self.filter.filter_editline.GetText() == self.filter.placeholder:
-					self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (ui_class))
+					self.object_list.InsertItem(self.object_list.GetItemCount(), "%s" % (ui_class))
 
 		def selected_object(self):
-			return self.element_list.GetSelectedItemText()
+			return self.object_list.GetSelectedItemText()
 
 		def OnUpdate(self):
 			filter = self.filter.filter_editline.GetText()
@@ -67,7 +67,7 @@ class ObjectBrowser(ui.Bar):
 				if self.filter.filter_editline.IsFocus():
 					if filter != self.last_filter:
 						self.last_filter = filter
-						self.update_element_list()
+						self.update_object_list()
 				else:
 					self.filter.filter_editline.SetText(self.filter.placeholder)
 			else:

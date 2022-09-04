@@ -41,15 +41,15 @@ class ChildConfig(ui.Bar):
 		self.title.SetText("[ Child Config ] - None")
 		self.title.Show()
 
-		self.element_list = ListBoxScroll()
-		self.element_list.SetParent(self)
-		self.element_list.SetPosition(5, 15)
-		self.element_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
-		self.element_list.SetEvent(ui.__mem_func__(self.OnAttributeSelect))
-		self.element_list.SetSize(int(width/2) - 10, height - 32)
-		self.element_list.Show()
+		self.object_list = ListBoxScroll()
+		self.object_list.SetParent(self)
+		self.object_list.SetPosition(5, 15)
+		self.object_list.SetTextCenterAlign(wndMgr.HORIZONTAL_ALIGN_LEFT)
+		self.object_list.SetEvent(ui.__mem_func__(self.OnAttributeSelect))
+		self.object_list.SetSize(int(width/2) - 10, height - 32)
+		self.object_list.Show()
 
-		self.filter = FilterEditbox(self.element_list.GetWidth() - 20, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter attributes..")
+		self.filter = FilterEditbox(self.object_list.GetWidth() - 20, 20, globals.BASE_THEME_EDITBOX_BACKGROUND_COLOR, "filter attributes..")
 		self.filter.SetParent(self)
 		self.filter.SetPosition(0, height - 20)
 		self.filter.Show()
@@ -62,7 +62,7 @@ class ChildConfig(ui.Bar):
 
 	# Update the list of attributes (Not the selectbox entries)
 	def update(self, child_name, object_name):
-		self.element_list.ClearItem()
+		self.object_list.ClearItem()
 
 		self.selected_child_in_project = child_name
 		self.selected_object = object_name
@@ -89,24 +89,24 @@ class ChildConfig(ui.Bar):
 			if self.filter.filter_editline.IsFocus():
 				if filter != self.last_filter:
 					self.last_filter = filter
-					self.element_list.ClearItem()
+					self.object_list.ClearItem()
 					for attribute in self.attributes:
 						if filter.lower() in attribute.lower():
-							self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
+							self.object_list.InsertItem(self.object_list.GetItemCount(), "%s" % (attribute))
 			else:
 				self.filter.filter_editline.SetText(self.filter.placeholder)
 		else:
 			# Update the list of attributes
-			if self.element_list.GetItemCount() != len(self.attributes):
-				self.element_list.ClearItem()
+			if self.object_list.GetItemCount() != len(self.attributes):
+				self.object_list.ClearItem()
 				for attribute in self.attributes:
-					self.element_list.InsertItem(self.element_list.GetItemCount(), "%s" % (attribute))
+					self.object_list.InsertItem(self.object_list.GetItemCount(), "%s" % (attribute))
 			if self.filter.filter_editline.IsFocus():
 				self.filter.filter_editline.SetText("")
 		
 	def OnAttributeSelect(self, t=None, n=None):
 		if n is None: return
-		selected_attribute = self.element_list.GetSelectedItemText()
+		selected_attribute = self.object_list.GetSelectedItemText()
 		self.title_selected_attribute.SetText("[ Selected Attribute ] - %s" % (selected_attribute))
 
 		if selected_attribute and selected_attribute != self.selected_attribute:

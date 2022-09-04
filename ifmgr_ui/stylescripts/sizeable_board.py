@@ -1,16 +1,16 @@
 import wndMgr, ui
 
-from ...ifmgr_ui.board import IfMgr_Board
+from ...ifmgr_ui.board import Board_Custom
 
 SCREEN_WIDTH = wndMgr.GetScreenWidth()
 SCREEN_HEIGHT = wndMgr.GetScreenHeight()
 
-_class = IfMgr_Board
+_class = Board_Custom
 
 object = {
     "name" : "SizeableBoard",
 
-    "title" : "Object-Browser",
+    "title" : "Test Style Script Object",
 
     "style" : ("movable", "float",),
 
@@ -22,11 +22,23 @@ object = {
         'max_height' : 900,
     },
 
-	"x" : 1,
+	"x" : 300,
 	"y" : 1,
 
 	"width" : 220,
 	"height" : 450,
+
+    #"instructions" : 
+    #(
+    #    {
+    #        "type" : "on_update",
+    #        "exec_string" : 'LogTxt("OnUpdate", "TEST")'
+    #    },
+    #    {
+    #        "type" : "on_render",
+    #        "exec_string" : 'LogTxt("OnRender", "TEST")'
+    #    },
+    #),
 
 	"children" :
 	(
@@ -40,6 +52,7 @@ object = {
 
             "width" : 220,
             "height" : 450,
+
         },
         {
             "name" : "test_titlebar",

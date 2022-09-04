@@ -26,7 +26,6 @@ import globals
 # Python Modules
 import constinfo
 # CPython Modules
-from grp import GenerateColor
 import ui, wndMgr
 
 ###############################################################################
@@ -36,16 +35,16 @@ import ui, wndMgr
 class InterfaceManager(ui.BoardWithTitleBar):
 
 	def __init__(self, width, height):
-		LogTxt(NAME, "Initializing..")
+		LogTxt(__name__, "Initializing..")
 
 		ui.BoardWithTitleBar.__init__(self)
 
 		self.WINDOW_SIZE = [width, height]
 
-		LogTxt(NAME, "Looking for UI Classes..")
+		LogTxt(__name__, "Looking for UI Classes..")
 
 		self.ui = UI_Classes()._LoadUI()
-		LogTxt(NAME, "Found %d UI Classes!" % len(self.ui))
+		LogTxt(__name__, "Found %d UI Classes!" % len(self.ui))
 
 		if UI_CLASS_EXPORT['enabled']:
 			ui_class_export = [["Class,Base,Function,Arguments"]]
@@ -58,10 +57,10 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				for row in ui_class_export:
 					f.write(",".join(row) + "\n")
 				f.close()
-			LogTxt(NAME, "Exported UI Classes to %s" % target_file)
+			LogTxt(__name__, "Exported UI Classes to %s" % target_file)
 
 		if self.build_window() == False:
-			LogTxt(NAME, "Failed to build window!")
+			LogTxt(__name__, "Failed to build window!")
 			return False
 		self.Show()
 
@@ -112,6 +111,15 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.remove_object_button.Show()
 		###############################################################################
 
+		# New Object Browser
+		import n_object_browser
+
+		self.obj_browser = n_object_browser.n_object_browser()
+		self.obj_browser.object.SetWindowName("n_object_browser")
+		self.obj_browser.set_ui_data(self.ui)
+		###############################################################################
+
+
 		try:
 			# Object Browser
 			self.new_object_browser = ObjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
@@ -120,7 +128,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			self.new_object_browser.Show()
 			###############################################################################
 		except:
-			LogTxt(NAME, "Failed to build Object Browser!")
+			LogTxt(__name__, "Failed to build Object Browser!")
 			return False
 
 		try:
@@ -131,7 +139,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			self.project_browser.Show()
 			###############################################################################
 		except:
-			LogTxt(NAME, "Failed to build Project Browser!")
+			LogTxt(__name__, "Failed to build Project Browser!")
 			return False
 
 		try:
@@ -142,32 +150,36 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			self.child_config.Show()
 			###############################################################################
 		except:
-			LogTxt(NAME, "Failed to build Child Config!")
+			LogTxt(__name__, "Failed to build Child Config!")
 			return False
 
+		LogTxt(__name__, "Initialized!")
 		return True
 
 	# Add Object to current project by name
 	def OnAddObject(self):
 		self.project_browser.add_child(self.new_object_browser.selected_object())
 		self.new_object_browser.filter.filter_editline.SetText("")
-		LogTxt(NAME, "Added %s to Project Browser" % self.new_object_browser.selected_object())
+		LogTxt(__name__, "Added %s to Project Browser" % self.new_object_browser.selected_object())
 
 	# Remove Object from current project by name
 	def OnRemoveObject(self):
 		self.project_browser.remove_child(self.project_browser.selected_child_name())
 		self.project_browser.filter.filter_editline.SetText("")
-		LogTxt(NAME, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
+		LogTxt(__name__, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
 
 	# Abusing this loop to update
 	def OnRender(self):
 		#LogTxt("InterfaceManager::OnRender", "PB_SEL(%s) CC_SEL(%s)" % (self.project_browser.selected_child_name(), self.child_config.selected_child_in_project))
 
+		xMouse, yMouse = wndMgr.GetMousePosition()
+		self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, len(self.ui), xMouse, yMouse))
+
 		if self.child_config.selected_child_in_project != self.project_browser.selected_child_name():
 			self.child_config.update(self.project_browser.selected_child_name(), self.project_browser.selected_child_object_name(self.project_browser.selected_child_name()))
 		
 		# Manage Object Browser Add Button
-		if self.new_object_browser.element_list.GetSelectedItemText():
+		if self.new_object_browser.object_list.GetSelectedItemText():
 			if self.add_object_button.IsDown() and not self.add_object_button.IsIn():
 				self.add_object_button.SetUp()
 				self.add_object_button.Disable()
@@ -177,7 +189,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		##################################################
 
 		# Manage Project Browser Remove Button
-		if self.project_browser.element_list.GetSelectedItemText():
+		if self.project_browser.object_list.GetSelectedItemText():
 			if self.remove_object_button.IsDown() and not self.remove_object_button.IsIn():
 				self.remove_object_button.SetUp()
 				self.remove_object_button.Disable()
@@ -188,8 +200,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:
-		LogTxt(NAME, "Interface Manager is already initialized!")
-		LogTxt(NAME, "Restart client if you want to reinitialize it.")
+		LogTxt(__name__, "Interface Manager is already initialized!")
 		return None
 
 	#try:
@@ -199,24 +210,8 @@ def setup_ifmgr(parent):
 
 	return ifmgr
 	#except:
-	#	LogTxt(NAME, "Failed to initialize!")
+	#	LogTxt(__name__, "Failed to initialize!")
 	#	return None
 
 ############################################################################################################
 
-
-
-# Tests
-from pythonscriptloader import PythonScriptLoader
-
-
-def setup_test(parent):
-	test_script = None
-
-	sys.path.append("C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\")
-	pyScrLoader = PythonScriptLoader()
-	test_script = pyScrLoader.load_script(parent, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "sizeable_board.py")	
-
-	LogTxt(NAME, "Test Script Loaded!")
-
-	return test_script

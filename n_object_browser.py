@@ -1,8 +1,9 @@
 # This is my first test of utilizing our script loader.
+from distutils.log import Log
 from pythonscriptloader import PythonScriptLoader
 from proto_utils import LogTxt
 
-import ui
+import ui, wndMgr
 
 class n_object_browser(ui.ScriptWindow):
 	def __init__(self):
@@ -17,10 +18,23 @@ class n_object_browser(ui.ScriptWindow):
 
 		self.init = self.load()
 
-		self.ref_object_list 	= None
-		self.ref_board 			= None
+		self.ref_titlebar_info 	= self.find_object(self.object.Children, "titlebar_info")
+		self.ref_object_list 	= self.find_object(self.object.Children, "object_list")
+		self.ref_board 			= self.find_object(self.object.Children, "board")
+
+		self.ref_object_list.OnMouseWheel = self.ref_object_list.scrollBar.OnMouseWheel
 
 		LogTxt(__name__, "Initialized!")
+
+	def find_object(self, objects, object_name):
+		for object in objects:
+			if object.GetWindowName() == object_name:
+				return object
+			if hasattr(object, "Children"):
+				for child in object.Children:
+					if child.GetWindowName() == object_name:
+						return child
+		return None
 
 	def set_ui_data(self, data):
 		self.ui_data = data
@@ -29,31 +43,14 @@ class n_object_browser(ui.ScriptWindow):
 	def load(self):
 		try:
 			self.object = self.script_loader.load_script(self, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_object_browser.py")
-		except IOError, e:
-			LogTxt(__name__, "IOError: %s" % e)
-			return False
-		except RuntimeError, e:
-			LogTxt(__name__, "Runtime Error: %s" % e)
-			return False
 		except:
 			LogTxt(__name__, "Failed to load script!")
 			return False
 		return True
 
 	def update_title_info(self):
-		title_info_ref = None
-		for child in self.object.Children:
-			if hasattr(child, "Children"):
-				for subchild in child.Children:
-					if subchild.GetWindowName() == "titlebar_info":
-						title_info_ref = subchild
-						break
-			elif child.GetWindowName() == "titlebar_info":
-				title_info_ref = child
-				break
-		if title_info_ref:
-			title_info_ref.SetText("[ %s objects ]" % len(self.ui_data))
-
+		if self.ref_titlebar_info:
+			self.ref_titlebar_info.SetText("[ %s objects ]" % len(self.ui_data))
 
 	def update(self):
 		if self.init == True:

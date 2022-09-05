@@ -9,12 +9,6 @@ import globals
 
 # Our Main Board Class, will be used for all our Browser Boards (Objects, Project, Attributes, and what might be added later)
 class Board_Custom(ui.ScriptWindow):
-	offset				= 35
-	is_resizing 		= False
-	pos_move_original 	= None
-	scaling_border		= None
-	scaling_info        = None
-	position_info       = None
 	script_data 		= {}
 	sizeable 			= {}
 	size 				= (0, 0)
@@ -63,18 +57,6 @@ class Board_Custom(ui.ScriptWindow):
 		#LogTxt("TEST", "IsFocus: Window(%s) State(%s)" % (self.GetWindowName(), focus))
 		return focus
 
-	def update_position_info(self, x, y):
-		if self.position_info:
-			self.position_info.Destroy()
-			self.position_info = None
-		self.position_info = ui.TextLine()
-		self.position_info.SetFontColor(globals.TEXT_INFO_COLOR_RGBA[0], globals.TEXT_INFO_COLOR_RGBA[1], globals.TEXT_INFO_COLOR_RGBA[2])
-		self.position_info.SetOutline()
-		self.position_info.SetText("x:%s y:%s" % (x, y))
-		self.position_info.SetPosition(x + 10, y + self.GetHeight() + 10)
-		if self.position_info.IsShow() == False:
-			self.position_info.Show()
-
 	def hide_children(self, children):
 		for child in children:
 			if child.__class__ != ui.Board and child.__class__ != ui.TitleBar:
@@ -88,7 +70,6 @@ class Board_Custom(ui.ScriptWindow):
 				child.Show()
 	
 	def OnMoveWindow(self, x, y):
-		self.update_position_info(x, y)
 		return True
 
 	def OnRender(self):
@@ -106,28 +87,6 @@ class Board_Custom(ui.ScriptWindow):
 		for instruction in self.instruction_data:
 			if instruction['type'] == "on_update":
 				exec("exec('%s')" % instruction['exec_string'])
-
-		mouse_pos = GetMousePosition()
-		in_bounds = self.is_in_bounds(mouse_pos[0], mouse_pos[1])
-		pos_x, pos_y = self.GetGlobalPosition()
-
-		if in_bounds:
-			if self.position_info == None:
-				self.position_info = ui.TextLine()
-				self.position_info.SetFontColor(globals.TEXT_INFO_COLOR_RGBA[0], globals.TEXT_INFO_COLOR_RGBA[1], globals.TEXT_INFO_COLOR_RGBA[2])
-				self.position_info.SetOutline()
-				self.position_info.SetFontName("Tahoma:12")
-				self.position_info.SetFocus()
-			self.position_info.SetText("x:%d y:%d" % (pos_x, pos_y))
-			self.position_info.SetPosition(pos_x + 10, pos_y + self.size[1] - 25)
-			self.position_info.Show()
-		else:
-
-			if self.position_info != None:
-				self.position_info.Hide()
-				self.position_info.Destroy()
-				self.position_info = None
-
 
 	def __del__(self):
 		ui.ScriptWindow.__del__(self)

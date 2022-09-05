@@ -7,15 +7,11 @@ UI_CLASS_EXPORT = {
 	'enabled' 	: True,
 	'path' 		: 'C:\\Proto_InterfaceManager\\%s_ui_classes.csv',
 }
-RGB_MODE = True
-
 ###############################################################################
-import sys
 import datetime
-import ifmgr_ui
-from listboxscroll import ListBoxScroll
 
 # Interface Manager Modules
+import ifmgr_ui
 from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
 from object_browser import ObjectBrowser
@@ -101,7 +97,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.SetPosition(wndMgr.GetScreenWidth() / 2 - self.WINDOW_SIZE[0] / 2, 20)
 		self.AddFlag("movable")
 
-
 		# Info Text
 		self.information = ui.TextLine()
 		self.information.SetText("<Version:%s> <UI_Classes:%d>" % (VERSION, len(self.ui)))
@@ -175,15 +170,15 @@ def setup_ifmgr(parent):
 		LogTxt(__name__, "Interface Manager is already initialized!")
 		return None
 
-	#try:
-	ifmgr = InterfaceManager(350, 100)
+	try:
+		ifmgr = InterfaceManager(350, 100)
 
-	constinfo.INTERFACE_MANAGER_INITIALIZED = True
+		constinfo.INTERFACE_MANAGER_INITIALIZED = True
 
-	return ifmgr
-	#except:
-	#	LogTxt(__name__, "Failed to initialize!")
-	#	return None
+		return ifmgr
+	except:
+		LogTxt(__name__, "Failed to initialize!")
+		return None
 
 ############################################################################################################
 

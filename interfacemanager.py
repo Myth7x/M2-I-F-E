@@ -2,7 +2,7 @@
 # IfMgr : Interface Manager
 
 NAME = "Interface Manager"
-VERSION = '0.1-Rev.Pepp'
+VERSION = '0.5-Rev.Pepp'
 UI_CLASS_EXPORT = {
 	'enabled' 	: True,
 	'path' 		: 'C:\\Proto_InterfaceManager\\%s_ui_classes.csv',
@@ -12,6 +12,7 @@ RGB_MODE = True
 ###############################################################################
 import sys
 import datetime
+import ifmgr_ui
 from listboxscroll import ListBoxScroll
 
 # Interface Manager Modules
@@ -20,7 +21,8 @@ from proto_utils import LogTxt
 from object_browser import ObjectBrowser
 from project_browser import ProjectBrowser
 from child_config import ChildConfig
-
+import n_object_browser
+import n_scene_browser
 import globals
 
 # Python Modules
@@ -35,6 +37,7 @@ import ui, wndMgr
 class InterfaceManager(ui.BoardWithTitleBar):
 
 	def __init__(self, width, height):
+		self.current_scene = None
 		LogTxt(__name__, "Initializing..")
 
 		ui.BoardWithTitleBar.__init__(self)
@@ -71,11 +74,33 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def OnMouseLeftButtonDown(self):
 		self.SetFocus()
 
+	def create_scene(self, name):
+		self.current_scene = name
+		self.obj_browser = n_object_browser.n_object_browser()
+		self.obj_browser.object.SetWindowName("n_object_browser")
+		self.obj_browser.set_parent(self)
+		self.obj_browser.set_ui_data(self.ui)
+		
+		self.scene_browser = n_scene_browser.n_scene_browser()
+		self.scene_browser.object.SetWindowName("n_scene_browser")
+		self.scene_browser.set_parent(self)
+		self.scene_browser.set_ui_data(self.ui)
+		self.scene_browser.set_scene_name(self.current_scene)
+
+	def request_create_scene(self):
+		self.input_dialog = ifmgr_ui.InputDialog()
+		self.input_dialog.set_title("New Scene")
+		self.input_dialog.set_input_desc("Scene Name:")
+		self.input_dialog.set_input("")
+		self.input_dialog.set_callback(ui.__mem_func__(self.create_scene))
+		self.input_dialog.Show()
+
 	def build_window(self):
 		self.SetTitleName(NAME)
 		self.SetSize(self.WINDOW_SIZE[0], self.WINDOW_SIZE[1])
-		self.SetCenterPosition()
+		self.SetPosition(wndMgr.GetScreenWidth() / 2 - self.WINDOW_SIZE[0] / 2, 20)
 		self.AddFlag("movable")
+
 
 		# Info Text
 		self.information = ui.TextLine()
@@ -85,118 +110,65 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.information.Show()
 		###############################################################################
 
-		# Add Object Button
-		self.add_object_button = ui.Button()
-		self.add_object_button.SetParent(self)
-		self.add_object_button.SetPosition(160, 50)
-		self.add_object_button.SetText("<ADD")
-		self.add_object_button.ButtonText.SetPosition(66, 9)
-		self.add_object_button.SetEvent(ui.__mem_func__(self.OnAddObject))
-		self.add_object_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		self.add_object_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		self.add_object_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		self.add_object_button.Show()
-		###############################################################################
+		# New Scene Button
+		self.new_scene_button = ui.Button()
+		self.new_scene_button.SetParent(self)
+		self.new_scene_button.SetPosition(10, 50)
+		self.new_scene_button.SetUpVisual("d:/ymir work/ui/public/large_button_01.sub")
+		self.new_scene_button.SetOverVisual("d:/ymir work/ui/public/large_button_02.sub")
+		self.new_scene_button.SetDownVisual("d:/ymir work/ui/public/large_button_03.sub")
+		self.new_scene_button.SetText("New Scene")
+		self.new_scene_button.SetEvent(ui.__mem_func__(self.request_create_scene))
+		self.new_scene_button.Show()
 
-		# Remove Object Button
-		self.remove_object_button = ui.Button()
-		self.remove_object_button.SetParent(self)
-		self.remove_object_button.SetPosition(self.WINDOW_SIZE[0] - 210 - 55, 50)
-		self.remove_object_button.SetText("DELETE>")
-		self.remove_object_button.ButtonText.SetPosition(27, 9)
-		self.remove_object_button.SetEvent(ui.__mem_func__(self.OnRemoveObject))
-		self.remove_object_button.SetUpVisual("d:/ymir work/ui/public/Large_Button_01.sub")
-		self.remove_object_button.SetOverVisual("d:/ymir work/ui/public/Large_Button_02.sub")
-		self.remove_object_button.SetDownVisual("d:/ymir work/ui/public/Large_Button_03.sub")
-		self.remove_object_button.Show()
-		###############################################################################
-
-		# New Object Browser
-		import n_object_browser
-
-		self.obj_browser = n_object_browser.n_object_browser()
-		self.obj_browser.object.SetWindowName("n_object_browser")
-		self.obj_browser.set_ui_data(self.ui)
-		###############################################################################
-
-
-		try:
-			# Object Browser
-			self.new_object_browser = ObjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
-			self.new_object_browser.SetParent(self)
-			self.new_object_browser.SetPosition(10, 50)
-			self.new_object_browser.Show()
-			###############################################################################
-		except:
-			LogTxt(__name__, "Failed to build Object Browser!")
-			return False
-
-		try:
-			# Project Browser
-			self.project_browser = ProjectBrowser(200, 200, globals.BASE_THEME_COLOR, self.ui)
-			self.project_browser.SetParent(self)
-			self.project_browser.SetPosition(self.WINDOW_SIZE[0] - 210, 50)
-			self.project_browser.Show()
-			###############################################################################
-		except:
-			LogTxt(__name__, "Failed to build Project Browser!")
-			return False
-
-		try:
-			# Child Config
-			self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, globals.BASE_THEME_COLOR, self.ui)
-			self.child_config.SetParent(self)
-			self.child_config.SetPosition(10, 280)
-			self.child_config.Show()
-			###############################################################################
-		except:
-			LogTxt(__name__, "Failed to build Child Config!")
-			return False
+		## New Attribute Editor
+		#import n_attribute_editor
+#
+		#self.attr_editor = n_attribute_editor.n_attribute_editor()
+		#self.attr_editor.object.SetWindowName("n_attribute_editor")
+		#self.attr_editor.set_parent(self)
+		#self.attr_editor.set_ui_data(self.ui)
+		################################################################################
+#
+		#try:
+		#	# Child Config
+		#	self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, globals.BASE_THEME_COLOR, self.ui)
+		#	self.child_config.SetParent(self)
+		#	self.child_config.SetPosition(10, 280)
+		#	self.child_config.Show()
+		#	###############################################################################
+		#except:
+		#	LogTxt(__name__, "Failed to build Child Config!")
+		#	return False
 
 		LogTxt(__name__, "Initialized!")
 		return True
 
 	# Add Object to current project by name
 	def OnAddObject(self):
-		self.project_browser.add_child(self.new_object_browser.selected_object())
-		self.new_object_browser.filter.filter_editline.SetText("")
-		LogTxt(__name__, "Added %s to Project Browser" % self.new_object_browser.selected_object())
+		self.scene_browser.add_scene_object(self.obj_browser.get_selected_object())
 
 	# Remove Object from current project by name
 	def OnRemoveObject(self):
-		self.project_browser.remove_child(self.project_browser.selected_child_name())
-		self.project_browser.filter.filter_editline.SetText("")
-		LogTxt(__name__, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
+		pass
+		#self.scene_browser.remove_scene_object(self.obj_browser.get_selected_object())
+		
+		#self.project_browser.remove_child(self.project_browser.selected_child_name())
+		#self.project_browser.filter.filter_editline.SetText("")
+		#LogTxt(__name__, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
 
 	# Abusing this loop to update
 	def OnRender(self):
-		#LogTxt("InterfaceManager::OnRender", "PB_SEL(%s) CC_SEL(%s)" % (self.project_browser.selected_child_name(), self.child_config.selected_child_in_project))
-
 		xMouse, yMouse = wndMgr.GetMousePosition()
 		self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, len(self.ui), xMouse, yMouse))
 
-		if self.child_config.selected_child_in_project != self.project_browser.selected_child_name():
-			self.child_config.update(self.project_browser.selected_child_name(), self.project_browser.selected_child_object_name(self.project_browser.selected_child_name()))
-		
-		# Manage Object Browser Add Button
-		if self.new_object_browser.object_list.GetSelectedItemText():
-			if self.add_object_button.IsDown() and not self.add_object_button.IsIn():
-				self.add_object_button.SetUp()
-				self.add_object_button.Disable()
-				self.add_object_button.Enable()
-		else:
-			self.add_object_button.Down()
-		##################################################
+		if self.current_scene != None:
+			self.new_scene_button.Hide()
+		#child = self.scene_browser.get_selected_children()
+		#if child:
+		#	if self.child_config.selected_child_in_project != child['object_name']:
+		#		self.child_config.update(child['child_name'], child['object_name'])
 
-		# Manage Project Browser Remove Button
-		if self.project_browser.object_list.GetSelectedItemText():
-			if self.remove_object_button.IsDown() and not self.remove_object_button.IsIn():
-				self.remove_object_button.SetUp()
-				self.remove_object_button.Disable()
-				self.remove_object_button.Enable()
-		else:
-			self.remove_object_button.Down()
-		##################################################
 
 def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:
@@ -204,7 +176,7 @@ def setup_ifmgr(parent):
 		return None
 
 	#try:
-	ifmgr = InterfaceManager(550, 500)
+	ifmgr = InterfaceManager(350, 100)
 
 	constinfo.INTERFACE_MANAGER_INITIALIZED = True
 

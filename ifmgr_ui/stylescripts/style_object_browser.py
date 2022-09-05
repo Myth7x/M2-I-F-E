@@ -1,4 +1,4 @@
-import wndMgr, ui
+import wndMgr, ui, grp
 
 from ...ifmgr_ui.board import Board_Custom
 
@@ -8,7 +8,7 @@ SCREEN_HEIGHT = wndMgr.GetScreenHeight()
 _class = Board_Custom
 
 WIDTH = 240
-HEIGHT = 480
+HEIGHT = 430
 
 object = {
     "name" : "n_object_browser",
@@ -56,53 +56,31 @@ object = {
 
         },
         {
-            "name" : "titlebar",
-            "type" : "titlebar",
-
-            "x" : 3,
-            "y" : 0,
-
-            "width" : WIDTH - 6,
-            "height" : 30,
-
-            "children" :
-            (
-                {
-                    "name" : "titlebar_title",
-                    "type" : "text",
-
-                    "x" : 18,
-                    "y" : 3,
-
-                    "text" : "Object-Browser",
-
-                    "text_horizontal_align" : "left",
-                },
-                {
-                    "name" : "titlebar_info",
-                    "type" : "text",
-
-                    "x" : WIDTH - 32,
-                    "y" : 3,
-
-                    "text" : "[ 0 objects ]",
-
-                    "fontname" : "Tahoma:12",
-
-                    "text_horizontal_align" : "right",
-                },
-                
-            ),
+            "name" : "titlebar_title",
+            "type" : "text",
+            "x" : 15,
+            "y" : 9,
+            "text" : "Object Browser",
+            "text_horizontal_align" : "left",
+        },
+        {
+            "name" : "titlebar_info",
+            "type" : "text",
+            "x" : WIDTH - 20 + 3,
+            "y" : 9,
+            "text" : "[ UI Classes: %d ]",
+            "fontname" : "Tahoma:12",
+            "text_horizontal_align" : "right",
         },
         {
             "name" : "bg_object_list",
             "type" : "thinboard",
 
             "x" : 8,
-            "y" : 23,
+            "y" : 26,
 
             "width" : WIDTH - 15,
-            "height" : HEIGHT - 60 - 50 - 10 + 25,
+            "height" : 370,
 
             "size"      : "relative",
         },
@@ -111,10 +89,10 @@ object = {
             "type" : "listbox_scroll",
 
             "x" : 10 + 4,
-            "y" : 23 + 5 + 4,
+            "y" : 26 + 6,
 
             "width" : WIDTH - 15 - 11,
-            "height" : HEIGHT - 60 - 50 - 30 + 25,
+            "height" : 370 - 12,
 
 
             "item_align" : wndMgr.HORIZONTAL_ALIGN_LEFT,
@@ -122,49 +100,13 @@ object = {
             "size"      : "relative",
         },
 
-        # Show Attributes Button
-        {
-        	"name" : "btn_show_attributes",
-        	"type" : "button",
-
-        	"x" : 8,
-        	"y" : 23 + 5 + 4 + (HEIGHT - 60 - 50 - 30) + 13 + 28,
-
-        	"text" : "Attributes",
-        	"horizontal_align" : "left",
-        	"vertical_align" : "top",
-
-            "tooltip_text" : "Show attributes",
-
-        	"default_image" : "d:/ymir work/ui/public/middle_button_01.sub",
-            "over_image" : "d:/ymir work/ui/public/middle_button_02.sub",
-            "down_image" : "d:/ymir work/ui/public/middle_button_03.sub",
-        },
-
-        # Add Button
-        {
-            "name" : "btn_add",
-            "type" : "button",
-
-            "x" : 8 + 80,
-            "y" : 23 + 5 + 4 + (HEIGHT - 60 - 50 - 30) + 13 + 28,
-
-            "text" : "Add",
-
-            "tooltip_text" : "Add selected object to scene",
-
-            "default_image" : "d:/ymir work/ui/public/middle_button_01.sub",
-            "over_image" : "d:/ymir work/ui/public/middle_button_02.sub",
-            "down_image" : "d:/ymir work/ui/public/middle_button_03.sub",
-        },
-
         # Refresh Button
         {
             "name" : "btn_refresh",
             "type" : "button",
 
-            "x" : 8 + WIDTH - 15 - 61,
-            "y" : 23 + 5 + 4 + (HEIGHT - 60 - 50 - 30) + 13 + 28,
+            "x" : WIDTH - 80,
+            "y" : HEIGHT - 32,
 
             "text" : "Refresh",
 
@@ -175,31 +117,5 @@ object = {
             "down_image" : "d:/ymir work/ui/public/middle_button_03.sub",
         },
 
-        {
-            "name" : "bg_selected_object",
-            "type" : "thinboard",
-
-            "x" : 8,
-            "y" : HEIGHT - 40,
-
-            "width" : WIDTH - 15,
-            "height" : 30,
-
-            "size"      : "relative",
-        },
-
-        
-
-        {
-            "name" : "text_selected_object",
-            "type" : "text",
-
-            "x" : 18,
-            "y" : HEIGHT - 40 + 8,
-
-            "text" : "Selected: None",
-
-            "text_horizontal_align" : "left",
-        },
     ),
 }

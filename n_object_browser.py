@@ -5,6 +5,8 @@ from proto_utils import LogTxt
 
 import ui, wndMgr
 
+# If we want to create a new window, we need to create a new class.
+# It always needs to inherit from ui.ScriptWindow.
 class n_object_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
@@ -13,18 +15,27 @@ class n_object_browser(ui.ScriptWindow):
 		self.style_script_data 	= None
 		self.ui_data 			= None
 		self.object 			= None
+		self.parent 			= None
 
 		self.script_loader = PythonScriptLoader()
 
 		self.init = self.load()
 
+		self.ref_titlebar 	= self.find_object(self.object.Children, "titlebar")
 		self.ref_titlebar_info 	= self.find_object(self.object.Children, "titlebar_info")
 		self.ref_object_list 	= self.find_object(self.object.Children, "object_list")
 		self.ref_board 			= self.find_object(self.object.Children, "board")
 
 		self.ref_object_list.OnMouseWheel = self.ref_object_list.scrollBar.OnMouseWheel
+		self.ref_object_list.OnMouseLeftButtonDoubleClick = self.on_double_click_object_list
 
 		LogTxt(__name__, "Initialized!")
+
+	def set_parent(self, parent):
+		self.parent = parent
+
+	def on_double_click_object_list(self):
+		self.parent.OnAddObject()
 
 	def find_object(self, objects, object_name):
 		for object in objects:
@@ -50,7 +61,7 @@ class n_object_browser(ui.ScriptWindow):
 
 	def update_title_info(self):
 		if self.ref_titlebar_info:
-			self.ref_titlebar_info.SetText("[ %s objects ]" % len(self.ui_data))
+			self.ref_titlebar_info.SetText("[ UI Classes: %d ]" % len(self.ui_data))
 
 	def update(self):
 		if self.init == True:
@@ -76,17 +87,13 @@ class n_object_browser(ui.ScriptWindow):
 		if self.ref_object_list:
 			self.ref_object_list.ClearItem()
 			for object in self.ui_data:
-				# print other infos about object
-				
-				ui_class_name = object
-				ui_class_str = 'ui.%s' % ui_class_name
-				ui_class = eval(ui_class_str)
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(),"%s" % object)
 
-				class_init_args = ui_class.__init__.func_code.co_varnames[1:ui_class.__init__.func_code.co_argcount]
-				class_init_args_str = ""
-				for arg in class_init_args:
-					class_init_args_str += "%s, " % arg
-
-				class_init_args_str = class_init_args_str[:-2]
-
-				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount()," - %s%s" % (ui_class_name, class_init_args))
+	def get_selected_object(self):
+		if self.ref_object_list.GetItemCount() > 0:
+			if self.ref_object_list.GetSelectedItem() != -1:
+				selected_object = self.ref_object_list.GetSelectedItemText()
+				for object in self.ui_data:
+					if selected_object == object:
+						return self.ui_data[object]
+		return None

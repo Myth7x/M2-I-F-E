@@ -280,21 +280,17 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			# Set attributes for our board
 			_object.set_sizeable_data(_data['sizeable'])
 			# Set instruction data
-			if 'instructions' in _data:
+			if hasattr(_data, 'instructions'):
 				_object.set_instruction_data(_data['instructions'])
 		else:
 			_object.SetParent(parent)
 		
-		if "style" in _data:
-			for StyleList in _data["style"]:
-				_object.AddFlag(StyleList)
-
 		_object.SetPosition(int(_data["x"]), int(_data["y"]))
 		_object.SetSize(int(_data["width"]), int(_data["height"]))
 
-		if "style" in _data:
-			for StyleList in _data["style"]:
-				_object.AddFlag(StyleList)
+		if hasattr(_data, 'style'):
+			for style in _data["style"]:
+				_object.AddFlag(style)
 
 		self.load_children(_object, _data)
 		

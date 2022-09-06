@@ -7,8 +7,10 @@ import ui
 class UI_Classes:
 	def is_class(self, class_attr):
 		return hasattr(class_attr, "__init__")
+
 	def is_function(self, attr):
 		return hasattr(attr, "__code__")
+
 	def concat_to_arg_string(self, data, attr_name=""):
 		result = ""
 		for var in data:
@@ -17,6 +19,7 @@ class UI_Classes:
 			else:
 				result += "%s, " % (var)
 		return result[:-2]
+
 	def get_class_data(self, module, class_name):
 		try:
 			class_attr = getattr(module, class_name)
@@ -40,15 +43,11 @@ class UI_Classes:
 			return [class_name, class_attr, class_bases, attributes] #MyClass <MyClass.Class>, ['Base'], {'SetText' = 'self, text', ..} 
 		except Exception:
 			pass
-	def _LoadUI(self):
-		module = ui
+		return {}
+
+	def load_ui_data(self):
 		classes = {}
-		for attribute_name in sorted(dir(module)):
-			try:
-				class_data = self.get_class_data(module, attribute_name)
-				if class_data == None:
-					continue
-				classes[attribute_name] = class_data
-			except Exception:
-				pass
+		for attribute_name in sorted(dir(ui)):
+			if hasattr(classes, attribute_name):
+				classes[attribute_name] = self.get_class_data(ui, attribute_name)
 		return classes

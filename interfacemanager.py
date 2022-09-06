@@ -38,8 +38,8 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.WINDOW_SIZE = [width, height]
 
 		LogTxt(__name__, "Looking for UI Classes..")
-
-		globals.UI_CLASS_DATA = UI_Classes()._LoadUI()
+		self.ui = UI_Classes()
+		globals.UI_CLASS_DATA = self.ui.load_ui_data()
 		LogTxt(__name__, "Found %d UI Classes!" % len(globals.UI_CLASS_DATA))
 
 		if UI_CLASS_EXPORT['enabled']:

@@ -79,9 +79,10 @@ class n_scene_browser(ui.ScriptWindow):
 		if self.ref_object_list.GetItemCount() > 0:
 			if self.ref_object_list.GetSelectedItem() != -1:
 				selected_object = self.ref_object_list.GetSelectedItemText()
-				for object in globals.UI_CLASS_DATA:
-					if selected_object == object:
-						return globals.UI_CLASS_DATA[object]
+				try:
+					return globals.UI_CLASS_DATA[selected_object]
+				except:
+					return None
 		return None
 	
 	# returns the children dictionary with set values

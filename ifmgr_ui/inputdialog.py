@@ -36,6 +36,7 @@ class InputDialog(ui.BoardWithTitleBar):
         self.input.SetSize(146, 18)
         self.input.SetMax(16)
         self.input.Show()
+        self.input.SetReturnEvent(self.on_press_return)
 
         self.button = ui.Button()
         self.button.SetParent(self)
@@ -52,6 +53,9 @@ class InputDialog(ui.BoardWithTitleBar):
 
     def set_callback(self, func):
         self.fn_callback = func
+
+    def on_press_return(self):
+        self.on_button_press()
 
     def on_button_press(self):
         LogTxt(__name__, self.input.GetText())

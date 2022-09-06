@@ -1,4 +1,5 @@
 import inspect
+from proto_utils import LogTxt
 
 # M2 CPython Modules
 import ui
@@ -48,6 +49,10 @@ class UI_Classes:
 	def load_ui_data(self):
 		classes = {}
 		for attribute_name in sorted(dir(ui)):
-			if hasattr(classes, attribute_name):
-				classes[attribute_name] = self.get_class_data(ui, attribute_name)
+			# check if attribute is a class
+			attr = getattr(ui, attribute_name)
+			if not self.is_class(attr):
+				continue
+			# get class data
+			classes[attribute_name] = self.get_class_data(ui, attribute_name)
 		return classes

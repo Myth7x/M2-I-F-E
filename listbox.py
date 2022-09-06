@@ -1,4 +1,3 @@
-from pickle import GLOBAL
 import ui, wndMgr, grp
 
 BACKGROUND_COLOR 	= grp.GenerateColor(0.0, 0.0, 0.0, 1.0)
@@ -9,6 +8,7 @@ SELECT_COLOR 		= grp.GenerateColor(0.0, 0.0, 0.5, 0.3)
 WHITE_COLOR 		= grp.GenerateColor(1.0, 1.0, 1.0, 0.5)
 HALF_WHITE_COLOR 	= grp.GenerateColor(1.0, 1.0, 1.0, 0.2)
 
+# copy of ui.ListBox
 class ListBox(ui.Window):
 
 	TEMPORARY_PLACE = 3
@@ -27,6 +27,7 @@ class ListBox(ui.Window):
 		self.keyDict = {}
 		self.textDict = {}
 		self.event = lambda *arg: None
+
 	def __del__(self):
 		ui.Window.__del__(self)
 
@@ -46,11 +47,11 @@ class ListBox(ui.Window):
 		self._LocateItem()
 
 	def ClearItem(self):
-		self.keyDict = {}
-		self.textDict = {}
-		self.itemList = []
-		self.overLine = -1
-		self.selectedLine = -1
+		self.keyDict 		= {}
+		self.textDict 		= {}
+		self.itemList 		= []
+		self.overLine 		= -1
+		self.selectedLine 	= -1
 
 	def InsertItem(self, number, text):
 		self.keyDict[len(self.itemList)] = number

@@ -44,6 +44,7 @@ class n_scene_browser(ui.ScriptWindow):
 		pass
 
 	def add_scene_object(self, data):
+		LogTxt(__name__, "Adding object to scene...")
 		_child = {
 			'child_name': data[0],
 			'object_name': data[0],

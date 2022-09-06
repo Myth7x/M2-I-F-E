@@ -16,7 +16,6 @@ from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
 import n_object_browser
 import n_scene_browser
-import globals
 
 # Python Modules
 import constinfo
@@ -25,6 +24,7 @@ import ui, wndMgr
 
 ###############################################################################
 
+import globals
 
 # Main Interface Manager Class
 class InterfaceManager(ui.BoardWithTitleBar):
@@ -42,20 +42,20 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		globals.UI_CLASS_DATA = self.ui.load_ui_data()
 		LogTxt(__name__, "Found %d UI Classes!" % len(globals.UI_CLASS_DATA))
 
-		if UI_CLASS_EXPORT['enabled']:
-			ui_class_export = [["Class,Base,Function,Arguments"]]
-			for ui_class in globals.UI_CLASS_DATA:
-				ui_class_export.append(['%s,,' % (ui_class)])
-				for ui_class_attr in self.ui[ui_class][3]:
-					ui_class_export.append(['%s,%s,%s,%s' % (ui_class, self.ui[ui_class][2], ui_class_attr, self.ui[ui_class][3][ui_class_attr])])
-			target_file = UI_CLASS_EXPORT['path'] % (datetime.datetime.now().strftime('%Y-%m-%d'))
-			with open(target_file, "w") as f:
-				for row in ui_class_export:
-					f.write(",".join(row) + "\n")
-				f.close()
-			LogTxt(__name__, "Exported UI Classes to %s" % target_file)
+		#if UI_CLASS_EXPORT['enabled']:
+		#	ui_class_export = [["Class,Base,Function,Arguments"]]
+		#	for ui_class in globals.UI_CLASS_DATA:
+		#		ui_class_export.append(['%s,,' % (ui_class)])
+		#		for ui_class_attr in self.ui[ui_class][3]:
+		#			ui_class_export.append(['%s,%s,%s,%s' % (ui_class, self.ui[ui_class][2], ui_class_attr, self.ui[ui_class][3][ui_class_attr])])
+		#	target_file = UI_CLASS_EXPORT['path'] % (datetime.datetime.now().strftime('%Y-%m-%d'))
+		#	with open(target_file, "w") as f:
+		#		for row in ui_class_export:
+		#			f.write(",".join(row) + "\n")
+		#		f.close()
+		#	LogTxt(__name__, "Exported UI Classes to %s" % target_file)
 
-		if self.build_window() == False:
+		if self.build_window() != True:
 			LogTxt(__name__, "Failed to build window!")
 			return False
 		
@@ -96,7 +96,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		# Info Text
 		self.information = ui.TextLine()
-		self.information.SetText("<Version:%s> <UI_Classes:%d>" % (VERSION, len(self.ui)))
+		self.information.SetText("<Version:%s> <UI_Classes:%d>" % (VERSION, len(globals.UI_CLASS_DATA)))
 		self.information.SetParent(self)
 		self.information.SetPosition(10, 30)
 		self.information.Show()
@@ -152,7 +152,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	# Abusing this loop to update
 	def OnRender(self):
 		xMouse, yMouse = wndMgr.GetMousePosition()
-		self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, len(self.ui), xMouse, yMouse))
+		self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, len(globals.UI_CLASS_DATA), xMouse, yMouse))
 
 		if self.current_scene != None:
 			self.new_scene_button.Hide()

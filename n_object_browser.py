@@ -73,8 +73,6 @@ class n_object_browser(ui.ScriptWindow):
 				if self.ref_object_list.GetItemCount() != len(globals.UI_CLASS_DATA):
 					self.arrange_object_list()
 
-			self.ref_object_list.OnUpdate()
-
 	def render(self):
 		pass
 
@@ -83,7 +81,10 @@ class n_object_browser(ui.ScriptWindow):
 		if self.ref_object_list:
 			self.ref_object_list.ClearItem()
 			for object in globals.UI_CLASS_DATA:
-				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(),"%s" % object)
+				attr = globals.UI_CLASS_DATA[object]
+				
+				if len(attr) > 0:
+					self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(),"%s" % object)
 
 	def get_selected_object(self):
 		if self.ref_object_list.GetItemCount() > 0:
@@ -93,3 +94,4 @@ class n_object_browser(ui.ScriptWindow):
 					if selected_object == object:
 						return globals.UI_CLASS_DATA[object]
 		return None
+

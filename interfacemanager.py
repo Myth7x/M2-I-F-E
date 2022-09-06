@@ -31,6 +31,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 	def __init__(self, width, height):
 		self.current_scene = None
+		self.yesno_dialog = None
 		LogTxt(__name__, "Initializing..")
 
 		ui.BoardWithTitleBar.__init__(self)
@@ -88,6 +89,16 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.input_dialog.set_callback(ui.__mem_func__(self.create_scene))
 		self.input_dialog.Show()
 
+	def create_yesno_dialog(self, title, desc, callback):
+		self.yesno_dialog = ifmgr_ui.YesNoDialog()
+		self.yesno_dialog.set_title(title)
+		self.yesno_dialog.set_desc(desc)
+		self.yesno_dialog.set_callback(callback)
+		self.yesno_dialog.Show()
+
+	def test_callback_yesno(self, result):
+		LogTxt(__name__, "YesNoDialog Callback: %s" % result)
+
 	def build_window(self):
 		self.SetTitleName(NAME)
 		self.SetSize(self.WINDOW_SIZE[0], self.WINDOW_SIZE[1])
@@ -112,6 +123,8 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.new_scene_button.SetText("New Scene")
 		self.new_scene_button.SetEvent(ui.__mem_func__(self.request_create_scene))
 		self.new_scene_button.Show()
+
+		self.create_yesno_dialog("Hello there", "Is this a Question Dialog?", self.test_callback_yesno)
 
 		## New Attribute Editor
 		#import n_attribute_editor

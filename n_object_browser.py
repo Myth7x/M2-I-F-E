@@ -5,6 +5,8 @@ from proto_utils import LogTxt
 
 import ui, wndMgr
 
+import globals
+
 # If we want to create a new window, we need to create a new class.
 # It always needs to inherit from ui.ScriptWindow.
 class n_object_browser(ui.ScriptWindow):
@@ -13,7 +15,6 @@ class n_object_browser(ui.ScriptWindow):
 		LogTxt(__name__, "Initializing...")
 
 		self.style_script_data 	= None
-		self.ui_data 			= None
 		self.object 			= None
 		self.parent 			= None
 
@@ -47,10 +48,6 @@ class n_object_browser(ui.ScriptWindow):
 						return child
 		return None
 
-	def set_ui_data(self, data):
-		self.ui_data = data
-		self.arrange_object_list()
-
 	def load(self):
 		try:
 			self.object = self.script_loader.load_script(self, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_object_browser.py")
@@ -61,7 +58,7 @@ class n_object_browser(ui.ScriptWindow):
 
 	def update_title_info(self):
 		if self.ref_titlebar_info:
-			self.ref_titlebar_info.SetText("[ UI Classes: %d ]" % len(self.ui_data))
+			self.ref_titlebar_info.SetText("[ UI Classes: %d ]" % len(globals.UI_CLASS_DATA))
 
 	def update(self):
 		if self.init == True:
@@ -74,7 +71,7 @@ class n_object_browser(ui.ScriptWindow):
 						self.ref_board = child
 				
 			if self.ref_object_list and self.ref_board:
-				if self.ref_object_list.GetItemCount() != len(self.ui_data):
+				if self.ref_object_list.GetItemCount() != len(globals.UI_CLASS_DATA):
 					self.arrange_object_list()
 
 			self.ref_object_list.OnUpdate()
@@ -86,14 +83,14 @@ class n_object_browser(ui.ScriptWindow):
 		# find object_list in object.Children
 		if self.ref_object_list:
 			self.ref_object_list.ClearItem()
-			for object in self.ui_data:
+			for object in globals.UI_CLASS_DATA:
 				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(),"%s" % object)
 
 	def get_selected_object(self):
 		if self.ref_object_list.GetItemCount() > 0:
 			if self.ref_object_list.GetSelectedItem() != -1:
 				selected_object = self.ref_object_list.GetSelectedItemText()
-				for object in self.ui_data:
+				for object in globals.UI_CLASS_DATA:
 					if selected_object == object:
-						return self.ui_data[object]
+						return globals.UI_CLASS_DATA[object]
 		return None

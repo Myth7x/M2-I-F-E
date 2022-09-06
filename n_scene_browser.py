@@ -5,13 +5,14 @@ from proto_utils import LogTxt
 
 import ui, wndMgr
 
+import globals
+
 class n_scene_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		LogTxt(__name__, "Initializing...")
 
 		self.style_script_data 	= None
-		self.ui_data 			= None
 		self.object 			= None
 		self.parent 			= None
 
@@ -64,10 +65,6 @@ class n_scene_browser(ui.ScriptWindow):
 						return child
 		return None
 
-	def set_ui_data(self, data):
-		self.ui_data = data
-		self.arrange_object_list()
-
 	def load(self):
 		try:
 			self.object = self.script_loader.load_script(self, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_scene_browser.py")
@@ -81,9 +78,9 @@ class n_scene_browser(ui.ScriptWindow):
 		if self.ref_object_list.GetItemCount() > 0:
 			if self.ref_object_list.GetSelectedItem() != -1:
 				selected_object = self.ref_object_list.GetSelectedItemText()
-				for object in self.ui_data:
+				for object in globals.UI_CLASS_DATA:
 					if selected_object == object:
-						return self.ui_data[object]
+						return globals.UI_CLASS_DATA[object]
 		return None
 	
 	# returns the children dictionary with set values

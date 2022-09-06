@@ -14,9 +14,6 @@ import datetime
 import ifmgr_ui
 from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
-from object_browser import ObjectBrowser
-from project_browser import ProjectBrowser
-from child_config import ChildConfig
 import n_object_browser
 import n_scene_browser
 import globals
@@ -42,12 +39,12 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		LogTxt(__name__, "Looking for UI Classes..")
 
-		self.ui = UI_Classes()._LoadUI()
-		LogTxt(__name__, "Found %d UI Classes!" % len(self.ui))
+		globals.UI_CLASS_DATA = UI_Classes()._LoadUI()
+		LogTxt(__name__, "Found %d UI Classes!" % len(globals.UI_CLASS_DATA))
 
 		if UI_CLASS_EXPORT['enabled']:
 			ui_class_export = [["Class,Base,Function,Arguments"]]
-			for ui_class in self.ui:
+			for ui_class in globals.UI_CLASS_DATA:
 				ui_class_export.append(['%s,,' % (ui_class)])
 				for ui_class_attr in self.ui[ui_class][3]:
 					ui_class_export.append(['%s,%s,%s,%s' % (ui_class, self.ui[ui_class][2], ui_class_attr, self.ui[ui_class][3][ui_class_attr])])
@@ -75,12 +72,10 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.obj_browser = n_object_browser.n_object_browser()
 		self.obj_browser.object.SetWindowName("n_object_browser")
 		self.obj_browser.set_parent(self)
-		self.obj_browser.set_ui_data(self.ui)
 		
 		self.scene_browser = n_scene_browser.n_scene_browser()
 		self.scene_browser.object.SetWindowName("n_scene_browser")
 		self.scene_browser.set_parent(self)
-		self.scene_browser.set_ui_data(self.ui)
 		self.scene_browser.set_scene_name(self.current_scene)
 
 	def request_create_scene(self):

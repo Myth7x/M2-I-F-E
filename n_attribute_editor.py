@@ -1,15 +1,15 @@
-from distutils.log import Log
 from pythonscriptloader import PythonScriptLoader
 from proto_utils import LogTxt
 
 import ui, wndMgr
+
+import globals
 
 class n_attribute_editor(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		LogTxt(__name__, "Initializing...")
 
-		self.ui_data 			= None
 		self.object 			= None
 		self.parent 			= None
 
@@ -42,9 +42,6 @@ class n_attribute_editor(ui.ScriptWindow):
 			if object.GetWindowName() == object_name:
 				return object
 		return None
-
-	def set_ui_data(self, data):
-		self.ui_data = data
 
 	def load(self):
 		try:

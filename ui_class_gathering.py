@@ -1,4 +1,3 @@
-from argparse import Namespace
 import inspect
 
 # M2 CPython Modules

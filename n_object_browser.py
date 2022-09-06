@@ -17,6 +17,8 @@ class n_object_browser(ui.ScriptWindow):
 		self.object 			= None
 		self.parent 			= None
 
+		self.ui_attributes 		= None
+
 		self.script_loader = PythonScriptLoader()
 
 		self.init = self.load()
@@ -35,7 +37,9 @@ class n_object_browser(ui.ScriptWindow):
 		self.parent = parent
 
 	def on_double_click_object_list(self):
-		self.parent.OnAddObject()
+		selected_object = self.get_selected_object()
+		if selected_object:
+			self.parent.OnAddObject()
 
 	def find_object(self, objects, object_name):
 		for object in objects:
@@ -57,10 +61,11 @@ class n_object_browser(ui.ScriptWindow):
 
 	def update_title_info(self):
 		if self.ref_titlebar_info:
-			self.ref_titlebar_info.SetText("[ UI Classes: %d ]" % len(globals.UI_CLASS_DATA))
+			self.ref_titlebar_info.SetText("[ UI Classes: %d ]" % len(self.ui_attributes))
 
 	def update(self):
 		if self.init == True:
+			self.build_ui_attributes()
 			self.update_title_info()
 			if self.ref_board == None or self.ref_object_list == None:
 				for child in self.object.Children:
@@ -70,28 +75,33 @@ class n_object_browser(ui.ScriptWindow):
 						self.ref_board = child
 				
 			if self.ref_object_list and self.ref_board:
-				if self.ref_object_list.GetItemCount() != len(globals.UI_CLASS_DATA):
+				if self.ref_object_list.GetItemCount() != len(self.ui_attributes):
 					self.arrange_object_list()
 
 	def render(self):
 		pass
 
+	def build_ui_attributes(self):
+		self.ui_attributes = {}
+		for object in globals.UI_CLASS_DATA:
+			attr = globals.UI_CLASS_DATA[object]
+			if len(attr) > 0:
+				self.ui_attributes[object] = attr
+
+
 	def arrange_object_list(self):
 		# find object_list in object.Children
 		if self.ref_object_list:
 			self.ref_object_list.ClearItem()
-			for object in globals.UI_CLASS_DATA:
-				attr = globals.UI_CLASS_DATA[object]
-				
-				if len(attr) > 0:
-					self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(),"%s" % object)
+			for object in self.ui_attributes:
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(),"%s" % object)
 
 	def get_selected_object(self):
 		if self.ref_object_list.GetItemCount() > 0:
 			if self.ref_object_list.GetSelectedItem() != -1:
 				selected_object = self.ref_object_list.GetSelectedItemText()
-				for object in globals.UI_CLASS_DATA:
+				for object in self.ui_attributes:
 					if selected_object == object:
-						return globals.UI_CLASS_DATA[object]
+						return self.ui_attributes[object]
 		return None
 

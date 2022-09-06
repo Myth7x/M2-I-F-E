@@ -23,6 +23,12 @@ class ListBoxScroll(listbox.ListBox):
 		listbox.ListBox.ClearItem(self)
 		self.scrollBar.SetPos(0)
 
+	def select_item_name(self, name):
+		for i in range(len(self.itemList)):
+			if self.itemList[i].GetWindowName() == name:
+				self.SelectItem(i)
+				break
+
 	def _LocateItem(self):
 		listbox.ListBox._LocateItem(self)
 		

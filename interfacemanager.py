@@ -16,6 +16,7 @@ from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
 import n_object_browser
 import n_scene_browser
+import n_scene_demo
 
 # Python Modules
 import constinfo
@@ -30,9 +31,11 @@ import globals
 class InterfaceManager(ui.BoardWithTitleBar):
 
 	def __init__(self, width, height):
-		self.current_scene = None
-		self.yesno_dialog = None
-		self.obj_browser = None
+		self.current_scene 	= None
+		self.yesno_dialog 	= None
+		self.obj_browser 	= None
+		self.scene_browser 	= None
+		self.scene_demo 	= None
 		LogTxt(__name__, "Initializing..")
 
 		ui.BoardWithTitleBar.__init__(self)
@@ -71,8 +74,26 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def OnMouseLeftButtonDown(self):
 		self.SetFocus()
 
+	def refresh_scene_demo(self):
+		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.get_scene_data())
+
+	def on_demo_select_object(self, object_name):
+		LogTxt(__name__, "textDict Object: %s" % self.scene_browser.ref_object_list.textDict)
+		object_list_index = 0
+		for object in self.scene_browser.ref_object_list.textDict:
+			if self.scene_browser.ref_object_list.textDict[object] == object_name:
+				object_list_index = object
+				break
+
+		self.scene_browser.ref_object_list.SelectItem(object_list_index)
+		LogTxt(__name__, "Selected Object: %s" % object_list_index)
+
 	def create_scene(self, name):
 		self.current_scene = name
+
+		self.scene_demo = n_scene_demo.n_scene_demo()
+		self.scene_demo.set_parent(self)
+
 		self.obj_browser = n_object_browser.n_object_browser()
 		self.obj_browser.object.SetWindowName("n_object_browser")
 		self.obj_browser.set_parent(self)

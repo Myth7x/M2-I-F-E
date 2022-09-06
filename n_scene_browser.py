@@ -50,6 +50,8 @@ class n_scene_browser(ui.ScriptWindow):
 		self.scene_obj_editor.ref_board.Hide()
 		self.scene_obj_editor_open = False
 
+	def get_scene_data(self):
+		return self.scene
 
 	def set_scene_name(self, name):
 		self.scene['name'] = name
@@ -75,6 +77,10 @@ class n_scene_browser(ui.ScriptWindow):
 			'object_name': data[0],
 			'class': data[1],
 			'object': data[2],
+			'x': 0,
+			'y': 0,
+			'width': 100,
+			'height': 100,
 			'event': {
 				'__init__': [],
 				'__del__': [],
@@ -138,6 +144,8 @@ class n_scene_browser(ui.ScriptWindow):
 			## do stuff here
 			if self.ref_object_list.GetItemCount() != len(self.scene['children']):
 				self.arrange_object_list()
+				self.parent.refresh_scene_demo()
+				LogTxt(__name__, "Refreshing scene demo...")
 		
 			self.ref_object_list.OnUpdate()
 

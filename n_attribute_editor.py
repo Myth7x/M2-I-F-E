@@ -13,11 +13,15 @@ class n_attribute_editor(ui.ScriptWindow):
 		self.object 			= None
 		self.parent 			= None
 
+		self.scene_object = {}
+
 		self.script_loader = PythonScriptLoader()
 
 		self.init = self.load()
 
 		self.ref_category_attribute_configuration = self.object.Children[0].Children[1]
+		self.ref_board = self.object.Children[0]
+		LogTxt(__name__, "Initialized! ref board %s" % self.ref_board)
 
 		# Create ComboBox for attribute.attribute selection
 		self.cb_attr_val = ui.ComboBox()
@@ -34,6 +38,9 @@ class n_attribute_editor(ui.ScriptWindow):
 
 	def set_parent(self, parent):
 		self.parent = parent
+
+	def set_scene_object(self, object):
+		self.scene_object = object
 
 	def find_object(self, objects, object_name):
 		for object in objects:
@@ -52,7 +59,8 @@ class n_attribute_editor(ui.ScriptWindow):
 		return True
 
 	def update(self):
-		if self.init == True:
+		if self.ref_board.IsShow():
+			self.ref_board.SetTitleName('Children Editor - %s' % self.scene_object["child_name"])
 			selected_attr = self.cb_attr_val.listBox.GetSelectedItem()
 			if selected_attr > 0:
 				selected_attr_str = self.cb_attr_val.listBox.textDict[selected_attr-1]

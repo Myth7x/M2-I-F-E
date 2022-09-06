@@ -48,7 +48,7 @@ object = {
             "width" : WIDTH,
 	        "height" : HEIGHT,
 
-            "title" : "Attribute Editor",
+            "title" : "Children Editor - %s",
 
             "children" :
             (

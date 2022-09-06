@@ -3,6 +3,8 @@ from distutils.log import Log
 from pythonscriptloader import PythonScriptLoader
 from proto_utils import LogTxt
 
+import n_attribute_editor
+
 import ui, wndMgr
 
 import globals
@@ -15,6 +17,8 @@ class n_scene_browser(ui.ScriptWindow):
 		self.style_script_data 	= None
 		self.object 			= None
 		self.parent 			= None
+
+		self.scene_obj_editor 	= None
 
 		self.scene = {
 			"name": "*New Scene",
@@ -32,7 +36,20 @@ class n_scene_browser(ui.ScriptWindow):
 		self.ref_object_list.OnMouseWheel = self.ref_object_list.scrollBar.OnMouseWheel
 		self.ref_object_list.OnMouseLeftButtonDoubleClick = self.on_double_click_object_list
 
+		self.scene_obj_editor = n_attribute_editor.n_attribute_editor()
+		self.scene_obj_editor.set_parent(self)
+		self.scene_obj_editor.ref_board.SetCloseEvent(self.on_close_object_editor)
+		self.scene_obj_editor.ref_board.Hide()
+
+		self.scene_obj_editor_open = False
+
 		LogTxt(__name__, "Initialized!")
+
+	def on_close_object_editor(self):
+		LogTxt(__name__, "Closing object editor...")
+		self.scene_obj_editor.ref_board.Hide()
+		self.scene_obj_editor_open = False
+
 
 	def set_scene_name(self, name):
 		self.scene['name'] = name
@@ -41,7 +58,15 @@ class n_scene_browser(ui.ScriptWindow):
 		self.parent = parent
 
 	def on_double_click_object_list(self):
-		pass
+		selected_object = self.get_selected_children()
+		LogTxt(__name__, "Selected scene object: %s" % selected_object)
+		if selected_object != None and self.scene_obj_editor_open == False:
+			self.scene_obj_editor.set_scene_object(selected_object)
+			self.scene_obj_editor.ref_board.Show()
+			self.scene_obj_editor_open = True
+		else:
+			LogTxt(__name__, "Selected object is None!")
+
 
 	def add_scene_object(self, data):
 		LogTxt(__name__, "Adding object to scene...")

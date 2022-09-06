@@ -32,6 +32,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def __init__(self, width, height):
 		self.current_scene = None
 		self.yesno_dialog = None
+		self.obj_browser = None
 		LogTxt(__name__, "Initializing..")
 
 		ui.BoardWithTitleBar.__init__(self)
@@ -107,7 +108,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		# Info Text
 		self.information = ui.TextLine()
-		self.information.SetText("<Version:%s> <UI_Classes:%d>" % (VERSION, len(globals.UI_CLASS_DATA)))
 		self.information.SetParent(self)
 		self.information.SetPosition(10, 30)
 		self.information.Show()
@@ -123,8 +123,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.new_scene_button.SetText("New Scene")
 		self.new_scene_button.SetEvent(ui.__mem_func__(self.request_create_scene))
 		self.new_scene_button.Show()
+		###############################################################################
 
-		self.create_yesno_dialog("Hello there", "Is this a Question Dialog?", self.test_callback_yesno)
+		#self.create_yesno_dialog("Hello there", "Is this a Question Dialog?", self.test_callback_yesno)
 
 		## New Attribute Editor
 		#import n_attribute_editor
@@ -164,15 +165,15 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 	# Abusing this loop to update
 	def OnRender(self):
-		xMouse, yMouse = wndMgr.GetMousePosition()
-		self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, len(globals.UI_CLASS_DATA), xMouse, yMouse))
-
-		if self.current_scene != None:
-			self.new_scene_button.Hide()
-		#child = self.scene_browser.get_selected_children()
-		#if child:
-		#	if self.child_config.selected_child_in_project != child['object_name']:
-		#		self.child_config.update(child['child_name'], child['object_name'])
+		if self.obj_browser != None:
+			xMouse, yMouse = wndMgr.GetMousePosition()
+			self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, self.obj_browser.ref_object_list.GetItemCount(), xMouse, yMouse))
+			if self.current_scene != None:
+				self.new_scene_button.Hide()
+			#child = self.scene_browser.get_selected_children()
+			#if child:
+			#	if self.child_config.selected_child_in_project != child['object_name']:
+			#		self.child_config.update(child['child_name'], child['object_name'])
 
 
 def setup_ifmgr(parent):

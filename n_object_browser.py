@@ -37,9 +37,10 @@ class n_object_browser(ui.ScriptWindow):
 		self.parent = parent
 
 	def on_double_click_object_list(self):
-		selected_object = self.get_selected_object()
-		if selected_object:
-			self.parent.OnAddObject()
+		if self.ref_object_list.IsIn():
+			selected_object = self.get_selected_object()
+			if selected_object:
+				self.parent.OnAddObject()
 
 	def find_object(self, objects, object_name):
 		for object in objects:

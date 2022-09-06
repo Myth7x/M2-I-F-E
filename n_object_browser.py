@@ -1,9 +1,8 @@
 # This is my first test of utilizing our script loader.
-from distutils.log import Log
 from pythonscriptloader import PythonScriptLoader
 from proto_utils import LogTxt
 
-import ui, wndMgr
+import ui
 
 import globals
 

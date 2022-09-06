@@ -58,6 +58,8 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		if self.build_window() == False:
 			LogTxt(__name__, "Failed to build window!")
 			return False
+		
+		constinfo.INTERFACE_MANAGER_INITIALIZED = True
 		self.Show()
 
 	def __del__(self):
@@ -166,11 +168,7 @@ def setup_ifmgr(parent):
 		return None
 
 	try:
-		ifmgr = InterfaceManager(350, 100)
-
-		constinfo.INTERFACE_MANAGER_INITIALIZED = True
-
-		return ifmgr
+		return InterfaceManager(350, 100)
 	except:
 		LogTxt(__name__, "Failed to initialize!")
 		return None

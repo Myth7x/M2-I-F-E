@@ -1,7 +1,7 @@
 from pythonscriptloader import PythonScriptLoader
 from proto_utils import LogTxt
 
-import ui, wndMgr
+import ui
 
 import globals
 

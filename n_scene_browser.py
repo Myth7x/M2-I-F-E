@@ -72,13 +72,23 @@ class n_scene_browser(ui.ScriptWindow):
 
 	def add_scene_object(self, data):
 		LogTxt(__name__, "Adding object to scene...")
+		new_name = data[0]
+		for child in self.scene['children']:
+			if child['child_name'] == new_name:
+				LogTxt(__name__, "Object already exists!")
+				object_count = 0
+				for child2 in self.scene['children']:
+					if child2['class'] == child['class']:
+						object_count += 1
+				new_name = "%s_%d" % (new_name, object_count)
+				
 		_child = {
-			'child_name': data[0],
+			'child_name': new_name,
 			'object_name': data[0],
 			'class': data[1],
 			'object': data[2],
-			'x': 0,
-			'y': 0,
+			'x': 10,
+			'y': 10,
 			'width': 100,
 			'height': 100,
 			'event': {

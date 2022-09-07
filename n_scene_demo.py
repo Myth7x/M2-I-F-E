@@ -23,20 +23,21 @@ class n_scene_demo(ui.Bar):
 		self.scene_name     = ""
 		self.demo_objects   = {}
 
+		self.clicked = False
 		self.crtl = False
 		self.crtl_obj = None
+		self.crtl_pos = None
 		self.crtl_indicator_bar = None
 
 		self.SetSize(wndMgr.GetScreenWidth(), wndMgr.GetScreenHeight())
 		self.SetPosition(0, 0)
 		# set invisible hex color
 		self.SetColor(0x00000000)
-		# make clickthrough
-		self.SetWindowHorizontalAlignCenter()
-		self.SetWindowVerticalAlignCenter()
+
+		self.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.on_left_mouse_button_down), None)
 
 		self.Show()
-	
+
 	def set_parent(self, parent):
 		self.parent = parent
 
@@ -56,14 +57,24 @@ class n_scene_demo(ui.Bar):
 		LogTxt(__name__, "%s" % self.scene_data)
 		# iterate through the scene data and create the ui elements
 		for obj in self.scene_data['children']:
-			# create the ui element
-			self.demo_objects[obj['child_name']] = obj['class']()
-			# set the position and size
-			self.demo_objects[obj['child_name']].SetPosition(obj['x'], obj['y'])
-			self.demo_objects[obj['child_name']].SetSize(obj['width'], obj['height'])
-			
-			self.demo_objects[obj['child_name']].SetParent(self)
-			self.demo_objects[obj['child_name']].Show()
+			try:
+				# create the ui element
+				self.demo_objects[obj['child_name']] = obj['class']()
+				# set the position and size
+				self.demo_objects[obj['child_name']].AddFlag('movable')
+				self.demo_objects[obj['child_name']].AddFlag('pick')
+				self.demo_objects[obj['child_name']].AddFlag('float')
+
+				self.demo_objects[obj['child_name']].SetPosition(obj['x'], obj['y'])
+				self.demo_objects[obj['child_name']].SetSize(obj['width'], obj['height'])
+				# set control events
+				self.demo_objects[obj['child_name']].SetMouseLeftButtonDownEvent(ui.__mem_func__(self.on_left_mouse_button_down), obj['child_name'])
+				self.demo_objects[obj['child_name']].OnMouseLeftButtonUp = ui.__mem_func__(self.OnMouseLeftButtonUp)
+				# show the demo element
+				self.demo_objects[obj['child_name']].Show()
+			except Exception as e:
+				LogTxt(__name__, "Error: %s" % e)
+				continue
 			LogTxt(__name__, "Created object: %s" % obj)
 
 	def update_scene_data(self, obj, demo_obj):
@@ -76,69 +87,87 @@ class n_scene_demo(ui.Bar):
 				break
 		self.parent.on_demo_select_object(obj)
 
+	def on_left_mouse_button_down(self, child):
+		self.clicked = True
+		self.crtl_obj = child
+		LogTxt(__name__, "Clicked: %s" % child)
+
+	def destroy_indicator(self):
+		self.crtl_indicator_bar.Hide()
+		self.crtl_indicator_bar.Destroy()
+		self.crtl_indicator_bar = None
+
+	def make_indicator(self, child, x, y, widht, height):
+		self.crtl_indicator_bar = ui.Bar("TOP_MOST")
+		self.crtl_indicator_bar.SetParent(child)
+		self.crtl_indicator_bar.SetPosition(0, 0)
+		self.crtl_indicator_bar.SetSize(widht, height)
+		self.crtl_indicator_bar.SetColor(0x10ff1100)
+		self.crtl_indicator_bar.Show()
+
+	def update_indicator(self, width, height):
+		self.crtl_indicator_bar.SetSize(width + 4, height + 4)
+		self.crtl_indicator_bar.Show()
+
+	def OnMouseLeftButtonUp(self):
+		self.clicked = False
+		self.crtl_obj = None
+
 	def OnUpdate(self):
-		if self.crtl == False:
-			if self.crtl_indicator_bar != None:
-				self.crtl_indicator_bar.Hide()
-				self.crtl_indicator_bar.Destroy()
-				self.crtl_indicator_bar = None
-		# check if mouse is in one of the ui elements
-		for obj in self.demo_objects:
-			if self.demo_objects[obj].IsIn() or self.ctrl == True and self.crtl_obj == obj:
-				LogTxt(__name__, "Mouse is in: %s" % obj)
+		if self.clicked == True and self.crtl_obj != None:
 
-				# if now ctrl is pressed, we can move the ui element
-				if app.IsPressed(app.DIK_LCONTROL):
-					# get the mouse position
-					mouse_x, mouse_y = wndMgr.GetMousePosition()
-					# get the ui element position
-					x, y = self.demo_objects[obj].GetGlobalPosition()
-					# get the ui element size
-					width, height = (self.demo_objects[obj].GetWidth(), self.demo_objects[obj].GetHeight())
-					# set the new position
-					self.demo_objects[obj].SetPosition(mouse_x - width/2, mouse_y - height/2)
-					# update the scene data
-					self.update_scene_data(obj, self.demo_objects[obj])
-					self.ctrl = True
-					self.crtl_obj = obj
+			current_position = self.demo_objects[self.crtl_obj].GetGlobalPosition()
+			LogTxt(__name__, "Current position: %s" % str(current_position))
 
-					if self.crtl_indicator_bar == None:
-						self.crtl_indicator_bar = ui.Bar()
-						self.crtl_indicator_bar.SetParent(self)
-						self.crtl_indicator_bar.SetColor(0x55a1d162)
-					self.crtl_indicator_bar.SetSize(width, height)
-					self.crtl_indicator_bar.SetPosition(x, y)
-					self.crtl_indicator_bar.Show()
+			current_size = (self.demo_objects[self.crtl_obj].GetWidth(), self.demo_objects[self.crtl_obj].GetHeight())
+			LogTxt(__name__, "Current size: %s" % str(current_size))
+			
+			mouse_position = wndMgr.GetMousePosition()
+			LogTxt(__name__, "Mouse: %s" % str(mouse_position))
 
-					break
-				# if shift is pressed, we can resize the ui element
-				if app.IsPressed(app.DIK_LSHIFT):
-					LogTxt(__name__, "Resizing: %s" % obj)
-					# get the mouse position
-					mouse_x, mouse_y = wndMgr.GetMousePosition()
-					# get the ui element position
-					x, y = self.demo_objects[obj].GetGlobalPosition()
-					# we resize the ui element to the mouse position + 25
-					self.demo_objects[obj].SetSize(mouse_x - x + 25, mouse_y - y + 25)
-					# update the scene data
-					self.update_scene_data(obj, self.demo_objects[obj])
-					self.ctrl = True
-					self.crtl_obj = obj
+			# if shift is pressed, we can resize the ui element
+			if app.IsPressed(app.DIK_LSHIFT):
+				if self.crtl_pos == None:
+					self.crtl_pos = current_position
+				# mouse distance to left border of ui
+				mouse_distance_x = mouse_position[0] - self.crtl_pos[0]
+				# mouse distance to top border of ui
+				mouse_distance_y = mouse_position[1] - self.crtl_pos[1]
 
-					if self.crtl_indicator_bar == None:
-						self.crtl_indicator_bar = ui.Bar()
-						self.crtl_indicator_bar.SetParent(self)
-						self.crtl_indicator_bar.SetColor(0x55a1d162)
-					self.crtl_indicator_bar.SetSize(self.demo_objects[obj].GetWidth(), self.demo_objects[obj].GetHeight())
-					self.crtl_indicator_bar.SetPosition(x, y)
-					self.crtl_indicator_bar.Show()
+				# calculate the new size
+				new_width = mouse_distance_x
+				new_height = mouse_distance_y
 
-					break
+				# set the new size
+				self.demo_objects[self.crtl_obj].SetSize(new_width, new_height)
+				self.demo_objects[self.crtl_obj].SetPosition(self.crtl_pos[0], self.crtl_pos[1])
 		
+			else:
+				self.crtl_pos = current_position
+
+			# update the indicator bar
+			if self.crtl_indicator_bar == None:
+				if app.IsPressed(app.DIK_LSHIFT):
+					app.SetCursor(app.HVSIZE)
+				else:
+					app.SetCursor(app.CAMERA_ROTATE)
+
+				self.make_indicator(self.demo_objects[self.crtl_obj], self.crtl_pos[0], self.crtl_pos[1], self.demo_objects[self.crtl_obj].GetWidth(), self.demo_objects[self.crtl_obj].GetHeight())
+			else:
+				self.update_indicator(self.demo_objects[self.crtl_obj].GetWidth(), self.demo_objects[self.crtl_obj].GetHeight())
+
+
+			
+			self.update_scene_data(self.crtl_obj, self.demo_objects[self.crtl_obj])
+
 		# if ctrl is released, we stop moving and resizing
-		if app.IsPressed(app.DIK_LCONTROL) == False and app.IsPressed(app.DIK_LSHIFT) == False:
-			self.ctrl = False
+		if self.clicked == False or self.crtl_obj == None:
 			self.crtl_obj = None
+			self.clicked = False
+			self.crtl_pos = None
+			if self.crtl_indicator_bar != None:
+				app.SetCursor(app.NORMAL)
+				self.destroy_indicator()
 
 	def OnRender(self):
 		pass

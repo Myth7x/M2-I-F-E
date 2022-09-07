@@ -103,6 +103,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.scene_browser.set_parent(self)
 		self.scene_browser.set_scene_name(self.current_scene)
 
+	def refresh_scene_demo(self):
+		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.get_scene_data())
+
 	def request_create_scene(self):
 		self.input_dialog = ifmgr_ui.InputDialog()
 		self.input_dialog.set_title("New Scene")
@@ -145,6 +148,17 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.new_scene_button.SetEvent(ui.__mem_func__(self.request_create_scene))
 		self.new_scene_button.Show()
 		###############################################################################
+
+		# Refresh Scene Button
+		self.refresh_scene_button = ui.Button()
+		self.refresh_scene_button.SetParent(self)
+		self.refresh_scene_button.SetPosition(10, 80)
+		self.refresh_scene_button.SetUpVisual("d:/ymir work/ui/public/large_button_01.sub")
+		self.refresh_scene_button.SetOverVisual("d:/ymir work/ui/public/large_button_02.sub")
+		self.refresh_scene_button.SetDownVisual("d:/ymir work/ui/public/large_button_03.sub")
+		self.refresh_scene_button.SetText("Refresh Scene")
+		self.refresh_scene_button.SetEvent(ui.__mem_func__(self.refresh_scene_demo))
+		self.refresh_scene_button.Show()
 
 		#self.create_yesno_dialog("Hello there", "Is this a Question Dialog?", self.test_callback_yesno)
 

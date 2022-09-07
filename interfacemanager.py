@@ -4,19 +4,16 @@
 NAME = "Interface Manager"
 VERSION = '0.5-Rev.Pepp'
 UI_CLASS_EXPORT = {
-	'enabled' 	: True,
+	'enabled' 	: False,
 	'path' 		: 'C:\\Proto_InterfaceManager\\%s_ui_classes.csv',
 }
 ###############################################################################
 import datetime
 
 # Interface Manager Modules
-import ifmgr_ui
 from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
-import n_object_browser
-import n_scene_browser
-import n_scene_demo
+import ifmgr_ui, n_object_browser, n_scene_browser, n_scene_demo
 
 # Python Modules
 import constinfo
@@ -47,18 +44,18 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		globals.UI_CLASS_DATA = self.ui.load_ui_data()
 		LogTxt(__name__, "Found %d UI Classes!" % len(globals.UI_CLASS_DATA))
 
-		#if UI_CLASS_EXPORT['enabled']:
-		#	ui_class_export = [["Class,Base,Function,Arguments"]]
-		#	for ui_class in globals.UI_CLASS_DATA:
-		#		ui_class_export.append(['%s,,' % (ui_class)])
-		#		for ui_class_attr in self.ui[ui_class][3]:
-		#			ui_class_export.append(['%s,%s,%s,%s' % (ui_class, self.ui[ui_class][2], ui_class_attr, self.ui[ui_class][3][ui_class_attr])])
-		#	target_file = UI_CLASS_EXPORT['path'] % (datetime.datetime.now().strftime('%Y-%m-%d'))
-		#	with open(target_file, "w") as f:
-		#		for row in ui_class_export:
-		#			f.write(",".join(row) + "\n")
-		#		f.close()
-		#	LogTxt(__name__, "Exported UI Classes to %s" % target_file)
+		if UI_CLASS_EXPORT['enabled']:
+			ui_class_export = [["Class,Base,Function,Arguments"]]
+			for ui_class in globals.UI_CLASS_DATA:
+				ui_class_export.append(['%s,,' % (ui_class)])
+				for ui_class_attr in self.ui[ui_class][3]:
+					ui_class_export.append(['%s,%s,%s,%s' % (ui_class, self.ui[ui_class][2], ui_class_attr, self.ui[ui_class][3][ui_class_attr])])
+			target_file = UI_CLASS_EXPORT['path'] % (datetime.datetime.now().strftime('%Y-%m-%d'))
+			with open(target_file, "w") as f:
+				for row in ui_class_export:
+					f.write(",".join(row) + "\n")
+				f.close()
+			LogTxt(__name__, "Exported UI Classes to %s" % target_file)
 
 		if self.build_window() != True:
 			LogTxt(__name__, "Failed to build window!")
@@ -78,7 +75,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.get_scene_data())
 
 	def on_demo_select_object(self, object_name):
-		LogTxt(__name__, "textDict Object: %s" % self.scene_browser.ref_object_list.textDict)
 		object_list_index = 0
 		for object in self.scene_browser.ref_object_list.textDict:
 			if self.scene_browser.ref_object_list.textDict[object] == object_name:
@@ -86,7 +82,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				break
 
 		self.scene_browser.ref_object_list.SelectItem(object_list_index)
-		LogTxt(__name__, "Selected Object: %s" % object_list_index)
 
 	def create_scene(self, name):
 		self.current_scene = name
@@ -160,28 +155,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.refresh_scene_button.SetEvent(ui.__mem_func__(self.refresh_scene_demo))
 		self.refresh_scene_button.Show()
 
-		#self.create_yesno_dialog("Hello there", "Is this a Question Dialog?", self.test_callback_yesno)
-
-		## New Attribute Editor
-		#import n_attribute_editor
-#
-		#self.attr_editor = n_attribute_editor.n_attribute_editor()
-		#self.attr_editor.object.SetWindowName("n_attribute_editor")
-		#self.attr_editor.set_parent(self)
-		#self.attr_editor.set_ui_data(self.ui)
-		################################################################################
-#
-		#try:
-		#	# Child Config
-		#	self.child_config = ChildConfig(self.WINDOW_SIZE[0] - 20, 205, globals.BASE_THEME_COLOR, self.ui)
-		#	self.child_config.SetParent(self)
-		#	self.child_config.SetPosition(10, 280)
-		#	self.child_config.Show()
-		#	###############################################################################
-		#except:
-		#	LogTxt(__name__, "Failed to build Child Config!")
-		#	return False
-
 		LogTxt(__name__, "Initialized!")
 		return True
 
@@ -192,11 +165,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	# Remove Object from current project by name
 	def OnRemoveObject(self):
 		pass
-		#self.scene_browser.remove_scene_object(self.obj_browser.get_selected_object())
-		
-		#self.project_browser.remove_child(self.project_browser.selected_child_name())
-		#self.project_browser.filter.filter_editline.SetText("")
-		#LogTxt(__name__, "Removed %s from Project Browser" % self.project_browser.selected_child_name())
 
 	# Abusing this loop to update
 	def OnRender(self):
@@ -205,11 +173,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, self.obj_browser.ref_object_list.GetItemCount(), xMouse, yMouse))
 			if self.current_scene != None:
 				self.new_scene_button.Hide()
-			#child = self.scene_browser.get_selected_children()
-			#if child:
-			#	if self.child_config.selected_child_in_project != child['object_name']:
-			#		self.child_config.update(child['child_name'], child['object_name'])
-
 
 def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:

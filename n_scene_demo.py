@@ -29,6 +29,8 @@ class n_scene_demo(ui.Bar):
 		self.crtl_pos = None
 		self.crtl_indicator_bar = None
 
+		self.crtl_context_menu = None
+
 		self.SetSize(wndMgr.GetScreenWidth(), wndMgr.GetScreenHeight())
 		self.SetPosition(0, 0)
 		# set invisible hex color
@@ -90,7 +92,6 @@ class n_scene_demo(ui.Bar):
 	def on_left_mouse_button_down(self, child):
 		self.clicked = True
 		self.crtl_obj = child
-		LogTxt(__name__, "Clicked: %s" % child)
 
 	def destroy_indicator(self):
 		self.crtl_indicator_bar.Hide()
@@ -116,27 +117,24 @@ class n_scene_demo(ui.Bar):
 	def OnUpdate(self):
 		if self.clicked == True and self.crtl_obj != None:
 
-			current_position = self.demo_objects[self.crtl_obj].GetGlobalPosition()
-			LogTxt(__name__, "Current position: %s" % str(current_position))
-
-			current_size = (self.demo_objects[self.crtl_obj].GetWidth(), self.demo_objects[self.crtl_obj].GetHeight())
-			LogTxt(__name__, "Current size: %s" % str(current_size))
-			
-			mouse_position = wndMgr.GetMousePosition()
-			LogTxt(__name__, "Mouse: %s" % str(mouse_position))
+			current_position 	= self.demo_objects[self.crtl_obj].GetGlobalPosition()
+			current_size 		= (self.demo_objects[self.crtl_obj].GetWidth(), self.demo_objects[self.crtl_obj].GetHeight())
+			mouse_position 		= wndMgr.GetMousePosition()
 
 			# if shift is pressed, we can resize the ui element
 			if app.IsPressed(app.DIK_LSHIFT):
+
 				if self.crtl_pos == None:
 					self.crtl_pos = current_position
+
 				# mouse distance to left border of ui
 				mouse_distance_x = mouse_position[0] - self.crtl_pos[0]
 				# mouse distance to top border of ui
 				mouse_distance_y = mouse_position[1] - self.crtl_pos[1]
 
 				# calculate the new size
-				new_width = mouse_distance_x
-				new_height = mouse_distance_y
+				new_width 	= mouse_distance_x
+				new_height 	= mouse_distance_y
 
 				# set the new size
 				self.demo_objects[self.crtl_obj].SetSize(new_width, new_height)
@@ -147,6 +145,8 @@ class n_scene_demo(ui.Bar):
 
 			# update the indicator bar
 			if self.crtl_indicator_bar == None:
+
+				# update the cursor icon
 				if app.IsPressed(app.DIK_LSHIFT):
 					app.SetCursor(app.HVSIZE)
 				else:
@@ -156,17 +156,19 @@ class n_scene_demo(ui.Bar):
 			else:
 				self.update_indicator(self.demo_objects[self.crtl_obj].GetWidth(), self.demo_objects[self.crtl_obj].GetHeight())
 
-
-			
+			# update the scene data
 			self.update_scene_data(self.crtl_obj, self.demo_objects[self.crtl_obj])
 
 		# if ctrl is released, we stop moving and resizing
 		if self.clicked == False or self.crtl_obj == None:
-			self.crtl_obj = None
-			self.clicked = False
-			self.crtl_pos = None
+			self.crtl_obj 	= None
+			self.clicked 	= False
+			self.crtl_pos 	= None
+
 			if self.crtl_indicator_bar != None:
+				# reset the cursor icon
 				app.SetCursor(app.NORMAL)
+				# destroy the indicator bar
 				self.destroy_indicator()
 
 	def OnRender(self):

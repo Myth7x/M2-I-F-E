@@ -77,6 +77,7 @@ class n_scene_demo(ui.Bar):
 				# show the demo element
 				self.demo_objects[obj['child_name']].Show()
 
+				###
 				if 'children' in obj and len(obj['children']) > 0:
 					self.load_children(obj['children'], self.demo_objects[obj['child_name']])
 

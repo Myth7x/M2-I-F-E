@@ -49,7 +49,7 @@ class UI_Classes:
 	def load_ui_data(self):
 		classes = {}
 		for attribute_name in sorted(dir(ui)):
-			LogTxt(__name__, "Checking %s" % attribute_name)
+			#LogTxt(__name__, "Checking %s" % attribute_name)
 			# check if attribute is a class
 			attr = getattr(ui, attribute_name)
 			if not self.is_class(attr):

@@ -9,6 +9,7 @@ UI_CLASS_EXPORT = {
 }
 ###############################################################################
 import datetime
+import grp
 
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
@@ -23,6 +24,8 @@ import ui, wndMgr
 ###############################################################################
 
 import globals
+
+import ifmgr_ui
 
 # Main Interface Manager Class
 class InterfaceManager(ui.BoardWithTitleBar):
@@ -64,6 +67,15 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		constinfo.INTERFACE_MANAGER_INITIALIZED = True
 		self.Show()
 
+		# test
+		self.test_selectbox = ifmgr_ui.SelectBox()
+		self.test_selectbox.SetParent(self)
+		self.test_selectbox.SetPosition(140, 30)
+		self.test_selectbox.SetSize(200, 100)
+		self.test_selectbox.SetWidth(200)
+		self.test_selectbox.Show()
+
+
 	def __del__(self):
 		ui.BoardWithTitleBar.__del__(self)
 
@@ -82,6 +94,10 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				break
 
 		self.scene_browser.ref_object_list.SelectItem(object_list_index)
+
+	def update_scene_data(self, data):
+		self.scene_browser.update_scene_data(data)
+		LogTxt(__name__, "Updated Scene Data")
 
 	def create_scene(self, name):
 		self.current_scene = name
@@ -180,7 +196,7 @@ def setup_ifmgr(parent):
 		return None
 
 	try:
-		return InterfaceManager(350, 100)
+		return InterfaceManager(350, 300)
 	except:
 		LogTxt(__name__, "Failed to initialize!")
 		return None

@@ -101,6 +101,13 @@ class n_scene_browser(ui.ScriptWindow):
 		self.scene['children'].append(_child)
 		LogTxt(__name__, "Adding object to scene: %s" % _child['child_name'])
 
+	def update_scene_data(self, data):
+		self.scene = data
+		self.arrange_object_list()
+		self.parent.refresh_scene_demo()
+		LogTxt(__name__, "Refreshing scene demo...")
+
+
 	# Finds specific object in a list of objects, used for iterating through the ui tree(children)
 	def find_object(self, objects, object_name):
 		for object in objects:

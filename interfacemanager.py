@@ -119,9 +119,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 	def request_create_scene(self):
 		self.input_dialog = ifmgr_ui.InputDialog()
-		self.input_dialog.set_title("New Scene")
+		self.input_dialog.set_title("New Scene Name")
 		self.input_dialog.set_input_desc("Scene Name:")
-		self.input_dialog.set_input("")
+		self.input_dialog.set_input("New Scene")
 		self.input_dialog.set_callback(ui.__mem_func__(self.create_scene))
 		self.input_dialog.Show()
 

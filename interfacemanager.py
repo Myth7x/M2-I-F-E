@@ -152,7 +152,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	###############################################################################
 	# Create Scene
 	def create_scene(self, name):
-		self.current_scene = name
+		self.current_scene = name if not globals.INFO_INPUT_SCENE_NAME in name else 'New Scene'
 
 		self.scene_demo = n_scene_demo.n_scene_demo()
 
@@ -185,7 +185,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.input_dialog.set_size(500, 100)
 		self.input_dialog.set_title("New Scene Name")
 		self.input_dialog.set_input_desc("Scene Name:")
-		self.input_dialog.set_input("New Scene  (press <ENTER> for default name)")
+		self.input_dialog.set_input("New Scene  %s" % globals.INFO_INPUT_SCENE_NAME)
 		self.input_dialog.set_callback(ui.__mem_func__(self.create_scene))
 		self.input_dialog.Show()
 	###############################

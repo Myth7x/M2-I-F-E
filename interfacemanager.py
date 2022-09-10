@@ -14,7 +14,7 @@ import grp
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
-import ifmgr_ui, n_object_browser, n_scene_browser, n_scene_demo_re
+import ifmgr_ui, n_object_browser, n_scene_browser, n_scene_demo
 
 # Python Modules
 import constinfo
@@ -99,7 +99,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.current_scene = name
 
 		try:
-			self.scene_demo = n_scene_demo_re.n_scene_demo_re()
+			self.scene_demo = n_scene_demo.n_scene_demo()
 		except Exception as e:
 			LogTxt(__name__, "Failed to load n_scene_demo_re %s" % e)
 			self.scene_demo = None

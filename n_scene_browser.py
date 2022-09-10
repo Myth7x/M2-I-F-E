@@ -9,8 +9,6 @@ import ui, wndMgr
 
 import globals
 
-import n_scene_demo_re
-
 class n_scene_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)

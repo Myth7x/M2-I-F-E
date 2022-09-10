@@ -157,6 +157,9 @@ class n_scene_demo():
 		self.obj_hotkey_info.SetText(" > TIPS : hold <ALT> to show window outlines | hold <MOUSE+SHIFT> to resize object")
 		self.obj_hotkey_info.Show()
 
+	def rect_collision(self, r1, r2):
+		return (r1[0] < r2[0] + r2[2] and r1[0] + r1[2] > r2[0] and r1[1] < r2[1] + r2[3] and r1[1] + r1[3] > r2[1])
+
 	def update(self):
 		mouse_position = wndMgr.GetMousePosition()
 		scene_info_text = self.scene_name + (' | Mouse Position: %s' % str(mouse_position))
@@ -164,6 +167,9 @@ class n_scene_demo():
 		if self.d_demo['mouse_over_target']:
 			scene_info_text += ' | MOUSE_OVER: %s' % self.d_demo['mouse_over_target']().GetWindowName()
 			
+			mouse_over_target_position = self.d_demo['mouse_over_target']().GetGlobalPosition()
+			mouse_over_target_rect = (mouse_over_target_position[0], mouse_over_target_position[1], self.d_demo['mouse_over_target']().GetWidth(), self.d_demo['mouse_over_target']().GetHeight())
+
 			if self.obj_mouse_over == None:
 				self.obj_mouse_over = self.scene_object_mouse_over(self.d_demo['mouse_over_target'])
 
@@ -175,11 +181,10 @@ class n_scene_demo():
 				for obj in self.d_demo['objects']:
 					if self.d_demo['objects'][obj] != self.d_demo['mouse_over_target']:
 						obj_position = self.d_demo['objects'][obj]().GetGlobalPosition()
-						horizontal = mouse_position[0] > obj_position[0] and mouse_position[0] < obj_position[0] + self.d_demo['objects'][obj]().GetWidth()
-						vertical = mouse_position[1] > obj_position[1] and mouse_position[1] < obj_position[1] + self.d_demo['objects'][obj]().GetHeight()
-
-						if horizontal and vertical:
-							scene_info_text += ' | INTERSECT_WITH: %s' % self.d_demo['objects'][obj]().GetWindowName()
+						obj_rect = (obj_position[0], obj_position[1], self.d_demo['objects'][obj]().GetWidth(), self.d_demo['objects'][obj]().GetHeight())
+						# check if current_recht is colliding with obj_rect
+						if obj_rect[0] < mouse_over_target_rect[0] + mouse_over_target_rect[2] and obj_rect[0] + obj_rect[2] > mouse_over_target_rect[0] and obj_rect[1] < mouse_over_target_rect[1] + mouse_over_target_rect[3] and obj_rect[1] + obj_rect[3] > mouse_over_target_rect[1]:
+							scene_info_text += ' | COLLISION: %s' % self.d_demo['objects'][obj]().GetWindowName()
 
 							if self.obj_window_drag == None:
 								self.obj_window_drag = self.scene_object_mouse_over(self.d_demo['objects'][obj])
@@ -227,11 +232,9 @@ class n_scene_demo():
 
 	def on_mouse_left_button_down(self, scene_data_object):
 		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_left_button_down')
-		self.d_demo['mouse_over_target'] = scene_data_object
 		self.d_demo['mouse_left_button_down'] = True
 	def on_mouse_left_button_up(self):
 		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_left_button_up')
-		self.d_demo['mouse_over_target'] = None
 		self.d_demo['mouse_left_button_down'] = False
 	####
 

@@ -153,7 +153,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		# New Scene Button
 		self.new_scene_button = ui.Button()
 		self.new_scene_button.SetParent(self)
-		self.new_scene_button.SetPosition(10, 50)
+		self.new_scene_button.SetPosition(10, 45)
 		self.new_scene_button.SetUpVisual("d:/ymir work/ui/public/large_button_01.sub")
 		self.new_scene_button.SetOverVisual("d:/ymir work/ui/public/large_button_02.sub")
 		self.new_scene_button.SetDownVisual("d:/ymir work/ui/public/large_button_03.sub")
@@ -165,7 +165,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		# Refresh Scene Button
 		self.refresh_scene_button = ui.Button()
 		self.refresh_scene_button.SetParent(self)
-		self.refresh_scene_button.SetPosition(10, 80)
+		self.refresh_scene_button.SetPosition(120, 45)
 		self.refresh_scene_button.SetUpVisual("d:/ymir work/ui/public/large_button_01.sub")
 		self.refresh_scene_button.SetOverVisual("d:/ymir work/ui/public/large_button_02.sub")
 		self.refresh_scene_button.SetDownVisual("d:/ymir work/ui/public/large_button_03.sub")
@@ -199,7 +199,7 @@ def setup_ifmgr(parent):
 		return None
 
 	try:
-		return InterfaceManager(350, 300)
+		return InterfaceManager(350, 100)
 	except:
 		LogTxt(__name__, "Failed to initialize!")
 		return None

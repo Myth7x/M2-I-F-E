@@ -49,7 +49,11 @@ class n_scene_demo_re():
 	d_scene_data 	= {}
 
 	# holds our demo data
-	d_demo 			= {'objects' : {}}
+	d_demo 			= {
+		'objects' 					: {},
+		'mouse_over_target' 		: None,
+		'mouse_left_button_down' 	: False,
+	}
 	
 	scene_name 		= ''
 
@@ -61,22 +65,30 @@ class n_scene_demo_re():
 		# the instance of our demo object
 		obj_instance = None
 
-		def __init__(self, data):
+		def __init__(self, data, fn_mouse_left_button_down, fn_mouse_left_button_up, fn_mouse_over_window, fn_mouse_over_out_window):
 			self.__dict__ = data
-			self.create_object_instance()
+			self.create_object_instance(fn_mouse_left_button_down, fn_mouse_left_button_up, fn_mouse_over_window, fn_mouse_over_out_window)
 
 		def __del__(self):
 			self.destroy_object_instance()
 
-		def create_object_instance(self):
-			LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__)
+		def create_object_instance(self, fn_mouse_left_button_down, fn_mouse_left_button_up, fn_mouse_over_window, fn_mouse_over_out_window):
+			#LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__)
 			try:
 				self.wnd = ui.Window()
 				self.wnd.AddFlag('movable')
 				self.wnd.AddFlag('float')
+
 				self.wnd.SetSize(self.width, self.height)
 				self.wnd.SetPosition(self.x, self.y)
+
 				self.wnd.SetWindowName(self.child_name)
+
+				self.wnd.SetOverEvent(ui.__mem_func__(fn_mouse_over_window), self)
+				self.wnd.SetOverOutEvent(ui.__mem_func__(fn_mouse_over_out_window), self)
+				self.wnd.SetMouseLeftButtonDownEvent(ui.__mem_func__(fn_mouse_left_button_down), self)
+				self.wnd.OnMouseLeftButtonUp = fn_mouse_left_button_up
+
 				self.wnd.Show()
 
 				# init from strin
@@ -85,11 +97,12 @@ class n_scene_demo_re():
 				self.obj_instance.SetPosition(0, 0)
 				self.obj_instance.SetSize(self.width, self.height)
 				self.obj_instance.AddFlag('not_pick')
-
+				self.obj_instance.Show()
+			
 				# TODO: logic like in our loader
 				####
 
-				self.obj_instance.Show()
+
 			except Exception as e:
 				LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % e)
 
@@ -104,17 +117,38 @@ class n_scene_demo_re():
 	###########################################################
 
 	def __init__(self):
-		LogTxt(__name__, 'n_scene_demo_re.__init__')
+		LogTxt(__name__, "Initializing..")
 		self.scene_name = 'scene_demo_re'
+
+	def update(self):
+		#LogTxt(__name__, 'Current Mouse Target: %s, is pressed: %s' % (self.d_demo['mouse_over_target'], self.d_demo['mouse_left_button_down']))
+		pass
 
 	## Demo Data
 
+	# we set our mouse over target here, we dont do other in position checks in our update logic down below
+	def on_mouse_over_window(self, scene_data_object):
+		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_over_window:: <%s>' % scene_data_object)
+		self.d_demo['mouse_over_target'] = scene_data_object
+	def on_mouse_over_out_window(self, scene_data_object):
+		#LogTxt(__name__, 'n_scene_demo_re.on_move_out:: <%s>' % scene_data_object)
+		self.d_demo['mouse_over_target'] = None
+
+	def on_mouse_left_button_down(self, scene_data_object):
+		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_left_button_down')
+		self.d_demo['mouse_over_target'] = scene_data_object
+		self.d_demo['mouse_left_button_down'] = True
+	def on_mouse_left_button_up(self):
+		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_left_button_up')
+		self.d_demo['mouse_over_target'] = None
+		self.d_demo['mouse_left_button_down'] = False
+	####
+
 	def prepare_demo_object(self, data):
-		LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data: %s' % data)
 		obj = self.get_demo_object_data(data['child_name'])
 		if obj == None:
-			self.d_demo['objects'][data['child_name']] = self.scene_data_object(data)
-			LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data insert: %s' % self.d_demo['objects'][data['child_name']].__dict__)
+			self.d_demo['objects'][data['child_name']] = self.scene_data_object(data, self.on_mouse_left_button_down, self.on_mouse_left_button_up, self.on_mouse_over_window, self.on_mouse_over_out_window)
+			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data insert: %s' % self.d_demo['objects'][data['child_name']].__dict__)
 		else:
 			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data update: %s' % self.d_demo['objects'][data['child_name']].__dict__)
 			for key, value in data.items():
@@ -132,7 +166,7 @@ class n_scene_demo_re():
 
 	## Scene Data
 	def create_scene(self):
-		LogTxt(__name__, 'n_scene_demo_re.create_scene')
+		LogTxt(__name__, 'n_scene_demo_re.create_scene %s' % self.scene_name)
 		self.create_demo_objects()
 	# Get Scene Object Data
 	def get_scene_object_data(self, child_name):

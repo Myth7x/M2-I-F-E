@@ -149,6 +149,11 @@ class n_scene_demo_re():
 	# Set a single data
 	def add_scene_object_data(self, child_name, data):
 		if 'children' in self.d_scene_data:
-			self.d_scene_data['children'].append(data)
+			child = self.get_scene_object_data(child_name)
+			if child == None:
+				self.d_scene_data['children'].append(data)
+			else:
+				for key, value in data.items():
+					child[key] = value
 			self.prepare_demo_object(data)
 			return

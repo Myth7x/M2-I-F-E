@@ -42,6 +42,7 @@ class n_object_browser(ui.ScriptWindow):
 			selected_object = self.get_selected_object()
 			if selected_object:
 				self.parent.scene_browser.add_scene_object(selected_object[0], selected_object)
+				return
 
 	def find_object(self, objects, object_name):
 		for object in objects:

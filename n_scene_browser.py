@@ -43,6 +43,8 @@ class n_scene_browser(ui.ScriptWindow):
 		self.scene_obj_editor.ref_board.SetCloseEvent(self.on_close_object_editor)
 		self.scene_obj_editor.ref_board.Hide()
 
+		self.OnUpdate = self.update
+
 		self.scene_obj_editor_open = False
 
 		LogTxt(__name__, "Initialized!")
@@ -52,15 +54,18 @@ class n_scene_browser(ui.ScriptWindow):
 		self.scene_obj_editor.ref_board.Hide()
 		self.scene_obj_editor_open = False
 
-	def get_scene_data(self):
-		return self.scene
+	def toggle_scene_demo_refresh(self):
+		self.parent.forward_scene_demo_refresh()
 
 	def set_scene_name(self, name):
 		self.scene['name'] = name
+		self.toggle_scene_demo_refresh()
 
 	def set_parent(self, parent):
 		self.parent = parent
+		self.toggle_scene_demo_refresh()
 
+	# on scene object list double click open object attribute editor
 	def on_double_click_object_list(self):
 		selected_object = self.get_selected_children()
 		if selected_object != None and self.scene_obj_editor_open == False:
@@ -70,22 +75,20 @@ class n_scene_browser(ui.ScriptWindow):
 		else:
 			LogTxt(__name__, "Selected object is None!")
 
+	def find_available_name_recursive(self, name, children):
+		for child in children:
+			if child['child_name'] == name:
+				return self.find_available_name_recursive(name + "_", children)
+		return name
 
+	# add scene object by name with ui_gatherer data
 	def add_scene_object(self, name, data):
 		LogTxt(__name__, "================================================================================")
 		LogTxt(__name__, "Adding scene object... %s" % name)
-		new_name = name
-		for child in self.scene['children']:
-			if child['child_name'] == new_name:
-				LogTxt(__name__, "Object already exists!")
-				object_count = 0
-				for child2 in self.scene['children']:
-					if child2['class'] == child['class']:
-						object_count += 1
-				new_name = "%s_%d" % (new_name, object_count)
-				
+		
+		child_name = self.find_available_name_recursive(name, self.scene['children'])		
 		_child = {
-			'child_name': new_name,
+			'child_name': child_name,
 			'object_name': data[0],
 			'class': data[1],
 			'object': data[2],
@@ -96,10 +99,9 @@ class n_scene_browser(ui.ScriptWindow):
 		}
 
 		self.scene['children'].append(_child)
-		self.parent.add_scene_object_data(new_name, _child)
-		self.arrange_object_list()
+		self.parent.scene_demo.add_scene_object_data(child_name, _child)
 		LogTxt(__name__, "================================================================================")
-		return True
+		return
 
 	# Finds specific object in a list of objects, used for iterating through the ui tree(children)
 	def find_object(self, objects, object_name):
@@ -112,6 +114,7 @@ class n_scene_browser(ui.ScriptWindow):
 						return child
 		return None
 
+	# load ui from script
 	def load(self):
 		try:
 			self.object = self.script_loader.load_script(self, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_scene_browser.py")
@@ -120,6 +123,7 @@ class n_scene_browser(ui.ScriptWindow):
 			return False
 		return True
 
+	# get scene object data dictionary by name
 	def get_scene_object_data(self, object_name):
 		for child in self.scene['children']:
 			if child['child_name'] == object_name:
@@ -144,34 +148,27 @@ class n_scene_browser(ui.ScriptWindow):
 			return None
 
 		# Find dict in self.scene['children'] with the name of the selected object
-		for child in self.scene['children']:
-			if child['child_name'] == selected_object:
-				return child
+		return self.get_scene_object_data(selected_object)
 
-		return None
-
-	def update_title_info(self):
-		self.ref_titlebar_title.SetText("[ %s : %d children ]" % (self.scene['name'], self.ref_object_list.GetItemCount()))
-
+	# Update UI Extra
 	def update(self):
 		if self.init == True:
-			self.update_title_info()
+			self.ref_titlebar_title.SetText("[ %s : %d children ]" % (self.scene['name'], self.ref_object_list.GetItemCount()))
 
-			## do stuff here
 			if self.ref_object_list.GetItemCount() != len(self.scene['children']):
-				#self.arrange_object_list()
-				#LogTxt(__name__, "Refreshing scene demo...")
+				self.arrange_object_list()
 				pass
 			
 			#self.ref_object_list.Update()
 
+	# Render UI Extra
 	def render(self):
 		pass
 
+	# Refreshes the object list
 	def arrange_object_list(self):
 		self.ref_object_list.ClearItem()
 		for child in self.scene['children']:
-			LogTxt(__name__, "Adding child to list: %s" % child['child_name'])
 			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), child['child_name'])
 
 

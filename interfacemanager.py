@@ -113,10 +113,8 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.scene_browser.set_parent(self)
 		self.scene_browser.set_scene_name(self.current_scene)
 
-		self.refresh_scene_demo()
-
-	def refresh_scene_demo(self):
-		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.get_scene_data())
+	def forward_scene_demo_refresh(self):
+		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.scene)
 
 	def add_scene_object_data(self, object_name, object_data):
 		self.scene_demo.add_scene_object_data(object_name, object_data)
@@ -172,7 +170,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.refresh_scene_button.SetOverVisual("d:/ymir work/ui/public/large_button_02.sub")
 		self.refresh_scene_button.SetDownVisual("d:/ymir work/ui/public/large_button_03.sub")
 		self.refresh_scene_button.SetText("Refresh Scene")
-		self.refresh_scene_button.SetEvent(ui.__mem_func__(self.refresh_scene_demo))
+		self.refresh_scene_button.SetEvent(ui.__mem_func__(self.forward_scene_demo_refresh))
 		self.refresh_scene_button.Show()
 
 		LogTxt(__name__, "Initialized!")

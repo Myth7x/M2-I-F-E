@@ -33,7 +33,7 @@
 # wndMgr.wndMgrGetMousePosition()               <- get global mouse position
 # wndMgr.wndMgrGetMouseLocalPosition()          <- get mouse position relative to window
 
-import ui, wndMgr
+import ui, wndMgr, grp
 
 import globals
 from proto_utils import LogTxt
@@ -57,6 +57,23 @@ class n_scene_demo():
 	
 	scene_name 		= ''
 
+	# the instance of our mouse over bar
+	obj_mouse_over = None
+
+	# the instance of our scene info text
+	obj_scene_info = None
+
+	###########################################################
+	class scene_object_mouse_over(ui.Bar):
+		def __init__(self, target):
+			ui.Bar.__init__(self)
+			self.AddFlag('not_pick')
+			self.target = target
+			self.SetParent(target())
+			self.SetSize(*(target().GetWidth(), target().GetHeight()))
+			self.SetPosition(0, 0)
+			self.Show()
+
 	###########################################################
 	class scene_data_object():
 		# the instance of our object control window
@@ -71,6 +88,9 @@ class n_scene_demo():
 
 		def __del__(self):
 			self.destroy_object_instance()
+
+		def __call__(self):
+			return self.wnd
 
 		def create_object_instance(self, fn_mouse_left_button_down, fn_mouse_left_button_up, fn_mouse_over_window, fn_mouse_over_out_window):
 			#LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__)
@@ -120,10 +140,45 @@ class n_scene_demo():
 		LogTxt(__name__, "Initializing..")
 		self.scene_name = 'scene_demo_re'
 
-	def update(self):
-		#LogTxt(__name__, 'Current Mouse Target: %s, is pressed: %s' % (self.d_demo['mouse_over_target'], self.d_demo['mouse_left_button_down']))
-		pass
+		width = wndMgr.GetScreenWidth()
+		self.obj_scene_info = ui.TextLine()
+		self.obj_scene_info.SetFontName("Tahoma:16")
+		self.obj_scene_info.SetPosition(10, 10)
+		self.obj_scene_info.SetSize(width, 20)
+		self.obj_scene_info.Show()
 
+		self.obj_hotkey_info = ui.TextLine()
+		self.obj_hotkey_info.SetFontName("Tahoma:12")
+		self.obj_hotkey_info.SetPosition(10, 25)
+		self.obj_hotkey_info.SetSize(width, 20)
+		self.obj_hotkey_info.SetText(" > TIPS : <ALT> to show window outlines | <MOUSE+SHIFT> to resize object")
+		self.obj_hotkey_info.Show()
+
+	def update(self):
+		mouse_position = wndMgr.GetMousePosition()
+		scene_info_text = self.scene_name + (' | Mouse Position: %s' % str(mouse_position))
+
+		if self.d_demo['mouse_over_target']:
+			scene_info_text += ' | MOUSE_OVER: %s' % self.d_demo['mouse_over_target']().GetWindowName()
+			
+			if self.obj_mouse_over == None:
+				self.obj_mouse_over = self.scene_object_mouse_over(self.d_demo['mouse_over_target'])
+
+			if self.d_demo['mouse_left_button_down']:
+				scene_info_text += ' | MOUSE_DOWN'
+
+				self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_DOWN)
+			else:
+				self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_OVER)
+
+		else:
+			if self.obj_mouse_over:
+				self.obj_mouse_over.Hide()
+				self.obj_mouse_over.Destroy()
+				self.obj_mouse_over = None
+
+		self.obj_scene_info.SetText(scene_info_text)
+	
 	## Demo Data
 
 	# we set our mouse over target here, we dont do other in position checks in our update logic down below

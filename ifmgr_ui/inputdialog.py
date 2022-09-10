@@ -1,5 +1,5 @@
 from proto_utils import LogTxt
-import ui, grp
+import ui, wndMgr, ime, grp
 
 class InputDialog(ui.BoardWithTitleBar):
     def __init__(self):
@@ -9,6 +9,8 @@ class InputDialog(ui.BoardWithTitleBar):
         self.SetCenterPosition()
         self.SetTitleName("Input Dialog")
         self.SetCloseEvent(self.Close)
+
+        self.default_input = ""
 
         self.input_bg_big = ui.Bar()
         self.input_bg_big.SetParent(self)
@@ -37,6 +39,7 @@ class InputDialog(ui.BoardWithTitleBar):
         self.input.SetMax(16)
         self.input.Show()
         self.input.SetReturnEvent(self.on_press_return)
+        self.input.OnMouseLeftButtonDown = self.OnMouseLeftButtonDown
 
         self.button = ui.Button()
         self.button.SetParent(self)
@@ -50,6 +53,14 @@ class InputDialog(ui.BoardWithTitleBar):
         self.fn_callback = None
 
         self.Show()
+
+    def set_size(self, width, height):
+        self.SetSize(width, height)
+
+        self.button.SetPosition((self.GetWidth() / 2) - (self.button.GetWidth()/2), 60)
+        self.input.SetSize((self.GetWidth() / 2) - (self.button.GetWidth()/2), 18)
+        self.input_bg_big.SetSize(self.GetWidth() - 20, 18)
+        self.input_bg_value.SetSize((self.GetWidth() / 2) - 20, 18)
 
     def set_callback(self, func):
         self.fn_callback = func
@@ -67,6 +78,7 @@ class InputDialog(ui.BoardWithTitleBar):
         self.input_desc.SetText(text)
     
     def set_input(self, text):
+        self.default_input = text
         self.input.SetText(text)
     
     def get_input(self):
@@ -76,7 +88,6 @@ class InputDialog(ui.BoardWithTitleBar):
         self.SetTitleName(title)
 
     def Show(self):
-        self.input.SetFocus()
         self.SetCenterPosition()
         self.SetTop()
         ui.BoardWithTitleBar.Show(self)
@@ -84,8 +95,13 @@ class InputDialog(ui.BoardWithTitleBar):
     def Close(self):
         self.Hide()
         ui.BoardWithTitleBar.__del__(self)
-    
-    def OnUpdate(self):
-        if self.IsShow():
-            self.SetTop()
+
+    def OnMouseLeftButtonDown(self):
+        if self.input.GetText() == self.default_input:
+            self.input.SetText("")
+        else:
+            if self.input.GetText() == "" and self.IsFocus() != True:
+                self.input.SetText(self.default_input)
+
+        ui.EditLine.OnMouseLeftButtonDown(self.input)
         

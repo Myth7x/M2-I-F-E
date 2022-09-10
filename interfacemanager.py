@@ -14,12 +14,12 @@ import grp
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
 from proto_utils import LogTxt
-import ifmgr_ui, n_object_browser, n_scene_browser, n_scene_demo
+import ifmgr_ui, n_object_browser, n_scene_browser, n_scene_demo_re
 
 # Python Modules
 import constinfo
 # CPython Modules
-import ui, wndMgr
+import ui, wndMgr, app
 
 ###############################################################################
 
@@ -67,13 +67,16 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		constinfo.INTERFACE_MANAGER_INITIALIZED = True
 		self.Show()
 
-		# test
-		self.test_selectbox = ifmgr_ui.SelectBox()
-		self.test_selectbox.SetParent(self)
-		self.test_selectbox.SetPosition(140, 30)
-		self.test_selectbox.SetSize(200, 100)
-		self.test_selectbox.SetWidth(200)
-		self.test_selectbox.Show()
+		## test
+		#self.test_selectbox = ifmgr_ui.SelectBox()
+		#self.test_selectbox.SetParent(self)
+		#self.test_selectbox.SetPosition(140, 30)
+		#self.test_selectbox.SetSize(200, 100)
+		#self.test_selectbox.SetWidth(200)
+		#self.test_selectbox.Show()
+
+		return self
+
 
 
 	def __del__(self):
@@ -82,9 +85,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	# To Reset Focus on Inputs
 	def OnMouseLeftButtonDown(self):
 		self.SetFocus()
-
-	def refresh_scene_demo(self):
-		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.get_scene_data())
 
 	def on_demo_select_object(self, object_name):
 		object_list_index = 0
@@ -95,15 +95,14 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		self.scene_browser.ref_object_list.SelectItem(object_list_index)
 
-	def update_scene_data(self, data):
-		self.scene_browser.update_scene_data(data)
-		LogTxt(__name__, "Updated Scene Data")
-
 	def create_scene(self, name):
 		self.current_scene = name
 
-		self.scene_demo = n_scene_demo.n_scene_demo()
-		self.scene_demo.set_parent(self)
+		try:
+			self.scene_demo = n_scene_demo_re.n_scene_demo_re()
+		except Exception as e:
+			LogTxt(__name__, "Failed to load n_scene_demo_re %s" % e)
+			self.scene_demo = None
 
 		self.obj_browser = n_object_browser.n_object_browser()
 		self.obj_browser.object.SetWindowName("n_object_browser")
@@ -114,8 +113,13 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.scene_browser.set_parent(self)
 		self.scene_browser.set_scene_name(self.current_scene)
 
+		self.refresh_scene_demo()
+
 	def refresh_scene_demo(self):
 		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.get_scene_data())
+
+	def add_scene_object_data(self, object_name, object_data):
+		self.scene_demo.add_scene_object_data(object_name, object_data)
 
 	def request_create_scene(self):
 		self.input_dialog = ifmgr_ui.InputDialog()
@@ -174,13 +178,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		LogTxt(__name__, "Initialized!")
 		return True
 
-	# Add Object to current project by name
-	def OnAddObject(self):
-		self.scene_browser.add_scene_object(self.obj_browser.get_selected_object())
-
-	# Remove Object from current project by name
-	def OnRemoveObject(self):
-		pass
 
 	# Abusing this loop to update
 	def OnRender(self):
@@ -189,6 +186,10 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, self.obj_browser.ref_object_list.GetItemCount(), xMouse, yMouse))
 			if self.current_scene != None:
 				self.new_scene_button.Hide()
+		if app.IsPressed(app.DIK_LALT):
+			wndMgr.SetOutlineFlag(True)
+		else:
+			wndMgr.SetOutlineFlag(False)
 
 def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:

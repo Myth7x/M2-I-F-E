@@ -9,6 +9,8 @@ import ui, wndMgr
 
 import globals
 
+import n_scene_demo_re
+
 class n_scene_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
@@ -61,7 +63,6 @@ class n_scene_browser(ui.ScriptWindow):
 
 	def on_double_click_object_list(self):
 		selected_object = self.get_selected_children()
-		LogTxt(__name__, "Selected scene object: %s" % selected_object)
 		if selected_object != None and self.scene_obj_editor_open == False:
 			self.scene_obj_editor.set_scene_object(selected_object)
 			self.scene_obj_editor.ref_board.Show()
@@ -70,9 +71,10 @@ class n_scene_browser(ui.ScriptWindow):
 			LogTxt(__name__, "Selected object is None!")
 
 
-	def add_scene_object(self, data):
-		LogTxt(__name__, "Adding object to scene...")
-		new_name = data[0]
+	def add_scene_object(self, name, data):
+		LogTxt(__name__, "================================================================================")
+		LogTxt(__name__, "Adding scene object... %s" % name)
+		new_name = name
 		for child in self.scene['children']:
 			if child['child_name'] == new_name:
 				LogTxt(__name__, "Object already exists!")
@@ -91,22 +93,13 @@ class n_scene_browser(ui.ScriptWindow):
 			'y': 10,
 			'width': 100,
 			'height': 100,
-			'event': {
-				'__init__': [],
-				'__del__': [],
-				'OnUpdate': [],
-				'OnRender': [],
-			}
 		}
+
 		self.scene['children'].append(_child)
-		LogTxt(__name__, "Adding object to scene: %s" % _child['child_name'])
-
-	def update_scene_data(self, data):
-		self.scene = data
+		self.parent.add_scene_object_data(new_name, _child)
 		self.arrange_object_list()
-		self.parent.refresh_scene_demo()
-		LogTxt(__name__, "Refreshing scene demo...")
-
+		LogTxt(__name__, "================================================================================")
+		return True
 
 	# Finds specific object in a list of objects, used for iterating through the ui tree(children)
 	def find_object(self, objects, object_name):
@@ -126,6 +119,12 @@ class n_scene_browser(ui.ScriptWindow):
 			LogTxt(__name__, "Failed to load script!")
 			return False
 		return True
+
+	def get_scene_object_data(self, object_name):
+		for child in self.scene['children']:
+			if child['child_name'] == object_name:
+				return child
+		return None
 
 	# return ui data dictionary
 	def get_selected_object(self):
@@ -160,11 +159,11 @@ class n_scene_browser(ui.ScriptWindow):
 
 			## do stuff here
 			if self.ref_object_list.GetItemCount() != len(self.scene['children']):
-				self.arrange_object_list()
-				self.parent.refresh_scene_demo()
-				LogTxt(__name__, "Refreshing scene demo...")
-		
-			self.ref_object_list.OnUpdate()
+				#self.arrange_object_list()
+				#LogTxt(__name__, "Refreshing scene demo...")
+				pass
+			
+			#self.ref_object_list.Update()
 
 	def render(self):
 		pass
@@ -172,6 +171,7 @@ class n_scene_browser(ui.ScriptWindow):
 	def arrange_object_list(self):
 		self.ref_object_list.ClearItem()
 		for child in self.scene['children']:
+			LogTxt(__name__, "Adding child to list: %s" % child['child_name'])
 			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), child['child_name'])
 
 

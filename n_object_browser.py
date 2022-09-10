@@ -38,9 +38,10 @@ class n_object_browser(ui.ScriptWindow):
 
 	def on_double_click_object_list(self):
 		if self.ref_object_list.IsIn():
+			LogTxt(__name__, "Double clicked object list! To")
 			selected_object = self.get_selected_object()
 			if selected_object:
-				self.parent.OnAddObject()
+				self.parent.scene_browser.add_scene_object(selected_object[0], selected_object)
 
 	def find_object(self, objects, object_name):
 		for object in objects:

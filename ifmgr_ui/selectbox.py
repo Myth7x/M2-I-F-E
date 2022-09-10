@@ -16,6 +16,8 @@ class SelectBox(ui.Window):
 	def __init__(self, layer = "UI"):
 		ui.Window.__init__(self, layer)
 
+		self.itemList = []
+
 		self.overLine = -1
 		self.stepSize = 20
 		self.width = 100

@@ -10,7 +10,7 @@ import globals
 class n_attribute_editor(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
-		LogTxt(__name__, "Initializing...")
+		#LogTxt(__name__, "Initializing...")
 
 		self.object 			= None
 		self.parent 			= None
@@ -23,7 +23,7 @@ class n_attribute_editor(ui.ScriptWindow):
 
 		self.ref_category_attribute_configuration = self.object.Children[0].Children[1]
 		self.ref_board = self.object.Children[0]
-		LogTxt(__name__, "Initialized! ref board %s" % self.ref_board)
+		#LogTxt(__name__, "Initialized! ref board %s" % self.ref_board)
 
 
 		self.bg_attr_editor = ui.Bar()
@@ -55,11 +55,11 @@ class n_attribute_editor(ui.ScriptWindow):
 		self.cb_on_event_val.InsertItem(2, 'OnUpdate')
 		self.cb_on_event_val.InsertItem(3, 'OnRender')
 
-		LogTxt(__name__, "Initialized!")
+		#LogTxt(__name__, "Initialized!")
 
 	def on_select_attr_val(self, selected_attr):
 		if selected_attr > 0:
-			LogTxt(__name__, "Selected attribute: %s" % self.cb_on_event_val.listBox.textDict[selected_attr-1])
+			#LogTxt(__name__, "Selected attribute: %s" % self.cb_on_event_val.listBox.textDict[selected_attr-1])
 
 			self.attr_editbox.SetText(self.scene_object["child_object"].__dict__[self.cb_on_event_val.listBox.textDict[selected_attr-1]])
 	def set_parent(self, parent):
@@ -80,7 +80,7 @@ class n_attribute_editor(ui.ScriptWindow):
 		try:
 			self.object = self.script_loader.load_script(self, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_attribute_editor.py")
 		except:
-			LogTxt(__name__, "Failed to load script!")
+			#LogTxt(__name__, "Failed to load script!")
 			return False
 		return True
 

@@ -5,7 +5,7 @@ NAME = "Interface Manager"
 VERSION = '0.5-Rev.Pepp'
 UI_CLASS_EXPORT = {
 	'enabled' 	: False,
-	'path' 		: 'C:\\Proto_InterfaceManager\\%s_ui_classes.csv',
+	'path' 		: 'C:\\InterfaceManager\\%s_ui_classes.csv',
 }
 ###############################################################################
 import datetime

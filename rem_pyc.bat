@@ -1,1 +1,1 @@
-del /s /q /f C:\Proto_InterfaceManager\*.pyc
+del /s /q /f C:\InterfaceManager\*.pyc

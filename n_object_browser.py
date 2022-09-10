@@ -55,7 +55,7 @@ class n_object_browser(ui.ScriptWindow):
 
 	def load(self):
 		try:
-			self.object = self.script_loader.load_script(self, "C:\\Proto_InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_object_browser.py")
+			self.object = self.script_loader.load_script(self, "C:\\InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_object_browser.py")
 		except:
 			LogTxt(__name__, "Failed to load script!")
 			return False

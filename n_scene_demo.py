@@ -151,7 +151,7 @@ class n_scene_demo():
 		self.obj_hotkey_info.SetFontName("Tahoma:12")
 		self.obj_hotkey_info.SetPosition(10, 25)
 		self.obj_hotkey_info.SetSize(width, 20)
-		self.obj_hotkey_info.SetText(" > TIPS : <ALT> to show window outlines | <MOUSE+SHIFT> to resize object")
+		self.obj_hotkey_info.SetText(" > TIPS : hold <ALT> to show window outlines | hold <MOUSE+SHIFT> to resize object")
 		self.obj_hotkey_info.Show()
 
 	def update(self):

@@ -60,6 +60,9 @@ class n_scene_demo():
 	# the instance of our mouse over bar
 	obj_mouse_over = None
 
+	# the instance of our window drag bar
+	obj_window_drag = None
+
 	# the instance of our scene info text
 	obj_scene_info = None
 
@@ -167,6 +170,34 @@ class n_scene_demo():
 			if self.d_demo['mouse_left_button_down']:
 				scene_info_text += ' | MOUSE_DOWN'
 
+				# lets look at wndMgr if we can get the next top window below our mouse and our dragged window
+				need_indicate = False
+				for obj in self.d_demo['objects']:
+					if self.d_demo['objects'][obj] != self.d_demo['mouse_over_target']:
+						obj_position = self.d_demo['objects'][obj]().GetGlobalPosition()
+						horizontal = mouse_position[0] > obj_position[0] and mouse_position[0] < obj_position[0] + self.d_demo['objects'][obj]().GetWidth()
+						vertical = mouse_position[1] > obj_position[1] and mouse_position[1] < obj_position[1] + self.d_demo['objects'][obj]().GetHeight()
+
+						if horizontal and vertical:
+							scene_info_text += ' | INTERSECT_WITH: %s' % self.d_demo['objects'][obj]().GetWindowName()
+
+							if self.obj_window_drag == None:
+								self.obj_window_drag = self.scene_object_mouse_over(self.d_demo['objects'][obj])
+								self.obj_window_drag.SetParent(self.d_demo['objects'][obj]())
+								self.obj_window_drag.SetPosition(0, 0)
+								self.obj_window_drag.SetSize(self.d_demo['objects'][obj]().GetWidth(), self.d_demo['objects'][obj]().GetHeight())
+								self.obj_window_drag.Show()
+							
+							need_indicate = True
+							self.obj_window_drag.SetColor(globals.CLR_SCENE_OBJECT_DRAG)
+							break
+
+				if need_indicate == False:
+					if self.obj_window_drag:
+						self.obj_window_drag.Hide()
+						self.obj_window_drag.Destroy()
+						self.obj_window_drag = None
+
 				self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_DOWN)
 			else:
 				self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_OVER)
@@ -176,6 +207,11 @@ class n_scene_demo():
 				self.obj_mouse_over.Hide()
 				self.obj_mouse_over.Destroy()
 				self.obj_mouse_over = None
+			
+			if self.obj_window_drag:
+				self.obj_window_drag.Hide()
+				self.obj_window_drag.Destroy()
+				self.obj_window_drag = None
 
 		self.obj_scene_info.SetText(scene_info_text)
 	

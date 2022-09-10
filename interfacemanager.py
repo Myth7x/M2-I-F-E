@@ -184,10 +184,14 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, self.obj_browser.ref_object_list.GetItemCount(), xMouse, yMouse))
 			if self.current_scene != None:
 				self.new_scene_button.Hide()
+		
 		if app.IsPressed(app.DIK_LALT):
 			wndMgr.SetOutlineFlag(True)
 		else:
 			wndMgr.SetOutlineFlag(False)
+		
+		if self.scene_demo:
+			self.scene_demo.update()
 
 def setup_ifmgr(parent):
 	if constinfo.INTERFACE_MANAGER_INITIALIZED == True:

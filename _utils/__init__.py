@@ -25,3 +25,5 @@ def rect_intersect_area_factor(r1, r2):
 
 
 import pythonscriptloader as pythonscriptloader
+
+import ui_class_gathering as ui_class_gathering

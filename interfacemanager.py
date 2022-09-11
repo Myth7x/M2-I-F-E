@@ -11,8 +11,7 @@ UI_CLASS_EXPORT = {
 import datetime, sys, os
 
 # Interface Manager Modules
-from ui_class_gathering import UI_Classes
-from _utils import LogTxt
+from _utils import LogTxt, ui_class_gathering
 import ifmgr_ui, globals, object_browser, scene_browser, scene_demo
 
 # Python Modules
@@ -40,7 +39,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.WINDOW_SIZE = [width, height]
 
 		LogTxt(__name__, "Looking for UI Modules..")
-		self.ui = UI_Classes()
+		self.ui = ui_class_gathering.UI_Classes()
 		globals.UI_CLASS_DATA = self.ui.load_ui_data()
 		LogTxt(__name__, "Found %d possible UI Modules!" % len(globals.UI_CLASS_DATA))
 

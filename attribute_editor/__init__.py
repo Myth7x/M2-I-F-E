@@ -1,4 +1,4 @@
-from pythonscriptloader import PythonScriptLoader
+from _utils.pythonscriptloader import PythonScriptLoader
 from _utils import LogTxt
 
 import ui
@@ -7,7 +7,7 @@ import ifmgr_ui
 
 import globals
 
-class n_attribute_editor(ui.ScriptWindow):
+class attribute_editor(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		#LogTxt(__name__, "Initializing...")

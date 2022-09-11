@@ -11,7 +11,7 @@ WIDTH = 240
 HEIGHT = 430
 
 object = {
-    "name" : "n_scene_browser",
+    "name" : "scene_browser",
 
     "style" : ("movable", "float",),
 

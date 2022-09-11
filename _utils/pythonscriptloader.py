@@ -6,8 +6,8 @@ import ui
 # Our Modules
 from _utils import LogTxt
 
-from .ifmgr_ui.board import Board_Custom
-from .ifmgr_ui.listboxscroll import ListBoxScroll
+from ..ifmgr_ui.board import Board_Custom
+from ..ifmgr_ui.listboxscroll import ListBoxScroll
 
 # Extend the ui.PythonScriptLoader class to add our own custom shit
 class PythonScriptLoader(ui.PythonScriptLoader):

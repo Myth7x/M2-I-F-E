@@ -1,15 +1,15 @@
 # Second Window with our own scriptloader, but i realized, we gonna use the original ones for functionality
 from distutils.log import Log
-from pythonscriptloader import PythonScriptLoader
+from _utils.pythonscriptloader import PythonScriptLoader
 from _utils import LogTxt
 
-import n_attribute_editor
+import attribute_editor
 
 import ui, wndMgr
 
 import globals
 
-class n_scene_browser(ui.ScriptWindow):
+class scene_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		LogTxt(__name__, "Initializing...")
@@ -36,7 +36,7 @@ class n_scene_browser(ui.ScriptWindow):
 		self.ref_object_list.OnMouseWheel = self.ref_object_list.scrollBar.OnMouseWheel
 		self.ref_object_list.OnMouseLeftButtonDoubleClick = self.on_double_click_object_list
 
-		self.scene_obj_editor = n_attribute_editor.n_attribute_editor()
+		self.scene_obj_editor = attribute_editor.attribute_editor()
 		self.scene_obj_editor.set_parent(self)
 		self.scene_obj_editor.ref_board.SetCloseEvent(self.on_close_object_editor)
 		self.scene_obj_editor.ref_board.Hide()

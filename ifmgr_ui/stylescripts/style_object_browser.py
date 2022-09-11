@@ -11,7 +11,7 @@ WIDTH = 240
 HEIGHT = 430
 
 object = {
-    "name" : "n_object_browser",
+    "name" : "object_browser",
 
     "style" : ("movable", "float",),
 

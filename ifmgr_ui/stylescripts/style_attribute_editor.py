@@ -17,7 +17,7 @@ CATEGORY_CONFIG_WIDTH = WIDTH/2 - 16
 CATEGORY_CONFIG_HEIGHT = HEIGHT - 34
 
 object = {
-    "name" : "n_attribute_editor",
+    "name" : "attribute_editor",
 
     "style" : ("movable", "float",),
 

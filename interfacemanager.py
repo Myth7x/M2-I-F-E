@@ -16,7 +16,7 @@ import sys
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
 from _utils import LogTxt
-import ifmgr_ui, n_object_browser, n_scene_browser, scene_demo
+import ifmgr_ui, object_browser, scene_browser, scene_demo
 
 # Python Modules
 import constinfo
@@ -161,12 +161,12 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		self.scene_demo = scene_demo.scene_demo()
 
-		self.obj_browser = n_object_browser.n_object_browser()
-		self.obj_browser.object.SetWindowName("n_object_browser")
+		self.obj_browser = object_browser.object_browser()
+		self.obj_browser.object.SetWindowName("object_browser")
 		self.obj_browser.set_parent(self)
 		
-		self.scene_browser = n_scene_browser.n_scene_browser()
-		self.scene_browser.object.SetWindowName("n_scene_browser")
+		self.scene_browser = scene_browser.scene_browser()
+		self.scene_browser.object.SetWindowName("scene_browser")
 		self.scene_browser.set_parent(self)
 		self.scene_browser.set_scene_name(self.current_scene)
 	###############################################################################

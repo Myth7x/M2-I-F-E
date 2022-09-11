@@ -1,5 +1,5 @@
 # This is my first test of utilizing our script loader.
-from pythonscriptloader import PythonScriptLoader
+from _utils.pythonscriptloader import PythonScriptLoader
 from _utils import LogTxt
 
 import ui
@@ -8,7 +8,7 @@ import globals
 
 # If we want to create a new window, we need to create a new class.
 # It always needs to inherit from ui.ScriptWindow.
-class n_object_browser(ui.ScriptWindow):
+class object_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		LogTxt(__name__, "Initializing...")

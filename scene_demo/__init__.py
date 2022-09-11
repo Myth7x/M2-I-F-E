@@ -36,7 +36,7 @@
 import ui, wndMgr, grp
 
 import globals
-from _utils import LogTxt
+from _utils import LogTxt, rect_collision
 
 ## Side Infos
 
@@ -56,7 +56,6 @@ class scene_demo():
 		'mouse_over_target' 		: None,
 		'mouse_left_down_target' 		: None,
 		'window_drag_target' 		: None,
-		'last_mouse_over_wnd' 	: None,
 	}
 	
 	scene_name 		= ''
@@ -221,9 +220,6 @@ class scene_demo():
 		self.obj_mouse_controller = mouse_controller()
 		#LogTxt(__name__, "TestMouseController: %s" % self.obj_mouse_controller.current_mouse_position)
 
-	# rectangle collision detection
-	def rect_collision(self, r1, r2):
-		return (r1[0] < r2[0] + r2[2] and r1[0] + r1[2] > r2[0] and r1[1] < r2[1] + r2[3] and r1[1] + r1[3] > r2[1])
 	###########################################################
 
 	###########################################################
@@ -231,14 +227,14 @@ class scene_demo():
 	###########################################################
 	def create_mouse_over_indicator(self, obj):
 		if self.obj_mouse_over == None:
-			self.obj_mouse_over = self.scene_object_mouse_over(self.d_demo['mouse_over_target'])
+			self.obj_mouse_over = self.scene_object_mouse_over(self.obj_mouse_controller.mouse_over_window_target)
 	def destroy_mouse_over_indicator(self):
 		if self.obj_mouse_over:
 			self.obj_mouse_over.Destroy()
 			self.obj_mouse_over = None
 	def create_window_drag_indicator(self, obj):
 		if self.obj_window_drag == None:
-			self.obj_window_drag = self.scene_object_mouse_over(self.d_demo['window_drag_target'])
+			self.obj_window_drag = self.scene_object_mouse_over(self.obj_mouse_controller.drag_window_target)
 	def destroy_window_drag_indicator(self):
 		if self.obj_window_drag:
 			self.obj_window_drag.Destroy()
@@ -247,14 +243,14 @@ class scene_demo():
 	###########################################################
 	# Control Methods
 	def update_controls(self, scene_info_text):
-		if self.d_demo['mouse_over_target'] and self.d_demo['mouse_left_down_target'] == None:
-			#LogTxt(__name__, 'update_controls:: mouse_over_target: %s' % self.d_demo['mouse_over_target'])
+		if self.obj_mouse_controller.mouse_over_window_target and self.obj_mouse_controller.mouse_left_down_target == None:
+			#LogTxt(__name__, 'update_controls:: mouse_over_target: %s' % self.obj_mouse_controller.mouse_over_window_target)
 			
 			self.destroy_window_drag_indicator()
 			scene_info_text = self.control_move(scene_info_text)
 
-		elif self.d_demo['mouse_left_down_target'] and self.d_demo['mouse_over_target'] != None:
-			#LogTxt(__name__, 'update_controls:: mouse_left_down_target: %s' % self.d_demo['mouse_left_down_target'])
+		elif self.obj_mouse_controller.mouse_left_down_target and self.obj_mouse_controller.mouse_over_window_target != None:
+			#LogTxt(__name__, 'update_controls:: mouse_left_down_target: %s' % self.obj_mouse_controller.mouse_left_down_target)
 			
 			scene_info_text = self.control_move(scene_info_text)
 			scene_info_text = self.control_drag(scene_info_text)
@@ -271,15 +267,15 @@ class scene_demo():
 		#LogTxt(__name__, 'control_drag:: %s' % self.__dict__)
 		# lets look at wndMgr if we can get the next top window below our mouse and our dragged window
 		self.destroy_window_drag_indicator()
-		if self.d_demo['mouse_over_target']:
-			wnd_mouse_over = self.d_demo['mouse_over_target']('wnd')
+		if self.obj_mouse_controller.mouse_over_window_target:
+			wnd_mouse_over = self.obj_mouse_controller.mouse_over_window_target('wnd')
 			any = False
 			for obj in self.d_demo['objects']:
 				iterator_wnd = self.d_demo['objects'][obj]('wnd')
 
 				iterator_scene_data = self.get_scene_object_data(obj)
-				#if iterator_scene_data['child_name'] == self.d_demo['mouse_left_down_target']('child_name') or \
-				#	'parent' in iterator_scene_data and iterator_scene_data['parent'] == self.d_demo['mouse_left_down_target']:
+				#if iterator_scene_data['child_name'] == self.obj_mouse_controller.mouse_left_down_target('child_name') or \
+				#	'parent' in iterator_scene_data and iterator_scene_data['parent'] == self.obj_mouse_controller.mouse_left_down_target:
 				#	continue
 
 				mouse_over_target_position = wnd_mouse_over.GetGlobalPosition()
@@ -291,8 +287,8 @@ class scene_demo():
 					obj_rect = (obj_position[0], obj_position[1], iterator_wnd.GetWidth(), iterator_wnd.GetHeight())
 
 					# check if current_recht is colliding with obj_rect
-					if self.rect_collision(mouse_over_target_rect, obj_rect):
-						self.d_demo['window_drag_target'] = self.d_demo['objects'][obj]
+					if rect_collision(mouse_over_target_rect, obj_rect):
+						self.obj_mouse_controller.drag_window_target = self.d_demo['objects'][obj]
 
 						self.create_window_drag_indicator(iterator_wnd)
 						scene_info_text += ' | WINDOW DRAG TARGET: %s' % iterator_wnd.GetWindowName()
@@ -304,38 +300,38 @@ class scene_demo():
 	def control_move(self, scene_info_text):
 		#LogTxt(__name__, 'control_move:: %s' % self.__dict__)
 
-		mouse_position = wndMgr.GetMousePosition()
+		mouse_position = self.obj_mouse_controller.current_mouse_position
 		scene_info_text = self.scene_name + (' | Mouse Position: %s' % str(mouse_position))
 		self.destroy_mouse_over_indicator()
-		if self.d_demo['mouse_over_target']:
-			wnd_mouse_over = self.d_demo['mouse_over_target']('wnd')
+		if self.obj_mouse_controller.mouse_over_window_target:
+			wnd_mouse_over = self.obj_mouse_controller.mouse_over_window_target('wnd')
 
 			mouse_over_target_position = wnd_mouse_over.GetGlobalPosition()
 			mouse_over_target_rect = (mouse_over_target_position[0], mouse_over_target_position[1], wnd_mouse_over.GetWidth(), wnd_mouse_over.GetHeight())
 
 			# check if mouse is over our scene object
-			if self.rect_collision((mouse_position[0], mouse_position[1], 1, 1), mouse_over_target_rect):
+			if rect_collision((mouse_position[0], mouse_position[1], 1, 1), mouse_over_target_rect):
 			
 				scene_info_text += ' | MOUSE_OVER: %s' % wnd_mouse_over.GetWindowName()
 				
-				self.create_mouse_over_indicator(self.d_demo['mouse_over_target'])
+				self.create_mouse_over_indicator(self.obj_mouse_controller.mouse_over_window_target)
 
 				self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_OVER)
 				self.obj_mouse_over.SetParent(wnd_mouse_over)
 				self.obj_mouse_over.SetPosition(0, 0)
 				
-				if self.d_demo['mouse_left_down_target']:
+				if self.obj_mouse_controller.mouse_left_down_target:
 					scene_info_text += ' | MOUSE_DOWN'
 					self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_DOWN)
 
 				else:
 					self.obj_mouse_over.SetColor(globals.CLR_SCENE_OBJECT_MOUSE_OVER)
 					
-					if self.d_demo['window_drag_target']:
-						wnd_mouse_over = self.d_demo['mouse_over_target']('wnd')
-						wnd_drag_target = self.d_demo['window_drag_target']('wnd')
+					if self.obj_mouse_controller.drag_window_target:
+						wnd_mouse_over = self.obj_mouse_controller.mouse_over_window_target('wnd')
+						wnd_drag_target = self.obj_mouse_controller.drag_window_target('wnd')
 
-						#self.d_demo['window_drag_target'] = None
+						#self.obj_mouse_controller.drag_window_target = None
 
 						#LogTxt(__name__, 'window_drag_target: %s' % wnd_drag_target.GetWindowName())
 
@@ -366,13 +362,13 @@ class scene_demo():
 
 					self.destroy_window_drag_indicator()
 			else:
-				self.d_demo['window_drag_target'] = None
+				self.obj_mouse_controller.drag_window_target = None
 
 				self.destroy_mouse_over_indicator()
 				self.destroy_window_drag_indicator()
 
 		else:
-			self.d_demo['window_drag_target'] = None
+			self.obj_mouse_controller.drag_window_target = None
 
 			self.destroy_mouse_over_indicator()
 			self.destroy_window_drag_indicator()
@@ -400,6 +396,9 @@ class scene_demo():
 	def update(self):
 		scene_info_text = self.scene_name
 
+		if self.obj_mouse_controller:
+			self.obj_mouse_controller.current_mouse_position = wndMgr.GetMousePosition()
+
 		if 'object' in self.__dict__ and len(self.d_demo['objects']) <= 0:
 			return
 		
@@ -410,20 +409,6 @@ class scene_demo():
 	##########################################################################################
 	## Demo Data
 
-	# we set our mouse over target here, we dont do other in position checks in our update logic down below
-	def on_mouse_over_window(self, scene_data_object):
-		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_over_window:: <%s>' % scene_data_object)
-		self.d_demo['mouse_over_target'] = scene_data_object
-	def on_mouse_over_out_window(self, scene_data_object):
-		#LogTxt(__name__, 'n_scene_demo_re.on_move_out:: <%s>' % scene_data_object)
-		self.d_demo['mouse_over_target'] = None
-	def on_mouse_left_button_down(self, scene_data_object):
-		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_left_button_down')
-		self.d_demo['mouse_left_down_target'] = scene_data_object
-	def on_mouse_left_button_up(self):
-		#LogTxt(__name__, 'n_scene_demo_re.on_mouse_left_button_up')
-		self.d_demo['mouse_left_down_target'] = None
-	####
 
 	def prepare_demo_object(self, data):
 		#LogTxt(__name__, "Start Dict: %s" % self.d_demo['objects'])
@@ -432,7 +417,7 @@ class scene_demo():
 		obj = self.get_demo_object_data(data['child_name'])
 		if obj == None:
 			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data creation of object: %s' % data['child_name'])
-			self.d_demo['objects'][data['child_name']] = self.scene_data_object(data, self.on_mouse_left_button_down, self.on_mouse_left_button_up, self.on_mouse_over_window, self.on_mouse_over_out_window, self.control_scene_object_move, self.get_demo_object_data)
+			self.d_demo['objects'][data['child_name']] = self.scene_data_object(data, self.obj_mouse_controller.on_mouse_left_button_down, self.obj_mouse_controller.on_mouse_left_button_up, self.obj_mouse_controller.on_mouse_over_window, self.obj_mouse_controller.on_mouse_over_out_window, self.control_scene_object_move, self.get_demo_object_data)
 		else:
 			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data update of object: %s' % data['child_name'])
 			#update self.d_demo['objects'][data['child_name']].__dict__
@@ -457,9 +442,9 @@ class scene_demo():
 	def create_scene(self):
 		#LogTxt(__name__, 'n_scene_demo_re.create_scene %s' % self.scene_name)
 		#self.destroy_demo_objects()
-		#self.d_demo['mouse_over_target'] = None
-		#self.d_demo['mouse_left_down_target'] = None
-		#self.d_demo['window_drag_target'] = None
+		#self.obj_mouse_controller.mouse_over_window_target = None
+		#self.obj_mouse_controller.mouse_left_down_target = None
+		#self.obj_mouse_controller.drag_window_target = None
 		self.create_demo_objects()
 	# Get Scene Object Data
 	def get_scene_object_data(self, child_name):

@@ -448,7 +448,7 @@ class n_scene_demo():
 
 	## Scene Data
 	def create_scene(self):
-		LogTxt(__name__, 'n_scene_demo_re.create_scene %s' % self.scene_name)
+		#LogTxt(__name__, 'n_scene_demo_re.create_scene %s' % self.scene_name)
 		#self.destroy_demo_objects()
 		#self.d_demo['mouse_over_target'] = None
 		#self.d_demo['mouse_left_down_target'] = None
@@ -461,7 +461,7 @@ class n_scene_demo():
 				return l
 	# Update single scene object by name and key name
 	def update_scene_object_data(self, child_name, key, value):
-		LogTxt(__name__, 'n_scene_demo_re.update_scene_object_data:: child_name: %s, key: %s, value: %s' % (child_name, key, value))
+		#LogTxt(__name__, 'n_scene_demo_re.update_scene_object_data:: child_name: %s, key: %s, value: %s' % (child_name, key, value))
 		for scene_obj in self.d_scene_data['children']:
 			if scene_obj['child_name'] == child_name:
 				if value == '__del_object__':

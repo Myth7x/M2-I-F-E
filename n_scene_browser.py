@@ -1,7 +1,7 @@
 # Second Window with our own scriptloader, but i realized, we gonna use the original ones for functionality
 from distutils.log import Log
 from pythonscriptloader import PythonScriptLoader
-from proto_utils import LogTxt
+from _utils import LogTxt
 
 import n_attribute_editor
 

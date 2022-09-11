@@ -1,9 +1,9 @@
 from app import IsPressed, DIK_LSHIFT
-from proto_utils import LogTxt
+from _utils import LogTxt
 from wndMgr import GetMousePosition, GetScreenHeight, GetScreenWidth
 import ui
 
-#from ..proto_utils import LogTxt
+#from ..utils import LogTxt
 
 import globals
 

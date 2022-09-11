@@ -1,6 +1,6 @@
 # This is my first test of utilizing our script loader.
 from pythonscriptloader import PythonScriptLoader
-from proto_utils import LogTxt
+from _utils import LogTxt
 
 import ui
 

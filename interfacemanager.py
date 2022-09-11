@@ -15,8 +15,8 @@ import sys
 
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
-from proto_utils import LogTxt
-import ifmgr_ui, n_object_browser, n_scene_browser, n_scene_demo
+from _utils import LogTxt
+import ifmgr_ui, n_object_browser, n_scene_browser, scene_demo
 
 # Python Modules
 import constinfo
@@ -29,6 +29,9 @@ import globals
 
 import ifmgr_ui
 
+
+import input_controller
+
 # Main Interface Manager Class
 class InterfaceManager(ui.BoardWithTitleBar):
 	current_scene 	= None
@@ -36,6 +39,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	obj_browser 	= None
 	scene_browser 	= None
 	scene_demo 	= None
+
 	def __init__(self, width, height):
 		LogTxt(__name__, "Initializing..")
 
@@ -54,7 +58,8 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		if self.build_window() != True:
 			LogTxt(__name__, "Failed to build window!")
 			return False
-		
+
+
 		constinfo.INTERFACE_MANAGER_INITIALIZED = True
 		self.Show()
 
@@ -154,7 +159,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def create_scene(self, name):
 		self.current_scene = name if not globals.INFO_INPUT_SCENE_NAME in name else 'New Scene'
 
-		self.scene_demo = n_scene_demo.n_scene_demo()
+		self.scene_demo = scene_demo.scene_demo()
 
 		self.obj_browser = n_object_browser.n_object_browser()
 		self.obj_browser.object.SetWindowName("n_object_browser")

@@ -1,5 +1,5 @@
 import inspect
-from proto_utils import LogTxt
+from _utils import LogTxt
 
 # M2 CPython Modules
 import ui

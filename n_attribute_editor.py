@@ -1,5 +1,5 @@
 from pythonscriptloader import PythonScriptLoader
-from proto_utils import LogTxt
+from _utils import LogTxt
 
 import ui
 

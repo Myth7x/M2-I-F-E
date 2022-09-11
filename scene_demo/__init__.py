@@ -36,7 +36,7 @@
 import ui, wndMgr, grp
 
 import globals
-from proto_utils import LogTxt
+from _utils import LogTxt
 
 ## Side Infos
 
@@ -44,7 +44,9 @@ from proto_utils import LogTxt
 #	- we dont set parent on wndMgr!, we only use parent for its position
 #	- we set parent name on our scene data object
 
-class n_scene_demo():
+from mouse_controller import mouse_controller
+
+class scene_demo():
 	# holds or scene data
 	d_scene_data 	= {}
 
@@ -67,6 +69,8 @@ class n_scene_demo():
 
 	# the instance of our scene info text
 	obj_scene_info = None
+
+	obj_mouse_controller = None
 
 	###########################################################
 	class scene_object_mouse_over(ui.Bar):
@@ -157,7 +161,7 @@ class n_scene_demo():
 
 		# create our object instance
 		def create_object_instance(self):
-			LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__)
+			LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__['child_name'])
 			try:
 				self.wnd = ui.Window()
 
@@ -213,6 +217,9 @@ class n_scene_demo():
 		self.obj_hotkey_info.SetSize(width, 20)
 		self.obj_hotkey_info.SetText(" > TIPS : hold <ALT> to show window outlines | hold <MOUSE+SHIFT> to resize object")
 		self.obj_hotkey_info.Show()
+
+		self.obj_mouse_controller = mouse_controller()
+		#LogTxt(__name__, "TestMouseController: %s" % self.obj_mouse_controller.current_mouse_position)
 
 	# rectangle collision detection
 	def rect_collision(self, r1, r2):

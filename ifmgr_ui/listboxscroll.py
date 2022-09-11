@@ -1,6 +1,6 @@
 import ui
 
-import listbox
+import ifmgr_ui.listbox as listbox
 
 # credits to ymir, event extention by myth
 class ListBoxScroll(listbox.ListBox):

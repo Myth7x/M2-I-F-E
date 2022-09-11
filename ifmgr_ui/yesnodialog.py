@@ -1,4 +1,4 @@
-from proto_utils import LogTxt
+from _utils import LogTxt
 import ui, grp
 
 class YesNoDialog(ui.BoardWithTitleBar):

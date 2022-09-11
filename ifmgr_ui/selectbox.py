@@ -2,7 +2,7 @@ import ui, wndMgr, grp
 
 import globals
 
-from proto_utils import LogTxt
+from _utils import LogTxt
 
 BACKGROUND_COLOR 	= grp.GenerateColor(0.0, 0.0, 0.0, 1.0)
 DARK_COLOR 			= grp.GenerateColor(0.2, 0.2, 0.2, 1.0)

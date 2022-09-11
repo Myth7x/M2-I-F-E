@@ -1,4 +1,4 @@
-from proto_utils import LogTxt
+from _utils import LogTxt
 import ui, wndMgr, ime, grp
 
 class InputDialog(ui.BoardWithTitleBar):

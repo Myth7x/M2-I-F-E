@@ -23,7 +23,7 @@ class mouse_controller():
 
 	############################################
 	def on_mouse_over_window(self, scene_data_object):
-		LogTxt('mouse_controller', 'on_mouse_over_window() - < object:%s >' % scene_data_object.__dict__['child_name'])
+		#LogTxt('mouse_controller', 'on_mouse_over_window() - < object:%s >' % scene_data_object.__dict__['child_name'])
 		if scene_data_object == None:
 			return
 		self.mouse_over_window_target = scene_data_object
@@ -86,6 +86,6 @@ class mouse_controller():
 				if intersect_area > d['best_factor']:
 					d['best_factor'] = intersect_area
 					d['best'] = obj
-					LogTxt('mouse_controller', 'find_drag_window_target() - < best:%s >' % obj('child_name'))
+					#LogTxt('mouse_controller', 'find_drag_window_target() - < best:%s >' % obj('child_name'))
 
 		return d

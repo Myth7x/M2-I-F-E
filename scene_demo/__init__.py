@@ -267,33 +267,40 @@ class scene_demo():
 		#LogTxt(__name__, 'control_drag:: %s' % self.__dict__)
 		# lets look at wndMgr if we can get the next top window below our mouse and our dragged window
 		self.destroy_window_drag_indicator()
-		if self.obj_mouse_controller.mouse_over_window_target:
-			wnd_mouse_over = self.obj_mouse_controller.mouse_over_window_target('wnd')
-			any = False
-			for obj in self.d_demo['objects']:
-				iterator_wnd = self.d_demo['objects'][obj]('wnd')
 
-				iterator_scene_data = self.get_scene_object_data(obj)
-				#if iterator_scene_data['child_name'] == self.obj_mouse_controller.mouse_left_down_target('child_name') or \
-				#	'parent' in iterator_scene_data and iterator_scene_data['parent'] == self.obj_mouse_controller.mouse_left_down_target:
-				#	continue
-
-				mouse_over_target_position = wnd_mouse_over.GetGlobalPosition()
-				mouse_over_target_rect = (mouse_over_target_position[0], mouse_over_target_position[1], wnd_mouse_over.GetWidth(), wnd_mouse_over.GetHeight())
-
-				if iterator_wnd != wnd_mouse_over:
-
-					obj_position = iterator_wnd.GetGlobalPosition()
-					obj_rect = (obj_position[0], obj_position[1], iterator_wnd.GetWidth(), iterator_wnd.GetHeight())
-
-					# check if current_recht is colliding with obj_rect
-					if rect_collision(mouse_over_target_rect, obj_rect):
-						self.obj_mouse_controller.drag_window_target = self.d_demo['objects'][obj]
-
-						self.create_window_drag_indicator(iterator_wnd)
-						scene_info_text += ' | WINDOW DRAG TARGET: %s' % iterator_wnd.GetWindowName()
-						self.obj_window_drag.SetColor(globals.CLR_SCENE_OBJECT_DRAG)
-						break
+		self.obj_mouse_controller.drag_window_target = self.obj_mouse_controller.find_drag_window_target(self)['best']
+		if self.obj_mouse_controller.drag_window_target:
+			self.create_window_drag_indicator(self.obj_mouse_controller.drag_window_target)
+			scene_info_text += " | DRAGGING : %s" % self.obj_mouse_controller.drag_window_target('child_name')
+			self.obj_window_drag.SetColor(globals.CLR_SCENE_OBJECT_DRAG)
+		
+			#for obj in self.d_demo['objects']:
+			#	iterator_wnd = self.d_demo['objects'][obj]('wnd')
+#
+			#	iterator_scene_data = self.get_scene_object_data(obj)
+			#	#if iterator_scene_data['child_name'] == self.obj_mouse_controller.mouse_left_down_target('child_name') or \
+			#	#	'parent' in iterator_scene_data and iterator_scene_data['parent'] == self.obj_mouse_controller.mouse_left_down_target:
+			#	#	continue
+#
+			#	mouse_over_target_position = wnd_mouse_over.GetGlobalPosition()
+			#	mouse_over_target_rect = (mouse_over_target_position[0], mouse_over_target_position[1], wnd_mouse_over.GetWidth(), wnd_mouse_over.GetHeight())
+#
+			#	if iterator_wnd != wnd_mouse_over:
+#
+			#		obj_position = iterator_wnd.GetGlobalPosition()
+			#		obj_rect = (obj_position[0], obj_position[1], iterator_wnd.GetWidth(), iterator_wnd.GetHeight())
+#
+			#		self.obj_mouse_controller.drag_window_target = self.obj_mouse_controller.find_drag_window_target(self)
+			#		LogTxt(__name__, 'control_drag:: <TESTTESTTEST> %s' % _)
+#
+			#		# check if current_recht is colliding with obj_rect
+			#		if rect_collision(mouse_over_target_rect, obj_rect):
+			#			self.obj_mouse_controller.drag_window_target = self.d_demo['objects'][obj]
+#
+			#			self.create_window_drag_indicator(iterator_wnd)
+			#			scene_info_text += ' | WINDOW DRAG TARGET: %s' % iterator_wnd.GetWindowName()
+			#			self.obj_window_drag.SetColor(globals.CLR_SCENE_OBJECT_DRAG)
+			#			break
 	
 		return scene_info_text
 	#

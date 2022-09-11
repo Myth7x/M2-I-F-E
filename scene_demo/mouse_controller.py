@@ -1,4 +1,4 @@
-from _utils import LogTxt
+from _utils import LogTxt, rect_collision
 
 class mouse_controller():
 	############################################
@@ -32,4 +32,34 @@ class mouse_controller():
 		self.mouse_left_down_target = None
 	
 	############################################
-	
+	def find_drag_window_target(self, instance_scene_demo):
+		d = {
+			'best' : None,
+			'best_factor' : 0,
+		}
+
+		t_mouse_over_window_target_position = self.mouse_over_window_target.get_position()
+		r_mouse_over_window_target = [t_mouse_over_window_target_position[0], t_mouse_over_window_target_position[1], self.mouse_over_window_target('wnd').GetWidth(), self.mouse_over_window_target('wnd').GetHeight()]
+
+		d_demo_objects = instance_scene_demo.d_demo['objects']
+
+		for key in d_demo_objects:
+			obj = d_demo_objects[key]
+			if obj == self.mouse_over_window_target: continue
+
+			t_demo_position = obj.get_position()
+			t_demo_size = (obj('wnd').GetWidth(), obj('wnd').GetHeight())
+			r_demo_window = [t_demo_position[0], t_demo_position[1], t_demo_size[0], t_demo_size[1]]
+
+			if rect_collision(r_mouse_over_window_target, r_demo_window):
+
+				# pixel area of the intersection
+				collissions = (min(r_mouse_over_window_target[0] + r_mouse_over_window_target[2], r_demo_window[0] + r_demo_window[2]) - max(r_mouse_over_window_target[0], r_demo_window[0])) * (min(r_mouse_over_window_target[1] + r_mouse_over_window_target[3], r_demo_window[1] + r_demo_window[3]) - max(r_mouse_over_window_target[1], r_demo_window[1])) 
+
+				
+				if collissions > d['best_factor']:
+					d['best_factor'] = collissions
+					d['best'] = obj
+					LogTxt('mouse_controller', 'find_drag_window_target() - < object:%s (collisions:%s) >' % (obj.__dict__['child_name'], collissions))
+
+		return d

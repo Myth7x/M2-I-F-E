@@ -2,35 +2,24 @@
 # IfMgr : Interface Manager
 
 NAME = "Interface Manager"
-VERSION = '0.5-Rev.Pepp'
+VERSION = '0.1.0 - Controls Development'
 UI_CLASS_EXPORT = {
 	'enabled' 	: False,
 	'path' 		: 'C:\\InterfaceManager\\%s_ui_classes.csv',
 }
 ###############################################################################
-import datetime
-import grp
-import os
-import sys
+import datetime, sys, os
 
 # Interface Manager Modules
 from ui_class_gathering import UI_Classes
 from _utils import LogTxt
-import ifmgr_ui, object_browser, scene_browser, scene_demo
+import ifmgr_ui, globals, object_browser, scene_browser, scene_demo
 
 # Python Modules
 import constinfo
 # CPython Modules
 import ui, wndMgr, app
-
 ###############################################################################
-
-import globals
-
-import ifmgr_ui
-
-
-import input_controller
 
 # Main Interface Manager Class
 class InterfaceManager(ui.BoardWithTitleBar):
@@ -38,7 +27,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	yesno_dialog 	= None
 	obj_browser 	= None
 	scene_browser 	= None
-	scene_demo 	= None
+	scene_demo 		= None
 
 	def __init__(self, width, height):
 		LogTxt(__name__, "Initializing..")
@@ -58,7 +47,6 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		if self.build_window() != True:
 			LogTxt(__name__, "Failed to build window!")
 			return False
-
 
 		constinfo.INTERFACE_MANAGER_INITIALIZED = True
 		self.Show()

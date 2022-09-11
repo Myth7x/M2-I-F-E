@@ -248,10 +248,10 @@ class scene_demo():
 		_ = self.obj_mouse_controller.find_drag_window_target(self, [])
 		if _ != None and _['best'] != None:
 			self.obj_mouse_controller.drag_window_target = _['best']
-			LogTxt(__name__, "update_controls:: drag_window_target: %s" % self.obj_mouse_controller.drag_window_target('wnd').GetWindowName())
+			#LogTxt(__name__, "update_controls:: drag_window_target: %s" % self.obj_mouse_controller.drag_window_target('wnd').GetWindowName())
 		else:
 			self.obj_mouse_controller.drag_window_target = None
-			LogTxt(__name__, "update_controls:: drag_window_target: None")
+			#LogTxt(__name__, "update_controls:: drag_window_target: None")
 
 			
 		###########################################################
@@ -302,22 +302,9 @@ class scene_demo():
 
 	# scene Object Callback On Move, to update our children
 	def control_scene_object_move(self, data, x, y):
-		#LogTxt(__name__, 'control_scene_object_move:: CALLBACK FROM SCENE OBJECT %s' % data['child_name'])
-		#move_obj_scene_data = self.get_scene_object_data(data['child_name'])
-		#self.update_positions(self.d_scene_data, move_obj_scene_data)
-		#move_obj_scene_data = self.get_scene_object_data(data['child_name'])
-		#for obj in self.d_demo['objects']:
-		#	obj_scene_data = self.get_scene_object_data(obj)
-		#	if obj_scene_data['child_name'] == move_obj_scene_data['child_name']:
-		#		continue
-		#	if 'parent' in obj_scene_data:
-		#		if obj_scene_data['parent']('wnd'):
-		#			if obj_scene_data['parent']('wnd').GetWindowName() == move_obj_scene_data['child_name']:
-		#				self.d_demo['objects'][obj].update_position()
 		pass
 		
 	############################################################################################################
-
 	# our update method, called from interfacemanager.onrender
 	def update(self):
 		scene_info_text = self.scene_name
@@ -335,7 +322,6 @@ class scene_demo():
 	##########################################################################################
 	## Demo Data
 
-
 	def prepare_demo_object(self, data):
 		#LogTxt(__name__, "Start Dict: %s" % self.d_demo['objects'])
 		#LogTxt(__name__, "Self Dict: %s" % self.__dict__)
@@ -350,50 +336,17 @@ class scene_demo():
 			for key, value in data.items():
 				self.d_demo['objects'][data['child_name']].update_data(key, value)
 
-	def destroy_demo_objects(self):
-		d = self.d_demo['objects']
-		for obj in d:
-			#LogTxt(__name__, 'n_scene_demo_re.destroy_demo_objects:: %s' % obj)
-			self.d_demo['objects'][obj].destroy_objects()
-	#
-	def create_demo_objects(self):
-		for data in self.d_scene_data['children']:
-			#LogTxt(__name__, 'n_scene_demo_re.create_demo_objects:: data: %s' % data)
-			self.prepare_demo_object(data)
-
 	def get_demo_object_data(self, child_name):
 		return self.d_demo['objects'].get(child_name)
 
 	## Scene Data
-	def create_scene(self):
-		#LogTxt(__name__, 'n_scene_demo_re.create_scene %s' % self.scene_name)
-		#self.destroy_demo_objects()
-		#self.obj_mouse_controller.mouse_over_window_target = None
-		#self.obj_mouse_controller.mouse_left_down_target = None
-		#self.obj_mouse_controller.drag_window_target = None
-		self.create_demo_objects()
+	
 	# Get Scene Object Data
 	def get_scene_object_data(self, child_name):
 		for l in self.d_scene_data['children']:
 			if l['child_name'] == child_name:
 				return l
-	# Update single scene object by name and key name
-	def update_scene_object_data(self, child_name, key, value):
-		#LogTxt(__name__, 'n_scene_demo_re.update_scene_object_data:: child_name: %s, key: %s, value: %s' % (child_name, key, value))
-		for scene_obj in self.d_scene_data['children']:
-			if scene_obj['child_name'] == child_name:
-				if value == '__del_object__':
-					if key in scene_obj:
-						del scene_obj[key]
-				else:
-					if key == 'x' or key == 'y':
-						if 'child_name' in scene_obj:
-							if 'parent' in scene_obj:
-								if scene_obj['parent'] != None:
-									if 'x' in scene_obj['parent'] and 'y' in scene_obj['parent']:
-										value = value - scene_obj['parent'][key]
-					scene_obj[key] = value
-				break
+	
 	def set_scene_data(self, scene_name, data):
 		# this can only be called once
 		if self.scene_name != scene_name:

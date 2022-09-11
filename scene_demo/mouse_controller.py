@@ -23,13 +23,17 @@ class mouse_controller():
 
 	############################################
 	def on_mouse_over_window(self, scene_data_object):
+		LogTxt('mouse_controller', 'on_mouse_over_window() - < object:%s >' % scene_data_object.__dict__['child_name'])
+		if scene_data_object == None:
+			return
 		self.mouse_over_window_target = scene_data_object
 	def on_mouse_over_out_window(self, scene_data_object):
+		if scene_data_object != self.mouse_over_window_target:
+			return
 		self.mouse_over_window_target = None
 	def on_mouse_left_button_down(self, scene_data_object):
 		self.mouse_left_down_target = scene_data_object
 	def on_mouse_left_button_up(self):
-		self.mouse_over_window_target = None
 		self.mouse_left_down_target = None
 		self.drag_window_target = None
 	
@@ -43,38 +47,45 @@ class mouse_controller():
 	def find_drag_window_target(self, instance_scene_demo, exclude_list):
 		d = {
 			'best' : None,
-			'best_factor' : 99999999999,
+			'best_factor' : 0,
 		}
+
 		if self.mouse_over_window_target == None:
 			return None
+
 		t_mouse_over_window_target_position = self.mouse_over_window_target('wnd').GetGlobalPosition()
 		r_mouse_over_window_target = [t_mouse_over_window_target_position[0], t_mouse_over_window_target_position[1], self.mouse_over_window_target('wnd').GetWidth(), self.mouse_over_window_target('wnd').GetHeight()]
 
 		d_demo_objects = instance_scene_demo.d_demo['objects']
 
+		
+
 		for key in d_demo_objects:
 			obj = d_demo_objects[key]
 			if obj == self.mouse_over_window_target: continue
-			if obj in exclude_list:
-				#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
-				continue
+			#if obj in exclude_list:
+			#	#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
+			#	continue
 
 			t_demo_position = obj('wnd').GetGlobalPosition()
 			t_demo_size = (obj('wnd').GetWidth(), obj('wnd').GetHeight())
 			r_demo_window = [t_demo_position[0], t_demo_position[1], t_demo_size[0], t_demo_size[1]]
 
 
-			px = (self.current_mouse_position[0] - t_demo_position[0]) ** 2
-			py = (self.current_mouse_position[1] - t_demo_position[1]) ** 2
-			pw = (self.current_mouse_position[0] - (t_demo_position[0] + t_demo_size[0])) ** 2
-			ph = (self.current_mouse_position[1] - (t_demo_position[1] + t_demo_size[1])) ** 2
-			factor = (px + py + pw + ph) / 4
-
+			
 			if rect_collision(r_mouse_over_window_target, r_demo_window):
 
-				if factor < d['best_factor']:
-					d['best_factor'] = factor
+				rect_intersect = [
+					max(r_mouse_over_window_target[0], r_demo_window[0]),
+					max(r_mouse_over_window_target[1], r_demo_window[1]),
+					min(r_mouse_over_window_target[0] + r_mouse_over_window_target[2], r_demo_window[0] + r_demo_window[2]) - max(r_mouse_over_window_target[0], r_demo_window[0]),
+					min(r_mouse_over_window_target[1] + r_mouse_over_window_target[3], r_demo_window[1] + r_demo_window[3]) - max(r_mouse_over_window_target[1], r_demo_window[1]),
+				]
+
+				intersect_area = rect_intersect[2] * rect_intersect[3]
+				if intersect_area > d['best_factor']:
+					d['best_factor'] = intersect_area
 					d['best'] = obj
-					#LogTxt('mouse_controller', 'find_drag_window_target() - < object:%s (collisions:%s) >' % (obj.__dict__['child_name'], factor))
+					LogTxt('mouse_controller', 'find_drag_window_target() - < best:%s >' % obj('child_name'))
 
 		return d

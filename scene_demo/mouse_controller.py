@@ -34,16 +34,13 @@ class mouse_controller():
 		self.drag_window_target = None
 	
 	def reset(self):
-		self.__dict__ = {
-			'current_mouse_position': [0, 0],
-			'last_mouse_position': [0, 0],
-			'mouse_over_window_target' : None,
-			'drag_window_target': None,
-			'mouse_left_down_target': None,
-		}
+		self.__dict__['mouse_over_window_target'] = None
+		self.__dict__['drag_window_target'] = None
+		self.__dict__['mouse_left_down_target'] = None
+		
 
 	############################################
-	def find_drag_window_target(self, instance_scene_demo):
+	def find_drag_window_target(self, instance_scene_demo, exclude_list):
 		d = {
 			'best' : None,
 			'best_factor' : 99999999999,
@@ -58,6 +55,9 @@ class mouse_controller():
 		for key in d_demo_objects:
 			obj = d_demo_objects[key]
 			if obj == self.mouse_over_window_target: continue
+			if obj in exclude_list:
+				#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
+				continue
 
 			t_demo_position = obj('wnd').GetGlobalPosition()
 			t_demo_size = (obj('wnd').GetWidth(), obj('wnd').GetHeight())
@@ -75,6 +75,6 @@ class mouse_controller():
 				if factor < d['best_factor']:
 					d['best_factor'] = factor
 					d['best'] = obj
-					LogTxt('mouse_controller', 'find_drag_window_target() - < object:%s (collisions:%s) >' % (obj.__dict__['child_name'], factor))
+					#LogTxt('mouse_controller', 'find_drag_window_target() - < object:%s (collisions:%s) >' % (obj.__dict__['child_name'], factor))
 
 		return d

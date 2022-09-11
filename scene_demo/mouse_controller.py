@@ -23,13 +23,11 @@ class mouse_controller():
 
 	############################################
 	def on_mouse_over_window(self, scene_data_object):
-		if self.mouse_over_window_target == None or self.mouse_over_window_target != scene_data_object:
-			self.mouse_over_window_target = scene_data_object
+		self.mouse_over_window_target = scene_data_object
 	def on_mouse_over_out_window(self, scene_data_object):
 		self.mouse_over_window_target = None
 	def on_mouse_left_button_down(self, scene_data_object):
-		if self.mouse_left_down_target == None or self.mouse_left_down_target != scene_data_object:
-			self.mouse_left_down_target = scene_data_object
+		self.mouse_left_down_target = scene_data_object
 	def on_mouse_left_button_up(self):
 		self.mouse_over_window_target = None
 		self.mouse_left_down_target = None
@@ -41,7 +39,6 @@ class mouse_controller():
 			'best' : None,
 			'best_factor' : 99999999999,
 		}
-
 		t_mouse_over_window_target_position = self.mouse_over_window_target('wnd').GetGlobalPosition()
 		r_mouse_over_window_target = [t_mouse_over_window_target_position[0], t_mouse_over_window_target_position[1], self.mouse_over_window_target('wnd').GetWidth(), self.mouse_over_window_target('wnd').GetHeight()]
 

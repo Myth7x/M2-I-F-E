@@ -20,12 +20,15 @@ UI_CLASS_DATA = {}
 
 
 
-CLR_SCENE_OBJECT_MOUSE_OVER = GenerateColor(0.6, 0.6, 0.6, 0.10)
-CLR_SCENE_OBJECT_MOUSE_DOWN = GenerateColor(252/255.0, 186/255.0, 3/255.0, 0.10)
+CLR_SCENE_OBJECT_MOUSE_OVER = GenerateColor(0.6, 0.6, 0.6, 0.08)
+CLR_SCENE_OBJECT_MOUSE_DOWN = GenerateColor(0.1, 0.9, 0.1, 0.08)
 
 CLR_SCENE_INFO = GenerateColor(0.9, 0.9, 0.9, 1)
 
-CLR_SCENE_OBJECT_DRAG = GenerateColor(0.1, 0.9, 0.1, 0.10)
+CLR_SCENE_OBJECT_DRAG = GenerateColor(0.9, 0.9, 0.1, 0.10)
 
 
 INFO_INPUT_SCENE_NAME = "(press <ENTER> for default name)"
+
+
+MIN_WINDOW_INTERSECTION_FACTOR = 1200

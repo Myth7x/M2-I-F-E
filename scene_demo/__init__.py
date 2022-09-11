@@ -36,7 +36,7 @@
 import ui, wndMgr, grp
 
 import globals
-from _utils import LogTxt, rect_collision, case
+from _utils import LogTxt, rect_collision
 
 ## Side Infos
 
@@ -47,6 +47,12 @@ from _utils import LogTxt, rect_collision, case
 from mouse_controller import mouse_controller
 
 class scene_demo():
+	"""
+	scene demo class
+	- visualize our scene data
+	- has a mouse controller for mouse input
+	"""
+
 	# holds or scene data
 	d_scene_data 	= {}
 
@@ -142,13 +148,6 @@ class scene_demo():
 
 		# get wnd position, relative to parent if parent is set
 		def get_position(self): # return type=tuple
-			# if we have a parent
-			if 'parent' in self.__dict__:
-				parent = self.fn_get_scene_object_data(self.__dict__['parent'])('wnd')
-				if parent:
-					parent_position = parent.GetGlobalPosition()
-					# we add our position to the parents position, since we have converted our position to local
-					return (parent_position[0] + self.__dict__['x'], parent_position[1] + self.__dict__['y'])
 			# if we dont have a parent, we return our global position
 			return self.wnd.GetGlobalPosition()
 
@@ -168,7 +167,7 @@ class scene_demo():
 
 		# create our object instance
 		def create_object_instance(self):
-			LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__['child_name'])
+			LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__['x'])
 			try:
 				self.wnd = ui.Window()
 
@@ -177,7 +176,7 @@ class scene_demo():
 	
 				self.wnd.moveWindowEvent = self.on_move	# we overwrite the moveWindowEvent to call our on_move function
 
-				self.wnd.SetPosition(*self.get_position()) # set position
+				self.wnd.SetPosition(*(self.__dict__['x'], self.__dict__['y'])) # set position
 			
 				self.wnd.SetSize(self.__dict__['width'], self.__dict__['height'])
 				self.wnd.SetWindowName(self.__dict__['child_name'])
@@ -245,9 +244,9 @@ class scene_demo():
 	def update_controls(self, scene_info_text):
 
 		# find out if we have a window under the mouse
-		_ = self.obj_mouse_controller.find_drag_window_target(self, [])
-		if _ != None and _['best'] != None:
-			self.obj_mouse_controller.drag_window_target = _['best']
+		best_drag_window_target = self.obj_mouse_controller.find_drag_window_target(self, [])
+		if best_drag_window_target != None and best_drag_window_target['best'] != None:
+			self.obj_mouse_controller.drag_window_target = best_drag_window_target['best']
 			#LogTxt(__name__, "update_controls:: drag_window_target: %s" % self.obj_mouse_controller.drag_window_target('wnd').GetWindowName())
 		else:
 			self.obj_mouse_controller.drag_window_target = None
@@ -263,7 +262,7 @@ class scene_demo():
 		if self.obj_mouse_controller.mouse_over_window_target:
 			self.update_indicator(self.obj_mouse_over, self.obj_mouse_controller.mouse_over_window_target, globals.CLR_SCENE_OBJECT_MOUSE_OVER)
 			wnd_mouse_over = self.obj_mouse_controller.mouse_over_window_target('wnd')
-			scene_info_text += ' | MOUSE_OVER: %s' % wnd_mouse_over.GetWindowName()
+			scene_info_text += ' | MOUSE_OVER: %s < intersect_area:%s >' % (wnd_mouse_over.GetWindowName(), best_drag_window_target['best_factor'])
 			# has left mouse button down
 			if self.obj_mouse_controller.mouse_left_down_target:
 				self.update_indicator(self.obj_mouse_over, self.obj_mouse_controller.mouse_over_window_target, globals.CLR_SCENE_OBJECT_MOUSE_DOWN)

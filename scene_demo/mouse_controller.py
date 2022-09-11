@@ -1,14 +1,20 @@
-from _utils import LogTxt, rect_collision
+from _utils import LogTxt, rect_collision, rect_intersect_area_factor
+
+import globals
 
 class mouse_controller():
+	"""
+	mouse controller class
+	- used for our scene demo objects control functions
+	"""
 	############################################
 	def __init__(self):
 		self.__dict__ = {
-			'current_mouse_position': [0, 0],
-			'last_mouse_position': [0, 0],
-			'mouse_over_window_target' : None,
-			'drag_window_target': None,
-			'mouse_left_down_target': None,
+			'current_mouse_position'	: [0, 0],
+			'last_mouse_position'		: [0, 0],
+			'mouse_over_window_target' 	: None,
+			'drag_window_target'		: None,
+			'mouse_left_down_target'	: None,
 		}
 	def __del__(self):
 		pass
@@ -22,14 +28,12 @@ class mouse_controller():
 		return key in self.__dict__
 
 	############################################
+	# mouse controller event callbacks
 	def on_mouse_over_window(self, scene_data_object):
-		#LogTxt('mouse_controller', 'on_mouse_over_window() - < object:%s >' % scene_data_object.__dict__['child_name'])
-		if scene_data_object == None:
-			return
+		if scene_data_object == None: return
 		self.mouse_over_window_target = scene_data_object
 	def on_mouse_over_out_window(self, scene_data_object):
-		if scene_data_object != self.mouse_over_window_target:
-			return
+		if scene_data_object != self.mouse_over_window_target: return
 		self.mouse_over_window_target = None
 	def on_mouse_left_button_down(self, scene_data_object):
 		self.mouse_left_down_target = scene_data_object
@@ -37,7 +41,12 @@ class mouse_controller():
 		self.mouse_left_down_target = None
 		self.drag_window_target = None
 	
+
+	############################################
 	def reset(self):
+		"""
+		Reset the mouse controller target objects
+		"""
 		self.__dict__['mouse_over_window_target'] = None
 		self.__dict__['drag_window_target'] = None
 		self.__dict__['mouse_left_down_target'] = None
@@ -45,6 +54,11 @@ class mouse_controller():
 
 	############################################
 	def find_drag_window_target(self, instance_scene_demo, exclude_list):
+		"""
+		Find the window that is being dragged
+			- instance_scene_demo: scene_demo instance
+			- exclude_list: list of window names to exclude from the search
+		"""
 		d = {
 			'best' : None,
 			'best_factor' : 0,
@@ -58,34 +72,28 @@ class mouse_controller():
 
 		d_demo_objects = instance_scene_demo.d_demo['objects']
 
-		
-
+		# iterate our current demo objects
 		for key in d_demo_objects:
 			obj = d_demo_objects[key]
+
+			# skip the current mouse over window target (window we are moving or clicking on)
 			if obj == self.mouse_over_window_target: continue
-			#if obj in exclude_list:
-			#	#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
-			#	continue
+
+			# unused atm, maybe for parenting later
+			if obj in exclude_list:
+				#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
+				continue
 
 			t_demo_position = obj('wnd').GetGlobalPosition()
 			t_demo_size = (obj('wnd').GetWidth(), obj('wnd').GetHeight())
 			r_demo_window = [t_demo_position[0], t_demo_position[1], t_demo_size[0], t_demo_size[1]]
 
-
-			
+			# check if the mouse over window target window is inside the demo object iterator window
 			if rect_collision(r_mouse_over_window_target, r_demo_window):
-
-				rect_intersect = [
-					max(r_mouse_over_window_target[0], r_demo_window[0]),
-					max(r_mouse_over_window_target[1], r_demo_window[1]),
-					min(r_mouse_over_window_target[0] + r_mouse_over_window_target[2], r_demo_window[0] + r_demo_window[2]) - max(r_mouse_over_window_target[0], r_demo_window[0]),
-					min(r_mouse_over_window_target[1] + r_mouse_over_window_target[3], r_demo_window[1] + r_demo_window[3]) - max(r_mouse_over_window_target[1], r_demo_window[1]),
-				]
-
-				intersect_area = rect_intersect[2] * rect_intersect[3]
-				if intersect_area > d['best_factor']:
-					d['best_factor'] = intersect_area
+				# calculate the intersect area factor
+				f = rect_intersect_area_factor(r_mouse_over_window_target, r_demo_window)
+				if f > d['best_factor'] and f > globals.MIN_WINDOW_INTERSECTION_FACTOR:
+					d['best_factor'] = f
 					d['best'] = obj
-					#LogTxt('mouse_controller', 'find_drag_window_target() - < best:%s >' % obj('child_name'))
-
+		# returning a dict bist the best object and the intersect area factor
 		return d

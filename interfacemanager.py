@@ -21,8 +21,11 @@ import constinfo
 import ui, wndMgr, app
 ###############################################################################
 
-# Main Interface Manager Class
 class InterfaceManager(ui.BoardWithTitleBar):
+	"""
+	interface manager class
+	- main program module, handles create/load/save/delete of scenes
+	"""
 	current_scene 	= None
 	yesno_dialog 	= None
 	obj_browser 	= None

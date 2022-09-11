@@ -10,6 +10,10 @@ import ui, wndMgr
 import globals
 
 class scene_browser(ui.ScriptWindow):
+	"""
+	scene browser class
+	- holds current scene data
+	"""
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		LogTxt(__name__, "Initializing...")
@@ -90,8 +94,8 @@ class scene_browser(ui.ScriptWindow):
 			'object_name': data[0],
 			'class': data[1],
 			'object': data[2],
-			'x': 10,
-			'y': 10,
+			'x': wndMgr.GetScreenWidth() / 2 - 100 / 2,
+			'y': wndMgr.GetScreenHeight() / 2 - 100 / 2,
 			'width': 100,
 			'height': 100,
 		}

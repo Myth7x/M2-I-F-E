@@ -8,6 +8,10 @@ import ifmgr_ui
 import globals
 
 class attribute_editor(ui.ScriptWindow):
+	"""
+	attribute editor class
+	- used to edit attributes of a scene object duh
+	"""
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		#LogTxt(__name__, "Initializing...")

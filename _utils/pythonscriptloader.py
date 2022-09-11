@@ -9,8 +9,13 @@ from _utils import LogTxt
 from ..ifmgr_ui.board import Board_Custom
 from ..ifmgr_ui.listboxscroll import ListBoxScroll
 
-# Extend the ui.PythonScriptLoader class to add our own custom shit
 class PythonScriptLoader(ui.PythonScriptLoader):
+	"""
+	python script loader class
+	- extend the ui.PythonScriptLoader class to add our own custom shit
+	- load_script() is the main function that loads the script
+	- load_children() copy of the original function but with a few changes
+	"""
 	def __init__(self):
 		ui.PythonScriptLoader.__init__(self)
 

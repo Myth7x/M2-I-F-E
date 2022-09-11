@@ -6,6 +6,9 @@ import ui
 
 # credits to samalamabigcock
 class UI_Classes:
+	"""
+	loads all classes from the module ui
+	"""
 	def is_class(self, class_attr):
 		return hasattr(class_attr, "__init__")
 

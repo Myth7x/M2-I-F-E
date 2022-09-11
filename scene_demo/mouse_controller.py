@@ -33,12 +33,23 @@ class mouse_controller():
 		self.mouse_left_down_target = None
 		self.drag_window_target = None
 	
+	def reset(self):
+		self.__dict__ = {
+			'current_mouse_position': [0, 0],
+			'last_mouse_position': [0, 0],
+			'mouse_over_window_target' : None,
+			'drag_window_target': None,
+			'mouse_left_down_target': None,
+		}
+
 	############################################
 	def find_drag_window_target(self, instance_scene_demo):
 		d = {
 			'best' : None,
 			'best_factor' : 99999999999,
 		}
+		if self.mouse_over_window_target == None:
+			return None
 		t_mouse_over_window_target_position = self.mouse_over_window_target('wnd').GetGlobalPosition()
 		r_mouse_over_window_target = [t_mouse_over_window_target_position[0], t_mouse_over_window_target_position[1], self.mouse_over_window_target('wnd').GetWidth(), self.mouse_over_window_target('wnd').GetHeight()]
 

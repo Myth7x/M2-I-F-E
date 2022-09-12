@@ -61,8 +61,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def OnRender(self):
 		"""Overridden to update the program"""
 		if self.obj_browser != None:
-			xMouse, yMouse = wndMgr.GetMousePosition()
-			self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, self.obj_browser.ref_object_list.GetItemCount(), xMouse, yMouse))
+			self.information.SetText("<Version:%s>" % VERSION)
 			if self.current_scene != None:
 				self.new_scene_button.Hide()
 		

@@ -21,11 +21,12 @@ UI_CLASS_DATA = {}
 
 
 CLR_SCENE_OBJECT_MOUSE_OVER = GenerateColor(0.6, 0.6, 0.6, 0.08)
-CLR_SCENE_OBJECT_MOUSE_DOWN = GenerateColor(0.1, 0.9, 0.1, 0.08)
+CLR_SCENE_OBJECT_MOUSE_DOWN = GenerateColor(0.6, 0.6, 0.6, 0.15)
 
 CLR_SCENE_INFO = GenerateColor(0.9, 0.9, 0.9, 1)
 
-CLR_SCENE_OBJECT_DRAG = GenerateColor(0.9, 0.9, 0.1, 0.10)
+CLR_SCENE_OBJECT_DRAG_CAN_DROP = GenerateColor(0.6, 0.6, 0.6, 0.08)
+CLR_SCENE_OBJECT_DRAG_CANNOT_DROP = GenerateColor(0.9, 0.1, 0.1, 0.08)#(0.1, 0.9, 0.1, 0.08)
 
 CLR_SCENE_TEXT_INDICATOR = GenerateColor(0.6, 0.6, 0.6, 0.5)
 

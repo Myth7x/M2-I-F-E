@@ -99,6 +99,10 @@ class scene_demo():
 
 	
 	class text_indicator_inputs(ui.Bar):
+		"""text indicator inputs class
+		- shows state of any input captured
+		"""
+
 		def __init__(self):
 			ui.Bar.__init__(self)
 			self.SetSize(100, 20)
@@ -108,14 +112,50 @@ class scene_demo():
 			self.title.SetParent(self)
 			self.title.SetPosition(int(self.GetWidth()/2), 0)
 			self.title.SetHorizontalAlignCenter()
-			self.title.SetText('Inputs')
+			self.title.SetText('Controls')
 			self.title.SetFontColor(0.0, 0.0, 0.0)
 			self.title.Show()
 
 			self.Hide()
+		def set_position(self, x, y):
+			"""set position of the text indicator"""
+			self.SetPosition(x, y)
+			self.title.SetPosition(int(self.GetWidth()/2), 0)
+		def set_size(self, width, height):
+			"""set size of the text indicator"""
+			self.SetSize(width, height)
+			self.title.SetPosition(int(self.GetWidth()/2), 0)
+		def add_text_line(self, name, text):
+			"""add a text line to the text indicator"""
+			if name in self.text_lines:
+				return
+			self.text_lines[name] = ui.TextLine()
+			self.text_lines[name].SetParent(self)
+			self.text_lines[name].SetPosition(10, 0)
+			self.text_lines[name].SetHorizontalAlignLeft()
+			self.text_lines[name].SetText(text)
+			self.text_lines[name].SetFontColor(0.0, 0.0, 0.0)
+			self.text_lines[name].Show()
+		def update_text_line(self, name, text):
+			"""update a text line"""
+			if not name in self.text_lines:
+				return
+			self.text_lines[name].SetText(text)
+		def remove_text_line(self, name):
+			"""remove a text line"""
+			if not name in self.text_lines:
+				return
+			self.text_lines[name].Hide()
+			del self.text_lines[name]
 		def set_text(self, name, text):
 			"""set text for a line by name"""
 			self.text_lines[name] = text
+		def arrange_text_lines(self):
+			"""arrange text lines"""
+			y = 16
+			for name in self.text_lines:
+				self.text_lines[name].SetPosition(10, y)
+				y += 16
 
 	###########################################################
 	class scene_data_object():
@@ -223,6 +263,15 @@ class scene_demo():
 				self.obj_instance.AddFlag('not_pick')	# we dont want to be able to pick this object
 				self.obj_instance.AddFlag('attach')		# we want to be able to attach this object to other objects
 				self.obj_instance.Show()
+			    
+				# textline? set text to its name and set position to middle of the window
+				if callable(getattr(self.obj_instance, "SetText", None)) and (ui.TextLine == type(self.obj_instance) or ui.EditLine == type(self.obj_instance)):
+					self.obj_instance.SetText(self.__dict__['child_name'])
+					if callable(getattr(self.obj_instance, "SetHorizontalAlignCenter", None)):
+						self.obj_instance.SetHorizontalAlignCenter()
+						self.obj_instance.SetVerticalAlignCenter()
+					self.obj_instance.SetPosition(self.__dict__['width']/2, self.__dict__['height']/2)
+
 			except Exception as e:
 				LogTxt(__name__, 'scene_data_object.create_object_instance:: EXCEPTION <%s>' % e)
 
@@ -253,10 +302,15 @@ class scene_demo():
 		self.obj_mouse_controller = mouse_controller()
 
 		self.text_indicator = self.text_indicator_inputs()
-		self.text_indicator.SetPosition(wndMgr.GetScreenWidth() - 310, wndMgr.GetScreenHeight() - 210)
-		self.text_indicator.SetSize(300, 200)
+		self.text_indicator.set_position(wndMgr.GetScreenWidth() - 310, wndMgr.GetScreenHeight() - 210)
+		self.text_indicator.set_size(300, 200)
 		self.text_indicator.SetColor(globals.CLR_SCENE_TEXT_INDICATOR)
 		self.text_indicator.Show()
+
+		self.text_indicator.add_text_line("MOUSE_LEFT_BUTTON_DOWN_TARGET", "Mouse Left Button Down Target: None")
+		self.text_indicator.add_text_line("MOUSE_OVER_WINDOW_TARGET", "Mouse Over Window Target: None")
+		self.text_indicator.add_text_line("DRAG_WINDOW_TARGET", "Drag&Drop Target Window: None")
+
 		#LogTxt(__name__, "TestMouseController: %s" % self.obj_mouse_controller.current_mouse_position)
 
 	###########################################################
@@ -291,11 +345,9 @@ class scene_demo():
 		if self.obj_mouse_controller.mouse_over_window_target:
 			self.update_indicator(self.obj_mouse_over, self.obj_mouse_controller.mouse_over_window_target, globals.CLR_SCENE_OBJECT_MOUSE_OVER)
 			wnd_mouse_over = self.obj_mouse_controller.mouse_over_window_target('wnd')
-			scene_info_text += ' | MOUSE_OVER: %s < intersect_area:%s >' % (wnd_mouse_over.GetWindowName(), best_drag_window_target['best_factor'])
 			# has left mouse button down
 			if self.obj_mouse_controller.mouse_left_down_target:
 				self.update_indicator(self.obj_mouse_over, self.obj_mouse_controller.mouse_over_window_target, globals.CLR_SCENE_OBJECT_MOUSE_DOWN)
-				scene_info_text += ' | MOUSE_LEFT_BUTTON_DOWN'
 			need_over_indicator = True
 		
 		scene_info_text = self.control_drag(scene_info_text)
@@ -317,9 +369,7 @@ class scene_demo():
 			mouse_move_window_pos = self.obj_mouse_controller.mouse_over_window_target('wnd').GetGlobalPosition()
 			rect_mouse_move_window = (mouse_move_window_pos[0], mouse_move_window_pos[1], self.obj_mouse_controller.mouse_over_window_target('wnd').GetWidth(), self.obj_mouse_controller.mouse_over_window_target('wnd').GetHeight())
 			if rect_collision(rect_drag_window, rect_mouse_move_window):
-
-				self.update_indicator(self.obj_window_drag, self.obj_mouse_controller.drag_window_target, globals.CLR_SCENE_OBJECT_DRAG)
-				scene_info_text += " | DRAGGING : %s" % self.obj_mouse_controller.drag_window_target('child_name')
+				self.update_indicator(self.obj_window_drag, self.obj_mouse_controller.drag_window_target, globals.CLR_SCENE_OBJECT_DRAG_CAN_DROP)
 				need_drag_indicator = True
 		
 		# hide drag indicator
@@ -347,6 +397,23 @@ class scene_demo():
 
 		self.obj_scene_info.SetText(scene_info_text)
 	
+	    
+		if self.obj_mouse_controller.mouse_left_down_target != None:
+			self.text_indicator.update_text_line("MOUSE_LEFT_BUTTON_DOWN_TARGET", "Mouse Left Button Down Target: %s" % self.obj_mouse_controller.mouse_left_down_target('wnd').GetWindowName())
+		else:
+			self.text_indicator.update_text_line("MOUSE_LEFT_BUTTON_DOWN_TARGET", "Mouse Left Button Down Target: None")
+		
+		if self.obj_mouse_controller.mouse_over_window_target != None:
+			self.text_indicator.update_text_line("MOUSE_OVER_WINDOW_TARGET", "Mouse Over Window Target: %s" % self.obj_mouse_controller.mouse_over_window_target('wnd').GetWindowName())
+		else:
+			self.text_indicator.update_text_line("MOUSE_OVER_WINDOW_TARGET", "Mouse Over Window Target: None")
+
+		if self.obj_mouse_controller.drag_window_target != None:
+			self.text_indicator.update_text_line("DRAG_WINDOW_TARGET", "Drag&Drop Target Window: %s" % self.obj_mouse_controller.drag_window_target('wnd').GetWindowName())
+		else:
+			self.text_indicator.update_text_line("DRAG_WINDOW_TARGET", "Drag&Drop Target Window: None")
+		
+		self.text_indicator.arrange_text_lines()
 	##########################################################################################
 	## Demo Data
 

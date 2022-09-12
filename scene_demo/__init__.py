@@ -47,8 +47,7 @@ from _utils import LogTxt, rect_collision
 from mouse_controller import mouse_controller
 
 class scene_demo():
-	"""
-	scene demo class
+	"""scene demo class
 	- visualize our scene data
 	- has a mouse controller for mouse input
 	"""
@@ -79,6 +78,8 @@ class scene_demo():
 
 	###########################################################
 	class window_indicator(ui.Bar):
+		"""window indicator class
+		- shows a colored bar around a window"""
 		def __init__(self):
 			ui.Bar.__init__(self)
 			self.AddFlag('not_pick')
@@ -96,10 +97,31 @@ class scene_demo():
 			self.SetPosition(0, 0)
 			self.Show()
 
+	
+	class text_indicator_inputs(ui.Bar):
+		def __init__(self):
+			ui.Bar.__init__(self)
+			self.SetSize(100, 20)
+			self.text_lines = {}
+
+			self.title = ui.TextLine()
+			self.title.SetParent(self)
+			self.title.SetPosition(int(self.GetWidth()/2), 0)
+			self.title.SetHorizontalAlignCenter()
+			self.title.SetText('Inputs')
+			self.title.SetFontColor(0.0, 0.0, 0.0)
+			self.title.Show()
+
+			self.Hide()
+		def set_text(self, name, text):
+			"""set text for a line by name"""
+			self.text_lines[name] = text
 
 	###########################################################
-	# Start of SceneDataObject
 	class scene_data_object():
+		"""scene data object class
+		- visualizes our scene data
+		"""
 		# the instance of our object control window
 		wnd = None
 
@@ -116,32 +138,38 @@ class scene_demo():
 			self.originals['position'] = (self.__dict__['x'], self.__dict__['y'])
 			self.originals['size'] = (self.__dict__['width'], self.__dict__['height'])
 			
-			self.fn_on_move 				= fn_on_move
-			self.fn_mouse_over_window 		= fn_mouse_over_window
-			self.fn_mouse_over_out_window 	= fn_mouse_over_out_window
-			self.fn_mouse_left_button_down 	= fn_mouse_left_button_down
-			self.fn_mouse_left_button_up 	= fn_mouse_left_button_up
+			# set ui class callbacks, set on and then called by our demo objects
+			self.fn_on_move 					= fn_on_move
+			self.fn_mouse_over_window 			= fn_mouse_over_window
+			self.fn_mouse_over_out_window 		= fn_mouse_over_out_window
+			self.fn_mouse_left_button_down 		= fn_mouse_left_button_down
+			self.fn_mouse_left_button_up 		= fn_mouse_left_button_up
 			self.fn_get_scene_object_data		= fn_get_scene_object_data
 
 			self.create_object_instance()
 
-		# overloaded delete to remove our custom instances
 		def __del__(self):
 			self.obj_instance.Hide()
 			self.obj_instance.Destroy()
 			self.wnd.Hide()
 			ui.Window.__del__(self.wnd)
 
-		# on object call, return dict entry by key
-		def __call__(self, name): # return type=dict
+		def __call__(self, name):
+			"""call function
+			Args:
+				name (str): name of the instance to return
+			
+			Returns:
+				instance: the instance of the name
+			"""
 			return self.__dict__[name]
 
-		# set wnd position
 		def set_position(self, x, y):
+			"""set wnd position"""
 			self.wnd.SetPosition(x, y)
 
-		# update dict entry by key
 		def update_data(self, key, value):
+			"""update __dict__ entry by key"""
 			self.__dict__[key] = value
 			if value == None:
 				del self.__dict__[key]
@@ -168,26 +196,25 @@ class scene_demo():
 		# create our object instance
 		def create_object_instance(self):
 			LogTxt(__name__, 'scene_data_object.create_object_instance:: %s' % self.__dict__['x'])
+
+			self.wnd = ui.Window()			# create our control window
+			self.wnd.AddFlag('movable') 	# we want to be able to move our controller
+			self.wnd.AddFlag('float') 		# enabled settop
+
+			self.wnd.SetPosition(*(self.__dict__['x'], self.__dict__['y'])) # set position
+			self.wnd.SetSize(self.__dict__['width'], self.__dict__['height']) # set size
+
+			# override functions
+			self.wnd.moveWindowEvent = self.on_move														# on move callback
+			self.wnd.SetWindowName(self.__dict__['child_name']) 										# set window name			
+			self.wnd.SetOverEvent(ui.__mem_func__(self.fn_mouse_over_window), self) 					# set mouse over event
+			self.wnd.SetOverOutEvent(ui.__mem_func__(self.fn_mouse_over_out_window), self) 				# set mouse over out event
+			self.wnd.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.fn_mouse_left_button_down), self) # set mouse left button down event
+			self.wnd.OnMouseLeftButtonUp = self.fn_mouse_left_button_up 								# set mouse left button up event			
+			self.wnd.Show()
+
 			try:
-				self.wnd = ui.Window()
-
-				self.wnd.AddFlag('movable') 	# we want to be able to move our window
-				self.wnd.AddFlag('float') 		# it should pop up above other windows
-	
-				self.wnd.moveWindowEvent = self.on_move	# we overwrite the moveWindowEvent to call our on_move function
-
-				self.wnd.SetPosition(*(self.__dict__['x'], self.__dict__['y'])) # set position
-			
-				self.wnd.SetSize(self.__dict__['width'], self.__dict__['height'])
-				self.wnd.SetWindowName(self.__dict__['child_name'])
-
-				self.wnd.SetOverEvent(ui.__mem_func__(self.fn_mouse_over_window), self)
-				self.wnd.SetOverOutEvent(ui.__mem_func__(self.fn_mouse_over_out_window), self)
-				self.wnd.SetMouseLeftButtonDownEvent(ui.__mem_func__(self.fn_mouse_left_button_down), self)
-				self.wnd.OnMouseLeftButtonUp = self.fn_mouse_left_button_up
-
-				self.wnd.Show()
-
+				# here we create our scene object instance
 				# this is just the base, custom stuff will follow when other shit is done
 				self.obj_instance = self.__dict__['class']()
 				self.obj_instance.SetParent(self.wnd) 	# set parent to the window
@@ -196,10 +223,6 @@ class scene_demo():
 				self.obj_instance.AddFlag('not_pick')	# we dont want to be able to pick this object
 				self.obj_instance.AddFlag('attach')		# we want to be able to attach this object to other objects
 				self.obj_instance.Show()
-			
-				####
-
-
 			except Exception as e:
 				LogTxt(__name__, 'scene_data_object.create_object_instance:: EXCEPTION <%s>' % e)
 
@@ -228,6 +251,12 @@ class scene_demo():
 		self.obj_window_drag = self.window_indicator()
 
 		self.obj_mouse_controller = mouse_controller()
+
+		self.text_indicator = self.text_indicator_inputs()
+		self.text_indicator.SetPosition(wndMgr.GetScreenWidth() - 310, wndMgr.GetScreenHeight() - 210)
+		self.text_indicator.SetSize(300, 200)
+		self.text_indicator.SetColor(globals.CLR_SCENE_TEXT_INDICATOR)
+		self.text_indicator.Show()
 		#LogTxt(__name__, "TestMouseController: %s" % self.obj_mouse_controller.current_mouse_position)
 
 	###########################################################

@@ -27,6 +27,7 @@ CLR_SCENE_INFO = GenerateColor(0.9, 0.9, 0.9, 1)
 
 CLR_SCENE_OBJECT_DRAG = GenerateColor(0.9, 0.9, 0.1, 0.10)
 
+CLR_SCENE_TEXT_INDICATOR = GenerateColor(0.6, 0.6, 0.6, 0.5)
 
 INFO_INPUT_SCENE_NAME = "(press <ENTER> for default name)"
 

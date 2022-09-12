@@ -3,8 +3,7 @@ from _utils import LogTxt, rect_collision, rect_intersect_area_factor
 import globals
 
 class mouse_controller():
-	"""
-	mouse controller class
+	"""mouse controller class
 	- used for our scene demo objects control functions
 	"""
 	############################################
@@ -40,24 +39,18 @@ class mouse_controller():
 	def on_mouse_left_button_up(self):
 		self.mouse_left_down_target = None
 		self.drag_window_target = None
-	
 
 	############################################
 	def reset(self):
-		"""
-		Reset the mouse controller target objects
-		"""
+		"""Reset the mouse controller target objects"""
 		self.__dict__['mouse_over_window_target'] = None
 		self.__dict__['drag_window_target'] = None
 		self.__dict__['mouse_left_down_target'] = None
-		
 
-	############################################
 	def find_drag_window_target(self, instance_scene_demo, exclude_list):
-		"""
-		Find the window that is being dragged
-			- instance_scene_demo: scene_demo instance
-			- exclude_list: list of window names to exclude from the search
+		"""Find the window that is being dragged
+		- instance_scene_demo: scene_demo instance
+		- exclude_list: list of window names to exclude from the search
 		"""
 		d = {
 			'best' : None,

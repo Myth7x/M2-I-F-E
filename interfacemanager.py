@@ -1,6 +1,3 @@
-# UI Builder by myth, b1g speed in ya nose
-# IfMgr : Interface Manager
-
 NAME = "Interface Manager"
 VERSION = '0.1.0 - Controls Development'
 UI_CLASS_EXPORT = {
@@ -21,8 +18,7 @@ import ui, wndMgr, app
 ###############################################################################
 
 class InterfaceManager(ui.BoardWithTitleBar):
-	"""
-	interface manager class
+	"""interface manager class
 	- main program module, handles create/load/save/delete of scenes
 	"""
 	current_scene 	= None
@@ -56,14 +52,14 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def __del__(self):
 		ui.BoardWithTitleBar.__del__(self)
 
-	###############################################################################
-	# Overridden Methods
-	###############################
-	# To Reset Focus on Inputs
+
+
 	def OnMouseLeftButtonDown(self):
+		"""Overridden to reset focus on inputs"""
 		self.SetFocus()
-	# Abusing this loop to update
+
 	def OnRender(self):
+		"""Overridden to update the program"""
 		if self.obj_browser != None:
 			xMouse, yMouse = wndMgr.GetMousePosition()
 			self.information.SetText("<Version:%s> <UI_Classes:%d> <Mouse:%d,%d>" % (VERSION, self.obj_browser.ref_object_list.GetItemCount(), xMouse, yMouse))
@@ -77,14 +73,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		
 		if self.scene_demo:
 			self.scene_demo.update()
-	###############################################################################
 
-
-	###############################################################################
-	# Interface Methods
-	###############################
-	# Build Window
 	def build_window(self):
+		"""Builds the interface manager window"""
 		self.SetTitleName(NAME)
 		self.SetSize(self.WINDOW_SIZE[0], self.WINDOW_SIZE[1])
 		self.SetPosition(wndMgr.GetScreenWidth() / 2 - self.WINDOW_SIZE[0] / 2, 20)
@@ -144,9 +135,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		LogTxt(__name__, "Initialized!")
 		return True
-	###############################################################################
-	# Create Scene
+
 	def create_scene(self, name):
+		"""Creates a new scene"""
 		self.current_scene = name if not globals.INFO_INPUT_SCENE_NAME in name else 'New Scene'
 
 		self.scene_demo = scene_demo.scene_demo()
@@ -159,13 +150,10 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.scene_browser.object.SetWindowName("scene_browser")
 		self.scene_browser.set_parent(self)
 		self.scene_browser.set_scene_name(self.current_scene)
-	###############################################################################
 
-
-	###############################################################################
-	# Event Methods
-	###############################
 	def on_demo_select_object(self, object_name):
+		"""Called when an object is selected in the object browser
+		- object_name: name of the selected object/name of the selected ui class"""
 		object_list_index = 0
 		for object in self.scene_browser.ref_object_list.textDict:
 			if self.scene_browser.ref_object_list.textDict[object] == object_name:
@@ -173,9 +161,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				break
 
 		self.scene_browser.ref_object_list.SelectItem(object_list_index)
-	###############################
-	# Create Scene
+
 	def create_scene_ask_name(self):
+		"""Asks for a name for the new scene on submit, creates the scene"""
 		self.input_dialog = ifmgr_ui.InputDialog()
 		self.input_dialog.set_size(500, 100)
 		self.input_dialog.set_title("New Scene Name")
@@ -183,31 +171,26 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.input_dialog.set_input("New Scene  %s" % globals.INFO_INPUT_SCENE_NAME)
 		self.input_dialog.set_callback(ui.__mem_func__(self.create_scene))
 		self.input_dialog.Show()
-	###############################
-	# Restart Game
+
 	def restart_game(self):
+		"""Restarts the game, useful if the m2 environment is broken"""
 		self.close_game()
 		os.system("start %s" % sys.executable)
-	###############################
-	# Close Game
+
 	def close_game(self):
+		"""Closes the game, also useful if the m2 environment is broken"""
 		app.Exit()
-	###############################
-	# Forward Scene Demo Refresh
+
 	def forward_scene_demo_refresh(self):
+		"""Forwards the refresh call to the scene demo"""
 		self.scene_demo.set_scene_data(self.current_scene, self.scene_browser.scene)
-	###############################
-	# Add Scene Object Data to Scene Demo
+
 	def add_scene_object_data(self, object_name, object_data):
+		"""Copies the scene project object data from our scene browser to the scene demo"""
 		self.scene_demo.add_scene_object_data(object_name, object_data)
-	###############################################################################
 
-
-	###############################################################################
-	# Other Methods
-	###############################
-	# Export UI Module Data (csv)
 	def export_raw_ui_data(self):
+		"""Exports the scraped raw ui data to a csv file"""
 		ui_class_export = [["Class,Base,Function,Arguments"]]
 		for ui_class in globals.UI_CLASS_DATA:
 			ui_class_export.append(['%s,,' % (ui_class)])
@@ -219,10 +202,5 @@ class InterfaceManager(ui.BoardWithTitleBar):
 				f.write(",".join(row) + "\n")
 			f.close()
 		LogTxt(__name__, "Exported UI Classes to %s" % target_file)
-	###############################################################################
 
-	
-
-
-############################################################################################################
 

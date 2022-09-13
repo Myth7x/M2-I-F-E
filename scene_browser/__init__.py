@@ -92,6 +92,7 @@ class scene_browser(ui.ScriptWindow):
 		_child = {
 			'child_name': child_name,
 			'object_name': data[0],
+			'parent':None,
 			'class': data[1],
 			'object': data[2],
 			'x': wndMgr.GetScreenWidth() / 2 - 100 / 2,

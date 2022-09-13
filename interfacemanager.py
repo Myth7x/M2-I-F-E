@@ -150,6 +150,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.scene_browser.set_parent(self)
 		self.scene_browser.set_scene_name(self.current_scene)
 
+		self.input_dialog.Close()
+		self.input_dialog = None
+
 	def on_demo_select_object(self, object_name):
 		"""Called when an object is selected in the object browser
 		- object_name: name of the selected object/name of the selected ui class"""

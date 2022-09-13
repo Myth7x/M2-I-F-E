@@ -72,7 +72,7 @@ class InputDialog(ui.BoardWithTitleBar):
         LogTxt(__name__, self.input.GetText())
         if self.fn_callback:
             self.fn_callback(self.input.GetText())
-        self.Close()
+        #self.Close()
 
     def set_input_desc(self, text):
         self.input_desc.SetText(text)
@@ -94,6 +94,7 @@ class InputDialog(ui.BoardWithTitleBar):
 
     def Close(self):
         self.Hide()
+        self.Destroy()
         ui.BoardWithTitleBar.__del__(self)
 
     def OnMouseLeftButtonDown(self):

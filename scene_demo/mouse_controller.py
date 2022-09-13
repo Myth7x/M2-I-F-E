@@ -7,7 +7,7 @@ class mouse_controller():
 	- used for our scene demo objects control functions
 	"""
 	############################################
-	def __init__(self):
+	def __init__(self, parent):
 		self.__dict__ = {
 			'current_mouse_position'	: [0, 0],
 			'last_mouse_position'		: [0, 0],
@@ -15,6 +15,7 @@ class mouse_controller():
 			'drag_window_target'		: None,
 			'mouse_left_down_target'	: None,
 		}
+		self.parent = parent
 	def __del__(self):
 		pass
 	def __get__(self, key):
@@ -31,14 +32,27 @@ class mouse_controller():
 	def on_mouse_over_window(self, scene_data_object):
 		if scene_data_object == None: return
 		self.mouse_over_window_target = scene_data_object
+		return True
 	def on_mouse_over_out_window(self, scene_data_object):
 		if scene_data_object != self.mouse_over_window_target: return
 		self.mouse_over_window_target = None
+		return True
 	def on_mouse_left_button_down(self, scene_data_object):
 		self.mouse_left_down_target = scene_data_object
+		return True
 	def on_mouse_left_button_up(self):
+		"""Mouse left button up event"""
+		# if we have a drag window target, call the on_drag_window_end event
+		if self.mouse_over_window_target != None:
+			self.parent.on_drag_window_end(
+				self.mouse_over_window_target, 
+				self.drag_window_target, 
+				self.__dict__['current_mouse_position'][0],
+				self.__dict__['current_mouse_position'][1]
+			)
 		self.mouse_left_down_target = None
 		self.drag_window_target = None
+		return True
 
 	############################################
 	def reset(self):

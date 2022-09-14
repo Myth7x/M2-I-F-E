@@ -94,9 +94,15 @@ class object_wrapper():
 		self.wnd.SetPosition(*self.get_global_position())
 		if self.is_moving == True and self.is_moving_target == True:
 			wndMgr.AddFlag(self.wnd.hWnd, 'not_pick')
+			wndMgr.RemoveFlag(self.wnd.hWnd, 'float')
+		
 		else:
 			wndMgr.RemoveFlag(self.wnd.hWnd, 'not_pick')
-			self.wnd.SetTop()
+			if self.is_moving == True and self.is_moving_target == False:
+				wndMgr.AddFlag(self.wnd.hWnd, 'not_pick')
+				wndMgr.AddFlag(self.wnd.hWnd, 'float')
+				self.wnd.SetTop()
+
 
 	# update call for random stuff
 	def on_update(self):
@@ -108,7 +114,9 @@ class object_wrapper():
 		self.__dict__['x'] = x
 		self.__dict__['y'] = y
 		self.fn_on_move(self.__dict__, x, y)
-		self.wnd.SetTop()
+		if self.is_moving_target == False and self.is_moving:
+			wndMgr.AddFlag(self.wnd.hWnd, 'not_pick')
+			self.wnd.SetTop()
 
 	# create our object instance
 	def create_object_instance(self):

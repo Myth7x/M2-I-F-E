@@ -39,16 +39,24 @@ class mouse_controller():
 		return True
 	def on_mouse_left_button_down(self, scene_data_object):
 		self.mouse_left_down_target = scene_data_object
+		self.mouse_left_down_target('wnd').AddFlag('float')
+		self.mouse_left_down_target('wnd').SetTop()
 		return True
 	def on_mouse_left_button_up(self):
 		"""Mouse left button up event"""
 		# if we have a drag window target, call the on_drag_window_end event
 		if self.mouse_over_window_target != None:
+			mouse_over_wnd_pos = self.mouse_over_window_target('wnd').GetGlobalPosition()
+			r_mouse_over_wnd = [mouse_over_wnd_pos[0], mouse_over_wnd_pos[1], self.mouse_over_window_target('wnd').GetWidth(), self.mouse_over_window_target('wnd').GetHeight()]
+			if rect_collision(r_mouse_over_wnd, [self.current_mouse_position[0], self.current_mouse_position[1], 1, 1]) == False:
+				self.drag_window_target = None
+
 			self.parent.on_drag_window_end(
 				self.mouse_over_window_target, 
 				self.drag_window_target, 
-				self.__dict__['current_mouse_position'][0],
-				self.__dict__['current_mouse_position'][1]
+				self.mouse_over_window_target.x,
+				self.mouse_over_window_target.y,
+				
 			)
 		self.mouse_left_down_target = None
 		self.drag_window_target = None

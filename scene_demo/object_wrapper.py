@@ -149,7 +149,7 @@ class object_wrapper():
 			self.uio_add_flag('not_pick')
 			self.uio_remove_flag('float')
 		elif self.is_moving == True and self.is_moving_target == False:
-			self.uio_remove_flag('uio_add_flag')
+			self.uio_remove_flag('not_pick')
 			self.uio_add_flag('float')
 			self.wnd.SetTop()
 			self.wnd.Show()

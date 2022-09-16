@@ -32,8 +32,6 @@
 # wndMgr.wndMgrIsDragging()                     <- is window being dragged?
 # wndMgr.wndMgrGetMousePosition()               <- get global mouse position
 # wndMgr.wndMgrGetMouseLocalPosition()          <- get mouse position relative to window
-
-from re import T
 import ui, wndMgr, grp
 
 import globals
@@ -217,11 +215,6 @@ class scene_demo():
 			for child_object in self.d_demo['objects']:
 				if self.d_demo['objects'][child_object].parent == self.obj_mouse_controller.mouse_over_window_target.child_name:
 					exclude_names.append(child_object)
-		if self.obj_mouse_controller.drag_window_target:
-			exclude_names.append(self.obj_mouse_controller.drag_window_target.child_name)
-		if self.obj_mouse_controller.mouse_left_down_target:
-			exclude_names.append(self.obj_mouse_controller.mouse_left_down_target.child_name)
-
 
 		best_drag_window_target = self.obj_mouse_controller.find_drag_window_target(self, exclude_names)
 		if best_drag_window_target != None and best_drag_window_target['best'] != None:

@@ -287,7 +287,17 @@ class scene_demo():
 		#	#self.d_demo['objects'][object].on_move(x, y)
 		pass
 
-
+	
+	def get_sub_children_name_list(self, parent_name):
+		"""get a list of all child objects"""
+		lst_names = []
+		for object in self.d_demo['objects']:
+			if self.d_demo['objects'][object].parent == parent_name:
+				lst_names.append(object)
+		for name in lst_names:
+			lst_names += self.get_sub_children_name_list(name)
+		LogTxt(__name__, "get_sub_children_name_list:: %s" % lst_names)
+		return lst_names
 
 	def on_drag_window_end(self, ctrl_wnd, dst_wnd, x, y):
 		"""method used to update children if the moved window has any
@@ -305,12 +315,7 @@ class scene_demo():
 			# Remove Parent from ctrl_wnd
 			#old_pos = ctrl_wnd('wnd').GetGlobalPosition()
 			
-			ctrl_wnd_children = []
-
-
-			for child in self.d_demo['objects']:
-				if self.d_demo['objects'][child].parent == ctrl_wnd.child_name and self.d_demo['objects'][child].child_name != ctrl_wnd.child_name:
-					ctrl_wnd_children.append(child)
+			ctrl_wnd_children = self.get_sub_children_name_list(ctrl_wnd.child_name)
 
 			for child in ctrl_wnd_children:
 				self.d_demo['objects'][child].x = self.d_demo['objects'][child].x + ctrl_wnd('wnd').GetGlobalPosition()[0]

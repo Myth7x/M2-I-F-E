@@ -39,17 +39,22 @@ class mouse_controller():
 		return True
 	def on_mouse_left_button_down(self, scene_data_object):
 		self.mouse_left_down_target = scene_data_object
-		self.mouse_left_down_target('wnd').AddFlag('float')
-		self.mouse_left_down_target('wnd').SetTop()
+		#self.mouse_left_down_target('wnd').SetTop()
 		return True
 	def on_mouse_left_button_up(self):
 		"""Mouse left button up event"""
 		# if we have a drag window target, call the on_drag_window_end event
 		if self.mouse_over_window_target != None:
-			mouse_over_wnd_pos = self.mouse_over_window_target('wnd').GetGlobalPosition()
-			r_mouse_over_wnd = [mouse_over_wnd_pos[0], mouse_over_wnd_pos[1], self.mouse_over_window_target('wnd').GetWidth(), self.mouse_over_window_target('wnd').GetHeight()]
+			mouse_over_wnd_pos = self.mouse_over_window_target.uio_get_position()
+			mouse_over_wnd_size = self.mouse_over_window_target.uio_get_size()
+			r_mouse_over_wnd = [mouse_over_wnd_pos[0], mouse_over_wnd_pos[1], mouse_over_wnd_size[0], mouse_over_wnd_size[1]]
+
+			# check if the mouse over window target window is inside the demo object iterator window
 			if rect_collision(r_mouse_over_wnd, [self.current_mouse_position[0], self.current_mouse_position[1], 1, 1]) == False:
 				self.drag_window_target = None
+
+			self.mouse_left_down_target.uio_remove_flag('not_pick')
+			self.mouse_left_down_target.uio_add_flag('float')
 
 			self.parent.on_drag_window_end(
 				self.mouse_over_window_target, 
@@ -58,16 +63,14 @@ class mouse_controller():
 				self.mouse_over_window_target.y,
 				
 			)
-		self.mouse_left_down_target = None
-		self.drag_window_target = None
-		return True
+			return True
 
 	############################################
 	def reset(self):
 		"""Reset the mouse controller target objects"""
-		self.__dict__['mouse_over_window_target'] = None
-		self.__dict__['drag_window_target'] = None
-		self.__dict__['mouse_left_down_target'] = None
+		self.mouse_over_window_target 	= None
+		self.drag_window_target 		= None
+		self.mouse_left_down_target 	= None
 
 	def find_drag_window_target(self, instance_scene_demo, exclude_list):
 		"""Find the window that is being dragged
@@ -95,7 +98,7 @@ class mouse_controller():
 			if obj == self.mouse_over_window_target: continue
 
 			# unused atm, maybe for parenting later
-			if obj in exclude_list:
+			if key in exclude_list:
 				#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
 				continue
 

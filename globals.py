@@ -22,11 +22,6 @@ BASE_THEME_SCALE_INFO_COLOR         = GenerateColor(*TEXT_INFO_COLOR_RGBA)
 
 UI_CLASS_DATA = {}
 
-
-
-
-
-
 CLR_SCENE_OBJECT_MOUSE_OVER = GenerateColor(0.6, 0.6, 0.6, 0.08)
 CLR_SCENE_OBJECT_MOUSE_DOWN = GenerateColor(0.6, 0.6, 0.6, 0.15)
 

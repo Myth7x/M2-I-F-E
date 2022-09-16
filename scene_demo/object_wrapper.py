@@ -96,10 +96,13 @@ class object_wrapper():
 		self.obj_instance.Destroy()
 
 		self.wnd.Destroy()
+		self.wnd = None
+
 
 	def create_object_instance(self):
 		"""create object instance with controller"""
-		self.wnd = ui.Window()			# create our control window
+		if not self.wnd:
+			self.wnd = ui.Window()			# create our control window
 		self.wnd.AddFlag('movable') 	# we want to be able to move our controller
 		self.wnd.AddFlag('float') 		# enabled settop
 

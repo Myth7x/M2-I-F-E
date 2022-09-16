@@ -298,40 +298,59 @@ class scene_demo():
 			y (int): y position of the window
 		"""
 
-		ctrl_wnd_name = ctrl_wnd('wnd').GetWindowName()
-
+		if dst_wnd == ctrl_wnd.parent:
+			return
+	
 		if dst_wnd == None:
 			# Remove Parent from ctrl_wnd
-			self.d_demo['objects'][ctrl_wnd_name].parent = None
-			self.d_demo['objects'][ctrl_wnd_name].is_moving = False
-			self.d_demo['objects'][ctrl_wnd_name].is_moving_target = False
-			self.d_demo['objects'][ctrl_wnd_name].x = x
-			self.d_demo['objects'][ctrl_wnd_name].y = y
-			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd_name, self.d_demo['objects'][ctrl_wnd_name].parent))
+			#old_pos = ctrl_wnd('wnd').GetGlobalPosition()
+			
+			for child in self.d_demo['objects']:
+				if self.d_demo['objects'][child].parent == ctrl_wnd.child_name and self.d_demo['objects'][child].child_name != ctrl_wnd.child_name:
+					self.d_demo['objects'][child].x = x + (ctrl_wnd.x - self.d_demo['objects'][child].x)
+					self.d_demo['objects'][child].y = y + (ctrl_wnd.y - self.d_demo['objects'][child].y)
+					self.d_demo['objects'][child].is_moving = False
+					self.d_demo['objects'][child].is_moving_target = False
+					self.d_demo['objects'][child].parent = None
+					self.d_demo['objects'][child].destroy_object_instance()
+					self.d_demo['objects'][child].create_object_instance()
+
+
+			ctrl_wnd.destroy_object_instance()
+			ctrl_wnd.create_object_instance()
+
+			ctrl_wnd.x = ctrl_wnd.x + (x - ctrl_wnd.x)
+			ctrl_wnd.y = ctrl_wnd.y + (y - ctrl_wnd.y)
+			ctrl_wnd.is_moving = False
+			ctrl_wnd.is_moving_target = False
+			ctrl_wnd.parent = None
+
+			ctrl_wnd.destroy_object_instance()
+			ctrl_wnd.create_object_instance()
+
+
+			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
 			return
 
-		dst_wnd_name = dst_wnd('wnd').GetWindowName()
-		
-		#LogTxt(__name__, "on_drag_window_end:: ctrl_wnd: %s, dst_wnd: %s, x: %s, y: %s" % (ctrl_wnd_name, dst_wnd_name, x, y))
-
-		if dst_wnd_name == ctrl_wnd_name: 
+		if ctrl_wnd == dst_wnd or dst_wnd == None: 
 			return
 
 		# update object data
-		if self.d_demo['objects'][dst_wnd_name].parent != ctrl_wnd_name:
-			self.d_demo['objects'][ctrl_wnd_name].parent = self.d_demo['objects'][dst_wnd_name]
-			self.d_demo['objects'][ctrl_wnd_name].parent = dst_wnd_name
-			self.d_demo['objects'][ctrl_wnd_name].x -= self.d_demo['objects'][dst_wnd_name].x
-			self.d_demo['objects'][ctrl_wnd_name].y -= self.d_demo['objects'][dst_wnd_name].y
+		#if self.d_demo['objects'][dst_wnd_name].parent != ctrl_wnd_name:
+		ctrl_wnd.parent = dst_wnd.child_name
+		ctrl_wnd('wnd').SetParent(dst_wnd('wnd'))
+		ctrl_wnd.x = x - dst_wnd.x
+		ctrl_wnd.y = y - dst_wnd.y
+		ctrl_wnd('wnd').SetPosition(ctrl_wnd.x, ctrl_wnd.y)
 
-			# if dst_wnd has already a parent and it is our crtl_wnd, remove it
-			#self.d_demo['objects'][dst_wnd_name].__dict__['parent'] = None
-			
-			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd_name, self.d_demo['objects'][ctrl_wnd_name].parent))
+		# if dst_wnd has already a parent and it is our crtl_wnd, remove it
+		#self.d_demo['objects'][dst_wnd_name].__dict__['parent'] = None
+		
+		LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
 
 		# reset drag window target and mouse left down target
-		self.obj_mouse_controller.refs['drag_window_target'] = None
-		self.obj_mouse_controller.refs['mouse_left_down_target'] = None
+		self.obj_mouse_controller.refs['drag_window_target'] 		= None
+		self.obj_mouse_controller.refs['mouse_left_down_target'] 	= None
 		
 		
 	############################################################################################################

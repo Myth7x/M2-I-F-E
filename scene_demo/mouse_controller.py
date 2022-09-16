@@ -50,23 +50,20 @@ class mouse_controller():
 		"""Mouse left button up event"""
 		# if we have a drag window target, call the on_drag_window_end event
 		if self.refs['mouse_left_down_target'] != None:
-			mouse_over_wnd_pos 	= self.refs['mouse_left_down_target'].uio_get_position()
-			mouse_over_wnd_size = self.refs['mouse_left_down_target'].uio_get_size()
+			pos 	= self.refs['mouse_left_down_target'].uio_get_position()
+			size = self.refs['mouse_left_down_target'].uio_get_size()
 
-			r_mouse_over_wnd = [mouse_over_wnd_pos[0], mouse_over_wnd_pos[1], mouse_over_wnd_size[0], mouse_over_wnd_size[1]]
+			r = [pos[0], pos[1], size[0], size[1]]
 
 			# check if the mouse over window target window is inside the demo object iterator window
-			if rect_collision(r_mouse_over_wnd, [self.mouse['position'][0], self.mouse['position'][1], 1, 1]) == False:
+			if rect_collision(r, [self.mouse['position'][0], self.mouse['position'][1], 1, 1]) == False:
 				self.refs['drag_window_target'] = None
-
-			self.refs['mouse_left_down_target'].uio_remove_flag('not_pick')
-			self.refs['mouse_left_down_target'].uio_add_flag('float')
 
 			self.parent.on_drag_window_end(
 				self.refs['mouse_left_down_target'], 
 				self.refs['drag_window_target'], 
-				self.refs['mouse_left_down_target'].x,
-				self.refs['mouse_left_down_target'].y,
+				self.mouse['position'][0],
+				self.mouse['position'][1]
 				
 			)
 
@@ -90,11 +87,11 @@ class mouse_controller():
 			'best_factor' : 0,
 		}
 
-		if self.refs['mouse_over_window_target'] == None:
+		if self.refs['mouse_left_down_target'] == None:
 			return None
 
-		t_mouse_over_window_target_position = self.refs['mouse_over_window_target']('wnd').GetGlobalPosition()
-		r_mouse_over_window_target = [t_mouse_over_window_target_position[0], t_mouse_over_window_target_position[1], self.refs['mouse_over_window_target']('wnd').GetWidth(), self.refs['mouse_over_window_target']('wnd').GetHeight()]
+		t_mouse_left_down_target_position = self.refs['mouse_left_down_target']('wnd').GetGlobalPosition()
+		r_mouse_left_down_target = [t_mouse_left_down_target_position[0], t_mouse_left_down_target_position[1], self.refs['mouse_left_down_target']('wnd').GetWidth(), self.refs['mouse_left_down_target']('wnd').GetHeight()]
 
 		d_demo_objects = instance_scene_demo.d_demo['objects']
 
@@ -103,21 +100,19 @@ class mouse_controller():
 			obj = d_demo_objects[key]
 
 			# skip the current mouse over window target (window we are moving or clicking on)
-			if obj == self.refs['mouse_over_window_target']: continue
+			if obj == self.refs['mouse_left_down_target']: continue
 
 			# unused atm, maybe for parenting later
-			if key in exclude_list:
-				#LogTxt("find_drag_window_target: exclude_list: %s" % obj('name'))
-				continue
+			if key in exclude_list:continue
 
 			t_demo_position = obj('wnd').GetGlobalPosition()
 			t_demo_size = (obj('wnd').GetWidth(), obj('wnd').GetHeight())
 			r_demo_window = [t_demo_position[0], t_demo_position[1], t_demo_size[0], t_demo_size[1]]
 
 			# check if the mouse over window target window is inside the demo object iterator window
-			if rect_collision(r_mouse_over_window_target, r_demo_window):
+			if rect_collision(r_mouse_left_down_target, r_demo_window):
 				# calculate the intersect area factor
-				f = rect_intersect_area_factor(r_mouse_over_window_target, r_demo_window)
+				f = rect_intersect_area_factor(r_mouse_left_down_target, r_demo_window)
 				if f > d['best_factor'] and f > MIN_WINDOW_INTERSECTION_FACTOR:
 					d['best_factor'] = f
 					d['best'] = obj

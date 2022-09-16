@@ -1,9 +1,3 @@
-NAME = "Interface Manager"
-VERSION = '0.1.0 - Controls Development'
-UI_CLASS_EXPORT = {
-	'enabled' 	: False,
-	'path' 		: 'C:\\InterfaceManager\\%s_ui_classes.csv',
-}
 ###############################################################################
 import datetime, sys, os
 
@@ -39,7 +33,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		globals.UI_CLASS_DATA = self.ui.load_ui_data()
 		LogTxt(__name__, "Found %d possible UI Modules!" % len(globals.UI_CLASS_DATA))
 
-		if UI_CLASS_EXPORT['enabled']:
+		if globals.UI_CLASS_EXPORT['enabled']:
 			self.export_raw_ui_data()
 
 		if self.build_window() != True:
@@ -61,7 +55,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def OnRender(self):
 		"""Overridden to update the program"""
 		if self.obj_browser != None:
-			self.information.SetText("<Version:%s>" % VERSION)
+			self.information.SetText("<Version:%s>" % globals.VERSION)
 			if self.current_scene != None:
 				self.new_scene_button.Hide()
 		
@@ -75,7 +69,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 	def build_window(self):
 		"""Builds the interface manager window"""
-		self.SetTitleName(NAME)
+		self.SetTitleName(globals.NAME)
 		self.SetSize(self.WINDOW_SIZE[0], self.WINDOW_SIZE[1])
 		self.SetPosition(wndMgr.GetScreenWidth() / 2 - self.WINDOW_SIZE[0] / 2, 20)
 		self.AddFlag("movable")
@@ -198,7 +192,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			ui_class_export.append(['%s,,' % (ui_class)])
 			for ui_class_attr in self.ui[ui_class][3]:
 				ui_class_export.append(['%s,%s,%s,%s' % (ui_class, self.ui[ui_class][2], ui_class_attr, self.ui[ui_class][3][ui_class_attr])])
-		target_file = UI_CLASS_EXPORT['path'] % (datetime.datetime.now().strftime('%Y-%m-%d'))
+		target_file = globals.UI_CLASS_EXPORT['path'] % (datetime.datetime.now().strftime('%Y-%m-%d'))
 		with open(target_file, "w") as f:
 			for row in ui_class_export:
 				f.write(",".join(row) + "\n")

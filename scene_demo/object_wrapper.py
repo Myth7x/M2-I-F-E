@@ -31,8 +31,10 @@ class object_wrapper():
 
 	def __init__(self, data, fn_mouse_left_button_down, fn_mouse_left_button_up, fn_mouse_over_window, fn_mouse_over_out_window, fn_on_move, fn_get_scene_object_data, fn_get_parent_position):
 		self.__dict__ = data
-		self.originals['position'] = (self.__dict__['x'], self.__dict__['y'])
-		self.originals['size'] = (self.__dict__['width'], self.__dict__['height'])
+
+		# backup original position and size, if the user wants to reset the object
+		self.originals['position'] = (self.x, self.y)
+		self.originals['size'] = (self.width, self.height)
 		
 		# set ui class callbacks, set on and then called by our demo objects
 		self.fn_get_parent_position = fn_get_parent_position
@@ -71,17 +73,9 @@ class object_wrapper():
 		"""update __dict__ entry by key"""
 		self.__dict__[key] = value
 
-	def get_global_position(self):
-		"""get global position
-		means... get the position of the object relative to the parent"""
-		parent_pos = self.fn_get_parent_position(self)
-		if parent_pos:
-			return (parent_pos[0] + self.x, parent_pos[1] + self.y)
-		return self.uio_get_position()
-
 	def on_update(self):
 		"""on update callback only here the object will be updated"""
-		self.uio_update_relative_to_parent()
+		pass
 
 	def on_move(self, x, y):
 		"""on move callback <on move callback to n_scene_demo instance, will call the func with our dict and wnd position>
@@ -91,9 +85,17 @@ class object_wrapper():
 		"""
 		self.x = x
 		self.y = y
-		if self.is_moving == True:
-			self.fn_on_move(self, x, y)
+		#if self.is_moving == True:
+		#	self.fn_on_move(self, x, y)
 
+	def destroy_object_instance(self):
+		"""destroy object instance"""
+		self.wnd.Hide()
+
+		self.obj_instance.Hide()
+		self.obj_instance.Destroy()
+
+		self.wnd.Destroy()
 
 	def create_object_instance(self):
 		"""create object instance with controller"""
@@ -141,18 +143,6 @@ class object_wrapper():
 	# In the end this dictionary will be the raw data for the scene object, so we can save it to a file and load it again.
 	# If we call any get function here, its because we want to get Window.GetPosition.
 	############################################################################################################
-
-	def uio_update_relative_to_parent(self):
-		"""update relative to parent"""
-		self.uio_set_position(self.get_global_position())
-		if self.is_moving == True and self.is_moving_target == True:
-			self.uio_add_flag('not_pick')
-			self.uio_remove_flag('float')
-		elif self.is_moving == True and self.is_moving_target == False:
-			self.uio_remove_flag('not_pick')
-			self.uio_add_flag('float')
-			self.wnd.SetTop()
-			self.wnd.Show()
 
 	def uio_get_position(self):
 		"""ui.Window.GetPosition

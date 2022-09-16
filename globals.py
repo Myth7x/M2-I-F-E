@@ -1,6 +1,13 @@
 from dbg import TraceError
 from grp import GenerateColor
 
+NAME = "Interface Manager"
+VERSION = '0.1.1 - Controls Recode 2'
+UI_CLASS_EXPORT = {
+	'enabled' 	: False,
+	'path' 		: 'C:\\InterfaceManager\\%s_ui_classes.csv',
+}
+
 BASE_THEME_COLOR_RGBA   = (0.3, 0.3, 0.3, 1)
 BASE_THEME_COLOR        = GenerateColor(*BASE_THEME_COLOR_RGBA)
 
@@ -31,6 +38,5 @@ CLR_SCENE_OBJECT_DRAG_CANNOT_DROP = GenerateColor(0.9, 0.1, 0.1, 0.08)#(0.1, 0.9
 CLR_SCENE_TEXT_INDICATOR = GenerateColor(0.6, 0.6, 0.6, 0.5)
 
 INFO_INPUT_SCENE_NAME = "(press <ENTER> for default name)"
-
 
 MIN_WINDOW_INTERSECTION_FACTOR = 1200

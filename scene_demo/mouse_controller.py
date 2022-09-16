@@ -62,8 +62,8 @@ class mouse_controller():
 			self.parent.on_drag_window_end(
 				self.refs['mouse_left_down_target'], 
 				self.refs['drag_window_target'], 
-				self.mouse['position'][0],
-				self.mouse['position'][1]
+				self.refs['mouse_left_down_target'].x,
+				self.refs['mouse_left_down_target'].y,
 				
 			)
 
@@ -101,7 +101,7 @@ class mouse_controller():
 
 			# skip the current mouse over window target (window we are moving or clicking on)
 			if obj == self.refs['mouse_left_down_target']: continue
-
+			if obj.parent != None: continue
 			# unused atm, maybe for parenting later
 			if key in exclude_list:continue
 

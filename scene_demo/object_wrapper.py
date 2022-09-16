@@ -90,13 +90,16 @@ class object_wrapper():
 
 	def destroy_object_instance(self):
 		"""destroy object instance"""
-		self.wnd.Hide()
+		
+		if self.obj_instance:
+			self.obj_instance.Hide()
+			self.obj_instance.Destroy()
+			self.obj_instance = None
 
-		self.obj_instance.Hide()
-		self.obj_instance.Destroy()
-
-		self.wnd.Destroy()
-		self.wnd = None
+		if self.wnd:
+			self.wnd.Hide()
+			self.wnd.Destroy()
+			self.wnd = None
 
 
 	def create_object_instance(self):

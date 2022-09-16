@@ -305,29 +305,28 @@ class scene_demo():
 			# Remove Parent from ctrl_wnd
 			#old_pos = ctrl_wnd('wnd').GetGlobalPosition()
 			
+			ctrl_wnd_children = []
+
+
 			for child in self.d_demo['objects']:
 				if self.d_demo['objects'][child].parent == ctrl_wnd.child_name and self.d_demo['objects'][child].child_name != ctrl_wnd.child_name:
-					self.d_demo['objects'][child].x = x + (ctrl_wnd.x - self.d_demo['objects'][child].x)
-					self.d_demo['objects'][child].y = y + (ctrl_wnd.y - self.d_demo['objects'][child].y)
-					self.d_demo['objects'][child].is_moving = False
-					self.d_demo['objects'][child].is_moving_target = False
-					self.d_demo['objects'][child].parent = None
-					self.d_demo['objects'][child].destroy_object_instance()
-					self.d_demo['objects'][child].create_object_instance()
+					ctrl_wnd_children.append(child)
 
-
-			ctrl_wnd.destroy_object_instance()
-			ctrl_wnd.create_object_instance()
-
-			ctrl_wnd.x = ctrl_wnd.x + (x - ctrl_wnd.x)
-			ctrl_wnd.y = ctrl_wnd.y + (y - ctrl_wnd.y)
+			for child in ctrl_wnd_children:
+				self.d_demo['objects'][child].x = self.d_demo['objects'][child].x + ctrl_wnd('wnd').GetGlobalPosition()[0]
+				self.d_demo['objects'][child].y = self.d_demo['objects'][child].y + ctrl_wnd('wnd').GetGlobalPosition()[1]
+				self.d_demo['objects'][child].is_moving = False
+				self.d_demo['objects'][child].is_moving_target = False
+				self.d_demo['objects'][child].destroy_object_instance()
+				self.d_demo['objects'][child].create_object_instance()
+			
 			ctrl_wnd.is_moving = False
 			ctrl_wnd.is_moving_target = False
 			ctrl_wnd.parent = None
-
+			ctrl_wnd.x = ctrl_wnd('wnd').GetGlobalPosition()[0] if ctrl_wnd.parent == None else ctrl_wnd.x # might cause glitches with position of children
+			ctrl_wnd.y = ctrl_wnd('wnd').GetGlobalPosition()[1] if ctrl_wnd.parent == None else ctrl_wnd.y
 			ctrl_wnd.destroy_object_instance()
 			ctrl_wnd.create_object_instance()
-
 
 			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
 			return

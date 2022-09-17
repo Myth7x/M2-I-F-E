@@ -6,7 +6,7 @@ import ifmgr_ui.listbox as listbox
 class ListBoxScroll(listbox.ListBox):
 	def __init__(self):
 		listbox.ListBox.__init__(self)
-		
+
 		self.scrollBar = ui.ScrollBar()
 		self.scrollBar.SetParent(self)
 		self.scrollBar.SetScrollEvent(self.__OnScroll)

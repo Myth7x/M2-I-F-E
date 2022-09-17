@@ -218,6 +218,8 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			elif Type == "listbox_scroll":
 				parent.Children[c] = ListBoxScroll()
 				parent.Children[c].SetParent(parent)
+				parent.Children[c].SetShowRowNumber(ElementValue["show_line_count"])
+				LogTxt(__name__, "show_line_count : %d" % ElementValue["show_line_count"])
 				self.LoadElementListBox(parent.Children[c], ElementValue, parent)
 			elif Type == "combo_box":
 				parent.Children[c] = ui.ComboBox()
@@ -265,10 +267,10 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			_data = getattr(_module, "object")
 			# Create the object
 			_object = _class()
-		except IOError, e:
+		except IOError as e:
 			LogTxt(__name__, "Error: %s" % e)
 			return None
-		except RuntimeError, e:
+		except RuntimeError as e:
 			LogTxt(__name__, "Failed to load script: %s" % script)
 			LogTxt(__name__, "Error: %s" % e)
 			return None
@@ -285,7 +287,7 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 			# Set attributes for our board
 			_object.set_sizeable_data(_data['sizeable'])
 			# Set instruction data
-			if hasattr(_data, 'instructions'):
+			if 'instructions' in _data:
 				_object.set_instruction_data(_data['instructions'])
 		else:
 			_object.SetParent(parent)
@@ -293,7 +295,7 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 		_object.SetPosition(int(_data["x"]), int(_data["y"]))
 		_object.SetSize(int(_data["width"]), int(_data["height"]))
 
-		if hasattr(_data, 'style'):
+		if 'style' in _data:
 			for style in _data["style"]:
 				_object.AddFlag(style)
 

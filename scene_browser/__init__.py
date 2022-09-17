@@ -1,3 +1,4 @@
+# coding: utf-8
 # Second Window with our own scriptloader, but i realized, we gonna use the original ones for functionality
 import copy
 from distutils.log import Log
@@ -41,6 +42,8 @@ class scene_browser(ui.ScriptWindow):
 
 		self.ref_object_list.OnMouseWheel = self.ref_object_list.scrollBar.OnMouseWheel
 		self.ref_object_list.OnMouseLeftButtonDoubleClick = self.on_double_click_object_list
+
+		self.depth = 0
 
 		self.scene_obj_editor = attribute_editor.attribute_editor()
 		self.scene_obj_editor.set_parent(self)
@@ -183,18 +186,31 @@ class scene_browser(ui.ScriptWindow):
 
 		self.arrange_object_list()
 
-	def iterate_object_list(self, dict):
-		for key, child in dict.items():
-			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), child['child_name'])
-			p_c = self.ref_object_list.GetItemCount()
-			c = 0
-			for sub_child_list_it in child['children']:
-				c += 1
-				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '%s.%s >> %s' % (p_c, c, sub_child_list_it['child_name']))
+	def iterate_object_list(self, data, parent_name):
+		for child in data:
+			if child['parent'] == parent_name:
+	
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|- %s' % child['child_name'])
+				self.iterate_object_list(self.scene['children'], child['child_name'])
 
-				if len(sub_child_list_it['children']) > 0:
-					self.iterate_object_list(sub_child_list_it['children'])
+	def recursive_create_object_list(self, data, parent_name, prefix):
+		original_depth = self.depth
+		tabulator = '\t'
+		for x in xrange(self.depth):
+			tabulator += '\t'
+		for child in data:
+			if child['parent'] == parent_name:
+				self.depth += 1
+
+
 				
+
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|%s|%s %s' % (tabulator, prefix, child['child_name']))
+				
+				self.recursive_create_object_list(self.scene['children'], child['child_name'], prefix)
+		
+		self.depth = original_depth
+		# set self.depth back to our original depth
 
 	# Refreshes the object list
 	def arrange_object_list(self):
@@ -205,14 +221,13 @@ class scene_browser(ui.ScriptWindow):
 			if child['parent'] == None:
 				parent_names.append(child['child_name'])
 
+		self.depth = 1
 
 		for parent_name in parent_names:
-			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), parent_name)
-			p_c = self.ref_object_list.GetItemCount()
-			c = 0
-			for child in self.scene['children']:
-				if child['parent'] == parent_name:
-					c += 1
-					self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '%s.%s >> %s' % (p_c, c, child['child_name']))
-					if 'children' in child and len(child['children']) > 0:
-						self.iterate_object_list(child['children'])
+			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|- %s ' % parent_name)
+			original_depth = self.depth
+			self.recursive_create_object_list(self.scene['children'], parent_name, "-")
+			if len(self.scene['children']) > 0 and self.ref_object_list.GetItemCount()-1 < len(self.scene['children']):
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|----------------------------------------')
+			self.depth = original_depth
+			#self.iterate_object_list(self.scene['children'], parent_name)

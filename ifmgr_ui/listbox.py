@@ -31,6 +31,9 @@ class ListBox(ui.Window):
 	def __del__(self):
 		ui.Window.__del__(self)
 
+	def SetShowRowNumber(self, state):
+		self.showLineCount = state
+
 	def SetWidth(self, width):
 		self.SetSize(width, self.height)
 
@@ -59,10 +62,8 @@ class ListBox(ui.Window):
 
 		textLine = ui.TextLine()
 		textLine.SetParent(self)
-		if not '>>' in str(text):
-			textLine.SetText('%d.\t%s' % (number+1, text))
-		else:
-			textLine.SetText('\t\t\t%s' % (text))
+		textLine.SetFontName('Arial:15')
+		textLine.SetText(text)
 		textLine.Show()
 
 		if self.itemCenterAlign:
@@ -77,12 +78,12 @@ class ListBox(ui.Window):
 		for key, value in self.keyDict.items():
 			if value == number:
 				if not '>>' in text:
-					self.textDict[key] = '%d.\t%s' % (number+1, text)
+					self.textDict[key] = text
 					if number < len(self.itemList):
-						self.itemList[key].SetText('%d.\t%s' % (number+1, text))
+						self.itemList[key].SetText('%d.%s' % (number+1, text))
 				else:
 					self.textDict[key] = text
-					self.itemList[key].SetText('\t\t\t%s' % (text))
+					self.itemList[key].SetText('%s' % (text))
 				
 
 				return

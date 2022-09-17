@@ -269,6 +269,13 @@ class scene_demo():
 
 		return scene_info_text
 	
+	def get_sub_children(self, parent_name):
+		children = []
+		for child_object in self.d_demo['objects']:
+			if self.d_demo['objects'][child_object].parent == parent_name:
+				children.append(self.d_demo['objects'][child_object])
+		return children
+
 	def get_sub_children_name_list(self, parent_name):
 		"""get a list of all child objects"""
 		lst_names = []

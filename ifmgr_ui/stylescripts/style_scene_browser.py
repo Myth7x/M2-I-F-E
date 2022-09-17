@@ -73,6 +73,7 @@ object = {
             "width" : WIDTH - 15 - 11,
             "height" : 370 - 12,
 
+            "show_line_count" : False,
 
             "item_align" : wndMgr.HORIZONTAL_ALIGN_LEFT,
 

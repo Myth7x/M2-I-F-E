@@ -91,6 +91,8 @@ object = {
             "x" : 10 + 4,
             "y" : 26 + 6,
 
+            "show_line_count" : True,
+
             "width" : WIDTH - 15 - 11,
             "height" : 370 - 12,
 

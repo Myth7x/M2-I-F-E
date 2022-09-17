@@ -310,28 +310,40 @@ class scene_demo():
 
 		if dst_wnd == ctrl_wnd.parent:
 			return
+		
+		
 	
 		if dst_wnd == None:
-			# Remove Parent from ctrl_wnd
-			#old_pos = ctrl_wnd('wnd').GetGlobalPosition()
-			
 			ctrl_wnd_children = self.get_sub_children_name_list(ctrl_wnd.child_name)
 
-			for child in ctrl_wnd_children:
-				self.d_demo['objects'][child].x = self.d_demo['objects'][child].x + ctrl_wnd('wnd').GetGlobalPosition()[0]
-				self.d_demo['objects'][child].y = self.d_demo['objects'][child].y + ctrl_wnd('wnd').GetGlobalPosition()[1]
-				self.d_demo['objects'][child].is_moving = False
-				self.d_demo['objects'][child].is_moving_target = False
-				self.d_demo['objects'][child].destroy_object_instance()
-				self.d_demo['objects'][child].create_object_instance()
+			#for child in ctrl_wnd_children:
+			#	obj = self.d_demo['objects'][child]
+#
+			#	parent_obj = self.d_demo['objects'][obj.parent]
+#
+			#	parent_pos = parent_obj('wnd').GetGlobalPosition()
+			#	obj.x = obj.x + parent_pos[0]
+			#	obj.y = obj.y + parent_pos[1]
+#
+			#	obj.destroy_object_instance()
 			
 			ctrl_wnd.is_moving = False
 			ctrl_wnd.is_moving_target = False
 			ctrl_wnd.parent = None
-			ctrl_wnd.x = ctrl_wnd('wnd').GetGlobalPosition()[0] if ctrl_wnd.parent == None else ctrl_wnd.x # might cause glitches with position of children
-			ctrl_wnd.y = ctrl_wnd('wnd').GetGlobalPosition()[1] if ctrl_wnd.parent == None else ctrl_wnd.y
+
+			ctrl_wnd.x = ctrl_wnd('wnd').GetGlobalPosition()[0]
+			ctrl_wnd.y = ctrl_wnd('wnd').GetGlobalPosition()[1]
+
 			ctrl_wnd.destroy_object_instance()
 			ctrl_wnd.create_object_instance()
+
+			for child in ctrl_wnd_children:
+				obj = self.d_demo['objects'][child]
+				obj('wnd').SetParent(ctrl_wnd('wnd'))
+				obj('wnd').SetPosition(obj.x, obj.y)
+				#obj.create_object_instance()
+
+
 
 			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
 			return
@@ -343,9 +355,10 @@ class scene_demo():
 		#if self.d_demo['objects'][dst_wnd_name].parent != ctrl_wnd_name:
 		ctrl_wnd.parent = dst_wnd.child_name
 		ctrl_wnd('wnd').SetParent(dst_wnd('wnd'))
-		ctrl_wnd.x = x - dst_wnd.x
-		ctrl_wnd.y = y - dst_wnd.y
+		ctrl_wnd.x = ctrl_wnd('wnd').GetGlobalPosition()[0] - dst_wnd('wnd').GetGlobalPosition()[0]
+		ctrl_wnd.y = ctrl_wnd('wnd').GetGlobalPosition()[1] - dst_wnd('wnd').GetGlobalPosition()[1]
 		ctrl_wnd('wnd').SetPosition(ctrl_wnd.x, ctrl_wnd.y)
+
 
 		# if dst_wnd has already a parent and it is our crtl_wnd, remove it
 		#self.d_demo['objects'][dst_wnd_name].__dict__['parent'] = None

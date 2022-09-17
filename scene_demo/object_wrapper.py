@@ -97,7 +97,6 @@ class object_wrapper():
 			self.obj_instance = None
 
 		if self.wnd:
-			self.wnd.Hide()
 			self.wnd.Destroy()
 			self.wnd = None
 

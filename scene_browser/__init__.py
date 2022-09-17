@@ -1,9 +1,11 @@
 # Second Window with our own scriptloader, but i realized, we gonna use the original ones for functionality
+import copy
 from distutils.log import Log
 from _utils.pythonscriptloader import PythonScriptLoader
 from _utils import LogTxt
 
 import attribute_editor
+from scene_demo import scene_demo
 
 import ui, wndMgr
 
@@ -168,10 +170,49 @@ class scene_browser(ui.ScriptWindow):
 	def render(self):
 		pass
 
+	def update_scene_object_data(self, data):
+		for obj_name in data:
+			obj = data[obj_name]
+			scene_data = self.get_scene_object_data(obj.child_name)
+			if scene_data != None:
+				scene_data['x'] = obj.x
+				scene_data['y'] = obj.y
+				scene_data['width'] = obj.width
+				scene_data['height'] = obj.height
+				scene_data['parent'] = obj.parent
+
+		self.arrange_object_list()
+
+	def iterate_object_list(self, dict):
+		for key, child in dict.items():
+			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), child['child_name'])
+			p_c = self.ref_object_list.GetItemCount()
+			c = 0
+			for sub_child_list_it in child['children']:
+				c += 1
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '%s.%s >> %s' % (p_c, c, sub_child_list_it['child_name']))
+
+				if len(sub_child_list_it['children']) > 0:
+					self.iterate_object_list(sub_child_list_it['children'])
+				
+
 	# Refreshes the object list
 	def arrange_object_list(self):
 		self.ref_object_list.ClearItem()
+		# wir bauen uns ein dict, dat konnen wir
+		parent_names = []
 		for child in self.scene['children']:
-			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), child['child_name'])
+			if child['parent'] == None:
+				parent_names.append(child['child_name'])
 
 
+		for parent_name in parent_names:
+			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), parent_name)
+			p_c = self.ref_object_list.GetItemCount()
+			c = 0
+			for child in self.scene['children']:
+				if child['parent'] == parent_name:
+					c += 1
+					self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '%s.%s >> %s' % (p_c, c, child['child_name']))
+					if 'children' in child and len(child['children']) > 0:
+						self.iterate_object_list(child['children'])

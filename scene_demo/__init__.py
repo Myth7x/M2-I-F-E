@@ -53,6 +53,8 @@ class scene_demo():
 	- has a mouse controller for mouse input
 	"""
 
+	parent = None
+
 	# holds or scene data
 	d_scene_data 	= {}
 
@@ -365,6 +367,8 @@ class scene_demo():
 
 		for child in self.d_demo['objects']:
 			self.d_demo['objects'][child].on_update()
+		
+		self.parent.update_scene_object_data(self.d_demo['objects'])
 	##########################################################################################
 	## Demo Data
 

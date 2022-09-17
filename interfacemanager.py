@@ -65,6 +65,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 			wndMgr.SetOutlineFlag(False)
 		
 		if self.scene_demo:
+			self.scene_demo.parent = self
 			self.scene_demo.update()
 
 	def build_window(self):
@@ -146,6 +147,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 
 		self.input_dialog.Close()
 		self.input_dialog = None
+
+	def update_scene_object_data(self, data):
+		self.scene_browser.update_scene_object_data(data)
 
 	def on_demo_select_object(self, object_name):
 		"""Called when an object is selected in the object browser

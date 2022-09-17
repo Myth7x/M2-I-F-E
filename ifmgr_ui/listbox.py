@@ -59,7 +59,10 @@ class ListBox(ui.Window):
 
 		textLine = ui.TextLine()
 		textLine.SetParent(self)
-		textLine.SetText('%d.\t%s' % (number+1, text))
+		if not '>>' in str(text):
+			textLine.SetText('%d.\t%s' % (number+1, text))
+		else:
+			textLine.SetText('\t\t\t%s' % (text))
 		textLine.Show()
 
 		if self.itemCenterAlign:
@@ -73,10 +76,14 @@ class ListBox(ui.Window):
 	def ChangeItem(self, number, text):
 		for key, value in self.keyDict.items():
 			if value == number:
-				self.textDict[key] = '%d.\t%s' % (number+1, text)
-
-				if number < len(self.itemList):
-					self.itemList[key].SetText('%d.\t%s' % (number+1, text))
+				if not '>>' in text:
+					self.textDict[key] = '%d.\t%s' % (number+1, text)
+					if number < len(self.itemList):
+						self.itemList[key].SetText('%d.\t%s' % (number+1, text))
+				else:
+					self.textDict[key] = text
+					self.itemList[key].SetText('\t\t\t%s' % (text))
+				
 
 				return
 

@@ -165,8 +165,16 @@ class scene_browser(ui.ScriptWindow):
 		if selected_object == None:
 			return None
 
+		# extract tree elements
+		tree_elements = selected_object.replace(' ', '')
+		tree_elements = tree_elements.replace('|', '')
+		tree_elements = tree_elements.replace('-', '')
+		tree_elements = tree_elements.replace('+', '')
+		tree_elements = tree_elements.replace('`', '')
+		LogTxt(__name__, "Tree elements: %s" % tree_elements)
+
 		# Find dict in self.scene['children'] with the name of the selected object
-		return self.get_scene_object_data(selected_object)
+		return self.get_scene_object_data(tree_elements)
 
 	# Update UI Extra
 	def update(self):

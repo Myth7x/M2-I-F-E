@@ -69,7 +69,7 @@ object = {
             "x" : WIDTH - 20 + 3,
             "y" : 9,
             "text" : "[ UI Classes: %d ]",
-            "fontname" : "Tahoma:12",
+            "font_name" : "Tahoma:12",
             "text_horizontal_align" : "right",
         },
         {

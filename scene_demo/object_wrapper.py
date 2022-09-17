@@ -139,7 +139,7 @@ class object_wrapper():
 				self.obj_instance.SetPosition(self.width/2, self.height/2)
 
 		except Exception as e:
-			LogTxt(__name__, 'scene_data_object.create_object_instance:: EXCEPTION <%s>' % e)
+			pass
 
 	############################################################################################################
 	# UI object related functions

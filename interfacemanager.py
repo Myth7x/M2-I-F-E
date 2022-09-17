@@ -188,6 +188,7 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def add_scene_object_data(self, object_name, object_data):
 		"""Copies the scene project object data from our scene browser to the scene demo"""
 		self.scene_demo.add_scene_object_data(object_name, object_data)
+		self.scene_browser.add_scene_object(object_name, object_data)
 
 	def export_raw_ui_data(self):
 		"""Exports the scraped raw ui data to a csv file"""

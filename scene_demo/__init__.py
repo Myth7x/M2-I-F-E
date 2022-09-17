@@ -314,7 +314,7 @@ class scene_demo():
 
 			for child in ctrl_wnd_children:
 				obj = self.d_demo['objects'][child]
-				LogTxt(__name__, "we iterate children to update them after none dragdrop <%s>" % obj('wnd'))
+				#LogTxt(__name__, "we iterate children to update them after none dragdrop <%s>" % obj('wnd'))
 				obj('wnd').SetParent(ctrl_wnd('wnd'))
 				obj('wnd').SetPosition(obj.x, obj.y)
 
@@ -347,9 +347,6 @@ class scene_demo():
 		if self.obj_mouse_controller:
 			self.obj_mouse_controller.mouse['position'] = wndMgr.GetMousePosition()
 
-		if 'object' in self.__dict__ and len(self.d_demo['objects']) <= 0:
-			return
-		
 		scene_info_text = self.update_controls(scene_info_text)
 
 		self.obj_scene_info.SetText(scene_info_text)
@@ -394,15 +391,10 @@ class scene_demo():
 		
 		obj = self.get_demo_object_data(data['child_name'])
 		if obj == None:
-			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data creation of object: %s' % data['child_name'])
 			self.d_demo['objects'][data['child_name']] = object_wrapper(data, self.obj_mouse_controller.on_mouse_left_button_down, self.obj_mouse_controller.on_mouse_left_button_up, self.obj_mouse_controller.on_mouse_over_window, self.obj_mouse_controller.on_mouse_over_out_window, None, self.get_demo_object_data, self.get_parent_position)
 			self.d_demo['objects'][data['child_name']].parent = self
 		else:
-			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data update of object: %s' % data['child_name'])
-			#update self.d_demo['objects'][data['child_name']].__dict__
-			for key, value in data.items():
-				#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data update of object: %s, key: %s, value: %s' % (data['child_name'], key, value))
-				self.d_demo['objects'][data['child_name']].update_data(key, value)
+			self.d_demo['objects'][data['child_name']] = data
 
 	def get_parent_position(self, child_data):
 		if self.obj_mouse_controller.refs['mouse_left_down_target'] and self.obj_mouse_controller.refs['mouse_left_down_target'].child_name == child_data.parent:
@@ -429,12 +421,17 @@ class scene_demo():
 		#self.create_demo_objects()
 	# Set a single data
 	def add_scene_object_data(self, child_name, data):
-		if 'children' in self.d_scene_data:
+		#if not 'children' in self.d_scene_data:
+		#	self.d_scene_data['children'] = []
+
+		child = self.get_scene_object_data(child_name)
+		if child == None:
+			self.d_scene_data['children'].append(data)
 			child = self.get_scene_object_data(child_name)
-			if child == None:
-				self.d_scene_data['children'].append(data)
-			else:
-				for key, value in data.items():
-					child[key] = value
-			self.prepare_demo_object(data)
-			return
+		else:
+			for obj in data:
+				#LogTxt(__name__, 'n_scene_demo_re.add_scene_object_data:: data update of object: %s, key: %s, value: %s' % (child_name, obj, data[obj]))
+				child[obj] = data[obj]
+		
+		self.prepare_demo_object(child)
+		self.parent.update_scene_object_data(self.d_demo['objects'])

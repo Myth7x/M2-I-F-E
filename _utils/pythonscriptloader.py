@@ -219,8 +219,7 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 				parent.Children[c] = ListBoxScroll()
 				parent.Children[c].SetParent(parent)
 				parent.Children[c].SetShowRowNumber(ElementValue["show_line_count"])
-				LogTxt(__name__, "show_line_count : %d" % ElementValue["show_line_count"])
-				self.LoadElementListBox(parent.Children[c], ElementValue, parent)
+				self.load_element_listbox(parent.Children[c], ElementValue, parent)
 			elif Type == "combo_box":
 				parent.Children[c] = ui.ComboBox()
 				parent.Children[c].SetParent(parent)
@@ -235,6 +234,21 @@ class PythonScriptLoader(ui.PythonScriptLoader):
 
 			self.load_children(parent.Children[c], ElementValue)
 			c += 1
+
+	def load_element_listbox(self, window, value, parentWindow):
+
+		if False == self.CheckKeyList(value["name"], value, self.LIST_BOX_KEY_LIST):
+			return False
+
+		if value.has_key("item_align"):
+			window.SetTextCenterAlign(value["item_align"])
+
+		window.SetSize(value["width"], value["height"])
+		if value.has_key("font_name"):
+			window.SetFontName(value["font_name"])
+		self.LoadDefaultData(window, value, parentWindow)
+
+		return True
 
 	def load_element_combobox(self, window, value, parentWindow):
 

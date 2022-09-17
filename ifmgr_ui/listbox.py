@@ -27,6 +27,7 @@ class ListBox(ui.Window):
 		self.keyDict = {}
 		self.textDict = {}
 		self.event = lambda *arg: None
+		self.fontName = 'Arial:12'
 
 	def __del__(self):
 		ui.Window.__del__(self)
@@ -62,7 +63,7 @@ class ListBox(ui.Window):
 
 		textLine = ui.TextLine()
 		textLine.SetParent(self)
-		textLine.SetFontName('Arial:15')
+		textLine.SetFontName(self.fontName)
 		textLine.SetText(text)
 		textLine.Show()
 
@@ -73,6 +74,15 @@ class ListBox(ui.Window):
 		self.itemList.append(textLine)
 
 		self._LocateItem()
+
+	def SetFontName(self, fontName):
+		self.fontName = fontName
+		for textLine in self.itemList:
+			text = textLine.GetText()
+			pos = textLine.GetLocalPosition()
+			textLine.SetFontName(self.fontName)
+			textLine.SetPosition(pos[0], pos[1])
+			textLine.SetText(text)
 
 	def ChangeItem(self, number, text):
 		for key, value in self.keyDict.items():

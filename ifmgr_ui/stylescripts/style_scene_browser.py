@@ -75,6 +75,8 @@ object = {
 
             "show_line_count" : False,
 
+            "font_name" : "Fixedsys:14",
+
             "item_align" : wndMgr.HORIZONTAL_ALIGN_LEFT,
 
             "size"      : "relative",

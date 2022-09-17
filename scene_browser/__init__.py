@@ -42,6 +42,8 @@ class scene_browser(ui.ScriptWindow):
 
 		self.ref_object_list.OnMouseWheel = self.ref_object_list.scrollBar.OnMouseWheel
 		self.ref_object_list.OnMouseLeftButtonDoubleClick = self.on_double_click_object_list
+		self.OnMouseWheel = self.ref_object_list.OnMouseWheel
+
 
 		self.depth = 0
 
@@ -70,7 +72,7 @@ class scene_browser(ui.ScriptWindow):
 
 	def set_parent(self, parent):
 		self.parent = parent
-		self.toggle_scene_demo_refresh()
+		self.SetParent(parent)
 
 	# on scene object list double click open object attribute editor
 	def on_double_click_object_list(self):
@@ -108,6 +110,7 @@ class scene_browser(ui.ScriptWindow):
 
 		self.scene['children'].append(_child)
 		self.parent.scene_demo.add_scene_object_data(child_name, _child)
+		self.arrange_object_list()
 		LogTxt(__name__, "================================================================================")
 		return
 
@@ -174,6 +177,7 @@ class scene_browser(ui.ScriptWindow):
 		pass
 
 	def update_scene_object_data(self, data):
+		
 		for obj_name in data:
 			obj = data[obj_name]
 			scene_data = self.get_scene_object_data(obj.child_name)
@@ -197,14 +201,11 @@ class scene_browser(ui.ScriptWindow):
 		original_depth = self.depth
 		tabulator = ''
 		for x in xrange(self.depth):
-			tabulator += '\t' + '|' if x != self.depth - 1 else '\t'
+			tabulator += '\t\t'
+		self.depth += 1
 		for child in data:
 			if child['parent'] == parent_name:
-				self.depth += 1
 
-
-				
-				tabulator_str = '|%s' % tabulator
 				final_str = '|%s|%s %s' % (tabulator, prefix, child['child_name'])
 				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), final_str)
 				
@@ -229,6 +230,6 @@ class scene_browser(ui.ScriptWindow):
 			original_depth = self.depth
 			self.recursive_create_object_list(self.scene['children'], parent_name, "--")
 			#if len(self.scene['children']) > 0 and self.ref_object_list.GetItemCount()-1 < len(self.scene['children']):
-			#	self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|----------------------------------------')
+			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|------------------------')
 			self.depth = original_depth
 			#self.iterate_object_list(self.scene['children'], parent_name)

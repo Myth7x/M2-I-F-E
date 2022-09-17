@@ -266,27 +266,6 @@ class scene_demo():
 			self.obj_window_drag.Hide()
 
 		return scene_info_text
-
-	# scene Object Callback On Move, to update our children
-	def callback_on_move(self, data, x, y):
-		"""called by our objects when they move"""
-		#self.d_demo['objects'][data.child_name].is_moving 			= True
-		#self.d_demo['objects'][data.child_name].is_moving_target 	= True
-		#for object in self.d_demo['objects']:
-		#	if self.d_demo['objects'][object].parent == data.child_name:
-		#		if self.d_demo['objects'][object].is_moving != True and self.d_demo['objects'][object].is_moving_target != True and \
-		#			self.d_demo['objects'][object].parent == data.child_name:
-#
-		#			self.d_demo['objects'][object].is_moving 			= True
-		#			self.d_demo['objects'][object].is_moving_target 	= False
-#
-		#		else:
-#
-		#			self.d_demo['objects'][object].is_moving 			= False
-		#			self.d_demo['objects'][object].is_moving_target 	= False
-		#	#self.d_demo['objects'][object].on_move(x, y)
-		pass
-
 	
 	def get_sub_children_name_list(self, parent_name):
 		"""get a list of all child objects"""
@@ -311,22 +290,9 @@ class scene_demo():
 		if dst_wnd == ctrl_wnd.parent:
 			return
 		
-		
-	
 		if dst_wnd == None:
 			ctrl_wnd_children = self.get_sub_children_name_list(ctrl_wnd.child_name)
 
-			#for child in ctrl_wnd_children:
-			#	obj = self.d_demo['objects'][child]
-#
-			#	parent_obj = self.d_demo['objects'][obj.parent]
-#
-			#	parent_pos = parent_obj('wnd').GetGlobalPosition()
-			#	obj.x = obj.x + parent_pos[0]
-			#	obj.y = obj.y + parent_pos[1]
-#
-			#	obj.destroy_object_instance()
-			
 			ctrl_wnd.is_moving = False
 			ctrl_wnd.is_moving_target = False
 			ctrl_wnd.parent = None
@@ -339,11 +305,9 @@ class scene_demo():
 
 			for child in ctrl_wnd_children:
 				obj = self.d_demo['objects'][child]
+				LogTxt(__name__, "we iterate children to update them after none dragdrop <%s>" % obj('wnd'))
 				obj('wnd').SetParent(ctrl_wnd('wnd'))
 				obj('wnd').SetPosition(obj.x, obj.y)
-				#obj.create_object_instance()
-
-
 
 			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
 			return
@@ -359,10 +323,6 @@ class scene_demo():
 		ctrl_wnd.y = ctrl_wnd('wnd').GetGlobalPosition()[1] - dst_wnd('wnd').GetGlobalPosition()[1]
 		ctrl_wnd('wnd').SetPosition(ctrl_wnd.x, ctrl_wnd.y)
 
-
-		# if dst_wnd has already a parent and it is our crtl_wnd, remove it
-		#self.d_demo['objects'][dst_wnd_name].__dict__['parent'] = None
-		
 		LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
 
 		# reset drag window target and mouse left down target
@@ -420,13 +380,11 @@ class scene_demo():
 			self.d_demo['objects'][obj]('wnd').SetSize(*(self.d_demo['objects'][obj].__dict__['width'], self.d_demo['objects'][obj].__dict__['height']))
 
 	def prepare_demo_object(self, data):
-		#LogTxt(__name__, "Start Dict: %s" % self.d_demo['objects'])
-		#LogTxt(__name__, "Self Dict: %s" % self.__dict__)
-
+		
 		obj = self.get_demo_object_data(data['child_name'])
 		if obj == None:
 			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data creation of object: %s' % data['child_name'])
-			self.d_demo['objects'][data['child_name']] = object_wrapper(data, self.obj_mouse_controller.on_mouse_left_button_down, self.obj_mouse_controller.on_mouse_left_button_up, self.obj_mouse_controller.on_mouse_over_window, self.obj_mouse_controller.on_mouse_over_out_window, self.callback_on_move, self.get_demo_object_data, self.get_parent_position)
+			self.d_demo['objects'][data['child_name']] = object_wrapper(data, self.obj_mouse_controller.on_mouse_left_button_down, self.obj_mouse_controller.on_mouse_left_button_up, self.obj_mouse_controller.on_mouse_over_window, self.obj_mouse_controller.on_mouse_over_out_window, None, self.get_demo_object_data, self.get_parent_position)
 			self.d_demo['objects'][data['child_name']].parent = self
 		else:
 			#LogTxt(__name__, 'n_scene_demo_re.prepare_demo_object:: data update of object: %s' % data['child_name'])

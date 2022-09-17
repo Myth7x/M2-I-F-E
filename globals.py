@@ -2,7 +2,7 @@ from dbg import TraceError
 from grp import GenerateColor
 
 NAME = "Interface Manager"
-VERSION = '0.1.1 - Controls Recode 2'
+VERSION = '0.1.2 - Object Attributes'
 UI_CLASS_EXPORT = {
 	'enabled' 	: False,
 	'path' 		: 'C:\\InterfaceManager\\%s_ui_classes.csv',

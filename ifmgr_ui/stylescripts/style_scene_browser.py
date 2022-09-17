@@ -75,7 +75,7 @@ object = {
 
             "show_line_count" : False,
 
-            "font_name" : "Consolas:16",
+            "font_name" : "System:14",
 
             "item_align" : wndMgr.HORIZONTAL_ALIGN_LEFT,
 

@@ -7,7 +7,7 @@ SCREEN_HEIGHT = wndMgr.GetScreenHeight()
 
 _class = Board_Custom
 
-WIDTH = 240
+WIDTH = 270
 HEIGHT = 430
 
 object = {
@@ -75,7 +75,7 @@ object = {
 
             "show_line_count" : False,
 
-            "font_name" : "Fixedsys:16",
+            "font_name" : "Tahoma:17",
 
             "item_align" : wndMgr.HORIZONTAL_ALIGN_LEFT,
 

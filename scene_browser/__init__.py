@@ -273,7 +273,7 @@ class scene_browser(ui.ScriptWindow):
 		self.ref_object_list.ClearItem()
 		
 		# log caller
-		LogTxt(__name__, "arrange_object_list called from %s" % inspect.stack()[1][3])
+		#LogTxt(__name__, "arrange_object_list called from %s" % inspect.stack()[1][3])
 
 		# wir bauen uns ein dict, dat konnen wir
 		parent_names = []
@@ -290,9 +290,9 @@ class scene_browser(ui.ScriptWindow):
 				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|')
 
 			if self.count_children(self.scene['children'], parent_name) > 0:
-				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|--+ %s ' % parent_name)
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|-+ %s ' % parent_name)
 			else:
-				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|--: %s ' % parent_name)
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|-- %s ' % parent_name)
 			original_depth = self.depth
 			self.recursive_create_object_list(self.scene['children'], parent_name, "--")
 			#if len(self.scene['children']) > 0 and self.ref_object_list.GetItemCount() < len(self.scene['children']):

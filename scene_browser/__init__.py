@@ -197,19 +197,32 @@ class scene_browser(ui.ScriptWindow):
 				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|- %s' % child['child_name'])
 				self.iterate_object_list(self.scene['children'], child['child_name'])
 
+	def count_children(self, data, parent_name):
+		count = 0
+		for child in data:
+			if child['parent'] == parent_name:
+				count += 1
+				count += self.count_children(self.scene['children'], child['child_name'])
+		return count
+
 	def recursive_create_object_list(self, data, parent_name, prefix):
 		original_depth = self.depth
 		tabulator = ''
 		for x in xrange(self.depth):
-			tabulator += '\t\t'
+			tabulator += '  '
 		self.depth += 1
 		for child in data:
 			if child['parent'] == parent_name:
+				orig_prefix = prefix
+				if self.count_children(self.scene['children'], child['child_name']) > 0:
+					prefix = prefix[:-1] + '+'
+					final_str = '|%s|%s %s' % (tabulator, prefix, child['child_name'])
+				else:
+					final_str = '|%s|%s %s' % (tabulator, prefix, child['child_name'])
 
-				final_str = '|%s|%s %s' % (tabulator, prefix, child['child_name'])
 				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), final_str)
 				
-				self.recursive_create_object_list(self.scene['children'], child['child_name'], prefix)
+				self.recursive_create_object_list(self.scene['children'], child['child_name'], orig_prefix)
 		
 		self.depth = original_depth
 		# set self.depth back to our original depth
@@ -217,6 +230,7 @@ class scene_browser(ui.ScriptWindow):
 	# Refreshes the object list
 	def arrange_object_list(self):
 		self.ref_object_list.ClearItem()
+		
 		# wir bauen uns ein dict, dat konnen wir
 		parent_names = []
 		for child in self.scene['children']:
@@ -224,12 +238,16 @@ class scene_browser(ui.ScriptWindow):
 				parent_names.append(child['child_name'])
 
 		self.depth = 1
-
+		#if len(parent_names) > 0:
+		#	self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|')
 		for parent_name in parent_names:
-			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|-- %s ' % parent_name)
+			if self.count_children(self.scene['children'], parent_name) > 0:
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|--+ %s ' % parent_name)
+			else:
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|--: %s ' % parent_name)
 			original_depth = self.depth
 			self.recursive_create_object_list(self.scene['children'], parent_name, "--")
-			#if len(self.scene['children']) > 0 and self.ref_object_list.GetItemCount()-1 < len(self.scene['children']):
-			self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|------------------------')
+			if len(self.scene['children']) > 0 and self.ref_object_list.GetItemCount()-1 < len(self.scene['children']):
+				self.ref_object_list.InsertItem(self.ref_object_list.GetItemCount(), '|')
 			self.depth = original_depth
 			#self.iterate_object_list(self.scene['children'], parent_name)

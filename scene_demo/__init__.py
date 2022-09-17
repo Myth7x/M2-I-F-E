@@ -79,6 +79,8 @@ class scene_demo():
 
 	obj_mouse_controller = None
 
+	call_arrange_object_list = False
+
 	###########################################################
 	class window_indicator(ui.Bar):
 		"""window indicator class
@@ -284,7 +286,6 @@ class scene_demo():
 				lst_names.append(object)
 		for name in lst_names:
 			lst_names += self.get_sub_children_name_list(name)
-		LogTxt(__name__, "get_sub_children_name_list:: %s" % lst_names)
 		return lst_names
 
 	def on_drag_window_end(self, ctrl_wnd, dst_wnd, x, y):
@@ -318,7 +319,8 @@ class scene_demo():
 				obj('wnd').SetParent(ctrl_wnd('wnd'))
 				obj('wnd').SetPosition(obj.x, obj.y)
 
-			LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
+			self.call_arrange_object_list = True
+
 			return
 
 		if ctrl_wnd == dst_wnd or dst_wnd == None: 
@@ -332,12 +334,10 @@ class scene_demo():
 		ctrl_wnd.y = ctrl_wnd('wnd').GetGlobalPosition()[1] - dst_wnd('wnd').GetGlobalPosition()[1]
 		ctrl_wnd('wnd').SetPosition(ctrl_wnd.x, ctrl_wnd.y)
 
-		LogTxt(__name__, "on_drag_window_end:: %s new parent %s ." % (ctrl_wnd.child_name, ctrl_wnd.parent))
-
 		# reset drag window target and mouse left down target
 		self.obj_mouse_controller.refs['drag_window_target'] 		= None
 		self.obj_mouse_controller.refs['mouse_left_down_target'] 	= None
-		
+		self.call_arrange_object_list = True
 		
 	############################################################################################################
 	# our update method, called from interfacemanager.onrender
@@ -372,7 +372,11 @@ class scene_demo():
 		for child in self.d_demo['objects']:
 			self.d_demo['objects'][child].on_update()
 		
+
 		self.parent.update_scene_object_data(self.d_demo['objects'])
+		if self.call_arrange_object_list == True:
+			self.parent.arrange_object_list()
+			self.call_arrange_object_list = False
 	##########################################################################################
 	## Demo Data
 

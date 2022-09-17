@@ -148,6 +148,10 @@ class InterfaceManager(ui.BoardWithTitleBar):
 		self.input_dialog.Close()
 		self.input_dialog = None
 
+	def arrange_object_list(self):
+		"""Arranges the object list"""
+		self.scene_browser.arrange_object_list()
+
 	def update_scene_object_data(self, data):
 		self.scene_browser.update_scene_object_data(data)
 

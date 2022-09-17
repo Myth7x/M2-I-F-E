@@ -2,6 +2,7 @@
 # Second Window with our own scriptloader, but i realized, we gonna use the original ones for functionality
 import copy
 from distutils.log import Log
+import inspect
 from _utils.pythonscriptloader import PythonScriptLoader
 from _utils import LogTxt
 
@@ -20,6 +21,8 @@ class scene_browser(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		LogTxt(__name__, "Initializing...")
+
+		self.last_object_list_data = None
 
 		self.style_script_data 	= None
 		self.object 			= None
@@ -57,6 +60,15 @@ class scene_browser(ui.ScriptWindow):
 		self.scene_obj_editor_open = False
 
 		LogTxt(__name__, "Initialized!")
+
+	# load ui from script
+	def load(self):
+		try:
+			self.object = self.script_loader.load_script(self, "C:\\InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_scene_browser.py")
+		except:
+			LogTxt(__name__, "Failed to load script!")
+			return False
+		return True
 
 	def on_close_object_editor(self):
 		LogTxt(__name__, "Closing object editor...")
@@ -98,11 +110,8 @@ class scene_browser(ui.ScriptWindow):
 					return self.find_available_name_recursive("%s_1" % name, children)
 		return name
 
-	# add scene object by name with ui_gatherer data
 	def add_scene_object(self, name, data):
-		LogTxt(__name__, "================================================================================")
-		LogTxt(__name__, "Adding scene object... %s" % name)
-		
+		"""add scene object by name with ui_gatherer data"""
 		child_name = self.find_available_name_recursive(name, self.scene['children'])		
 		_child = {
 			'child_name': child_name,
@@ -118,12 +127,11 @@ class scene_browser(ui.ScriptWindow):
 
 		self.scene['children'].append(_child)
 		self.parent.scene_demo.add_scene_object_data(child_name, _child)
-		self.arrange_object_list()
-		LogTxt(__name__, "================================================================================")
+		#self.arrange_object_list(data)
 		return
 
-	# Finds specific object in a list of objects, used for iterating through the ui tree(children)
 	def find_object(self, objects, object_name):
+		"""find object by name in list of objects"""
 		for object in objects:
 			if object.GetWindowName() == object_name:
 				return object
@@ -132,15 +140,6 @@ class scene_browser(ui.ScriptWindow):
 					if child.GetWindowName() == object_name:
 						return child
 		return None
-
-	# load ui from script
-	def load(self):
-		try:
-			self.object = self.script_loader.load_script(self, "C:\\InterfaceManager\\ifmgr_ui\\stylescripts\\", "style_scene_browser.py")
-		except:
-			LogTxt(__name__, "Failed to load script!")
-			return False
-		return True
 
 	# get scene object data dictionary by name
 	def get_scene_object_data(self, object_name):
@@ -175,7 +174,8 @@ class scene_browser(ui.ScriptWindow):
 			self.ref_titlebar_title.SetText("[ %s : %d children ]" % (self.scene['name'], self.ref_object_list.GetItemCount()))
 
 			if self.ref_object_list.GetItemCount() != len(self.scene['children']):
-				self.arrange_object_list()
+				self.last_object_list_data = None
+				#self.arrange_object_list(None)
 				pass
 			
 			#self.ref_object_list.Update()
@@ -183,6 +183,32 @@ class scene_browser(ui.ScriptWindow):
 	# Render UI Extra
 	def render(self):
 		pass
+
+	def compare_dict(self, d1, d2):
+		if d1 != d2:
+			return False
+		
+		for x in xrange(len(d1)):
+			if d1[x] != d2[x]:
+				return False
+			else:
+				if d1[x] == None:
+					return False
+				elif d1[x].child_name != d2[x].child_name:
+					return False
+				elif d1[x].parent != d2[x].parent:
+					return False
+				elif d1[x].x != d2[x].x:
+					return False
+				elif d1[x].y != d2[x].y:
+					return False
+				elif d1[x].width != d2[x].width:
+					return False
+				elif d1[x].height != d2[x].height:
+					return False
+
+
+		return True
 
 	def update_scene_object_data(self, data):
 		for obj_name in data:
@@ -194,8 +220,12 @@ class scene_browser(ui.ScriptWindow):
 				scene_data['width'] = obj.width
 				scene_data['height'] = obj.height
 				scene_data['parent'] = obj.parent
+		#self.arrange_object_list(data)
+		#if self.last_object_list_data == None or self.compare_dict(data, self.last_object_list_data) == False:
+		#	LogTxt(__name__, "Scene data and object data are not the same!")
+		#	self.arrange_object_list(data)
+		#	self.last_object_list_data = data
 
-		self.arrange_object_list()
 
 	def iterate_object_list(self, data, parent_name):
 		parent_child_count = self.count_children(self.scene['children'], parent_name)
@@ -239,8 +269,12 @@ class scene_browser(ui.ScriptWindow):
 
 	# Refreshes the object list
 	def arrange_object_list(self):
+		
 		self.ref_object_list.ClearItem()
 		
+		# log caller
+		LogTxt(__name__, "arrange_object_list called from %s" % inspect.stack()[1][3])
+
 		# wir bauen uns ein dict, dat konnen wir
 		parent_names = []
 		for child in self.scene['children']:

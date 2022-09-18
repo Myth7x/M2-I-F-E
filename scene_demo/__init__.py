@@ -380,6 +380,14 @@ class scene_demo():
 	##########################################################################################
 	## Demo Data
 
+	def update_object_data(self, child_name, attribute_list):
+		"""method used to update object data
+		Args:
+			child_name (str): the name of the object
+			attribute_list (list): the list of attributes to update
+		"""
+		self.d_demo['objects'][child_name].update_object_data(attribute_list)
+
 	def destroy_demo(self):
 		for obj in self.d_demo['objects']:
 			self.d_demo['objects'][obj]('wnd').Hide()

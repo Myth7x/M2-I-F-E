@@ -155,6 +155,9 @@ class InterfaceManager(ui.BoardWithTitleBar):
 	def update_scene_object_data(self, data):
 		self.scene_browser.update_scene_object_data(data)
 
+	def update_object_attributes(self, child_name, attribute_list):
+		self.scene_demo.update_object_data(child_name, attribute_list)
+
 	def on_demo_select_object(self, object_name):
 		"""Called when an object is selected in the object browser
 		- object_name: name of the selected object/name of the selected ui class"""

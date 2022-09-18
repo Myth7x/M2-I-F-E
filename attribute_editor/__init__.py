@@ -1,7 +1,7 @@
 from _utils.pythonscriptloader import PythonScriptLoader
 from _utils import LogTxt
 
-import ui
+import ui, grp, wndMgr
 
 import globals
 from .standard_attributes import StandardAttributes, Attribute
@@ -10,12 +10,86 @@ class attribute_editor(ui.ScriptWindow):
 	"""attribute editor class
 	- used to edit attributes of a scene object duh
 	"""
+
+	class attribute_input(ui.Bar):
+		def __init__(self):
+			ui.Bar.__init__(self)
+			self.AddFlag('float')
+			self.name = ""
+			self.type = None
+			self.value = None
+			self.parent = None
+		def set_name(self, name):
+			self.name = name
+		def set_parent(self, parent):
+			self.parent = parent
+		def set_type(self, type):
+			self.type = type
+		def set_value(self, value):
+			self.value = value
+		def get_value(self):
+			return self.value
+		def universal_callback(self, *args):
+			if self.type == 'slider':
+				self.value = self.input.GetSliderPos()
+
+			elif self.type == 'text':
+				self.value = self.input.GetText()
+			elif self.type == 'float':
+				self.value = self.input.GetText()
+			elif self.type == 'bool':
+				self.value = self.input.GetCheckStatus()
+			self.parent.update_attribute(self.name, self.value)
+			LogTxt("universal_callback", self.value)
+		def build_input(self):
+			if self.type == 'slider':
+				# slider
+				self.input = ui.SliderBar()
+				self.input.AddFlag('float')
+				self.input.SetSliderPos(self.value if self.value else 0.0)
+				self.input.SetParent(self)
+				self.input.SetPosition(10, 10)
+				self.input.SetSize(100, 20)
+				#self.input.SetLimit(0, 100)
+				self.input.SetEvent(ui.__mem_func__(self.universal_callback))
+				self.input.Show()
+				self.input.SetTop()
+
+			elif self.type == 'text':
+				self.input = ui.EditLine()
+				self.input.AddFlag('float')
+				self.input.SetParent(self)
+				self.input.SetWindowHorizontalAlignCenter()
+				self.input.SetWindowVerticalAlignCenter()
+				self.input.SetSize(100, 20)
+				self.input.SetPosition(10, 10)
+				self.input.SetReturnEvent(ui.__mem_func__(self.universal_callback))
+				self.input.SetText(self.value if self.value else "")
+				self.input.userMax = 999999
+				self.input.SetFocus()
+				self.input.SetTop()
+			
+			elif self.type == 'bool':
+				self.input = ui.CheckBox()
+				self.input.AddFlag('float')
+				self.input.SetParent(self)
+				self.input.SetWindowHorizontalAlignCenter()
+				self.input.SetWindowVerticalAlignCenter()
+				self.input.SetSize(100, 20)
+				self.input.SetPosition(10, 10)
+				self.input.SetEvent(ui.__mem_func__(self.universal_callback))
+				self.input.SetCheck(self.value if self.value else False)
+				self.input.SetTop()
+
+			self.input.Show()
+
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		#LogTxt(__name__, "Initializing...")
 
 		self.object 			= None
 		self.parent 			= None
+		self.has_updated = False
 
 		self.attributes = []
 
@@ -36,15 +110,6 @@ class attribute_editor(ui.ScriptWindow):
 		self.bg_attr_editor.SetSize(self.ref_category_attribute_configuration.GetWidth() - 40, self.ref_category_attribute_configuration.GetHeight() - 80)
 		self.bg_attr_editor.SetColor(0x304a4a4a)
 		self.bg_attr_editor.Show()
-		self.attr_editbox = ui.EditLine()
-		self.attr_editbox.SetParent(self.bg_attr_editor)
-		self.attr_editbox.SetPosition(3, 3)
-		self.attr_editbox.SetMultiLine()
-		self.attr_editbox.SetLimitWidth(self.bg_attr_editor.GetWidth())
-		self.attr_editbox.SetSize(*(self.bg_attr_editor.GetWidth() -6, self.bg_attr_editor.GetHeight()-6))
-		self.attr_editbox.SetText("Weeeeeeeeeeeeeew\n weeew")
-		self.attr_editbox.SetMax(1000)
-		self.attr_editbox.Show()
 
 		# Create ComboBox for attribute.attribute selection
 		self.cb_on_attr_val = ui.ComboBox()
@@ -52,9 +117,10 @@ class attribute_editor(ui.ScriptWindow):
 		self.cb_on_attr_val.SetPosition(20, 25)
 		self.cb_on_attr_val.SetSize(self.ref_category_attribute_configuration.GetWidth() - 40, 25)
 		self.cb_on_attr_val.Show()
+
+		self.attr_inputfield = None
 	
-		self.fn_original_on_select_attr_val = self.cb_on_attr_val.OnSelectItem
-		self.cb_on_attr_val.listBox.OnSelectItem = self.on_select_attr_val
+		self.cb_on_attr_val.SetEvent(ui.__mem_func__(self.on_select_attr_val))
 
 		self.attributes = []
 		for attr in StandardAttributes:
@@ -68,10 +134,20 @@ class attribute_editor(ui.ScriptWindow):
 
 		#LogTxt(__name__, "Initialized!")
 
-	def on_select_attr_val(self, selected_attr, name):
-		LogTxt(__name__, "Selected attribute: %s" % name)
-		self.attr_editbox.SetText(selected_attr + " " + name)
-		self.fn_original_on_select_attr_val(selected_attr, name)
+	def update_attribute(self, name, value):
+		LogTxt(__name__, "Updating attribute %s to %s" % (name, value))
+		for attr in self.attributes:
+			if attr.name == name:
+				attr.value = value
+				break
+		self.has_updated = True
+
+	def on_select_attr_val(self, selected_attr):
+		LogTxt(__name__, "Selected attribute: %s" % selected_attr)
+		if self.attr_inputfield:
+			self.attr_inputfield.Hide()
+			self.attr_inputfield.Destroy()
+			self.attr_inputfield = None
 	def set_parent(self, parent):
 		self.parent = parent
 
@@ -100,8 +176,26 @@ class attribute_editor(ui.ScriptWindow):
 			selected_attr = self.cb_on_attr_val.listBox.GetSelectedItem()
 			selected_attr_str = self.cb_on_attr_val.listBox.textDict[selected_attr]
 			self.cb_on_attr_val.SetCurrentItem(selected_attr_str)
+			
+			attr = self.attributes[selected_attr]
 
-			self.attr_editbox.SetText(self.scene_object[selected_attr_str] if selected_attr_str in self.scene_object else '')
-	
+			if self.attr_inputfield == None:
+				self.attr_inputfield = self.attribute_input()
+				self.attr_inputfield.set_name(attr.name)
+				self.attr_inputfield.set_parent(self)
+				self.attr_inputfield.SetParent(self.ref_category_attribute_configuration)
+				self.attr_inputfield.SetPosition(3, 60)
+				self.attr_inputfield.SetColor(grp.GenerateColor(0.2, 0.2, 0.2, 0.5))
+				self.attr_inputfield.SetSize(*(self.bg_attr_editor.GetWidth() -6, self.bg_attr_editor.GetHeight()-6))
+				self.attr_inputfield.Show()
+
+				self.attr_inputfield.set_type(attr.type)
+				self.attr_inputfield.build_input()
+			self.attr_inputfield.set_value(attr.value)
+
+			if self.has_updated:
+				self.parent.update_object_attributes(self.scene_object["child_name"], self.attributes)
+				self.has_updated = False
+
 	def render(self):
 		pass

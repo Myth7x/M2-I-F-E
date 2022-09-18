@@ -70,6 +70,14 @@ class scene_browser(ui.ScriptWindow):
 			return False
 		return True
 
+	def update_object_attributes(self, child_name, attribute_list):
+		"""update object attributes"""
+		#for attr in attribute_list:
+		#	LogTxt(__name__, "Updating attribute < %s:%s >" % (attr.name, attr.value))
+		#	self.get_scene_object_data(child_name)[attr.name] = attr.value
+		
+		self.parent.update_object_attributes(child_name, attribute_list)
+
 	def on_close_object_editor(self):
 		LogTxt(__name__, "Closing object editor...")
 		self.scene_obj_editor.ref_board.Hide()

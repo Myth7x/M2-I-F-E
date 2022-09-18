@@ -100,7 +100,25 @@ class object_wrapper():
 			self.wnd.Destroy()
 			self.wnd = None
 
+	def update_object_data(self, attribute_list):
+		LogTxt('update_object_data', attribute_list)
+		for attr in attribute_list:
+			self.__dict__[attr.name] = attr.value
+		
+			if attr.name == "x": # attr.value is 0-1 float so we need to convert it to pixel
+				self.x = wndMgr.GetScreenWidth() * attr.value
+			elif attr.name == "y":
+				self.y = wndMgr.GetScreenHeight() * attr.value
+			elif attr.name == "width":
+				self.width = wndMgr.GetScreenWidth() * attr.value * 100
+			elif attr.name == "height":
+				self.height = wndMgr.GetScreenHeight() * attr.value * 100
 
+			if attr.name == "x" or attr.name == "y":
+				self.uio_set_position((self.x, self.y))
+			elif attr.name == "width" or attr.name == "height":
+				self.uio_set_size((self.width, self.height))
+		#self.wnd.SetSize(self.width, self.height)
 	def create_object_instance(self):
 		"""create object instance with controller"""
 		if not self.wnd:

@@ -1,42 +1,42 @@
 StandardAttributes = {
     "name": {
-        'type': 'string',
+        'type': 'text',
         'default': 'unnamed',
         'description': 'Name of the object',
         'index': 1,
     },
     "type": {
-        'type': 'string',
+        'type': 'text',
         'default': 'object',
         'description': 'Type of the object',
         'index': 2,
     },
     "x": {
-        'type': 'float',
+        'type': 'slider',
         'default': 0.0,
         'description': 'X position of the object',
         'index': 3,
     },
     "y": {
-        'type': 'float',
+        'type': 'slider',
         'default': 0.0,
         'description': 'Y position of the object',
         'index': 4,
     },
     "width": {
-        'type': 'float',
+        'type': 'slider',
         'default': 0.0,
         'description': 'Width of the object',
         'index': 5,
     },
     "height": {
-        'type': 'float',
+        'type': 'slider',
         'default': 0.0,
         'description': 'Height of the object',
         'index': 6,
     },
     "parent": {
-        'type': 'string',
+        'type': 'text',
         'default': 'none',
         'description': 'Parent of the object',
         'index': 7,
@@ -50,5 +50,5 @@ class Attribute:
         self.value = value
         self.index = index
         self.description = description
-        self.input_type = type
+        self.type = type
         self.input_options = None

@@ -110,9 +110,9 @@ class object_wrapper():
 			elif attr.name == "y":
 				self.y = wndMgr.GetScreenHeight() * attr.value
 			elif attr.name == "width":
-				self.width = wndMgr.GetScreenWidth() * attr.value * 100
+				self.width = wndMgr.GetScreenWidth() * attr.value
 			elif attr.name == "height":
-				self.height = wndMgr.GetScreenHeight() * attr.value * 100
+				self.height = wndMgr.GetScreenHeight() * attr.value
 
 			if attr.name == "x" or attr.name == "y":
 				self.uio_set_position((self.x, self.y))
